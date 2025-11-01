@@ -1,0 +1,26 @@
+# Игнорировать системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Игнорировать временные файлы
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Игнорировать IDE файлы
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Игнорировать папку с большими файлами (опционально)
+# Раскомментируйте если не хотите загружать модели в Git
+# models/*.glb
+# models/*.fbx
+# models/*.usdz
+# images/*.jpg
+# images/*.png
+

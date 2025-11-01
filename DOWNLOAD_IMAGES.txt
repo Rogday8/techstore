@@ -1,0 +1,82 @@
+ИНСТРУКЦИЯ: Как загрузить реальные фото товаров
+================================================
+
+ВАРИАНТ 1: Быстрый способ через Unsplash
+-----------------------------------------
+Все изображения уже настроены в script.js с Unsplash API.
+Просто перезагрузите страницу - фото должны загрузиться!
+
+ВАРИАНТ 2: Локальные изображения (если Unsplash не работает)
+---------------------------------------------------------------
+
+ШАГ 1: Скачайте фотографии
+-------------------------
+Откройте в браузере и скачайте изображения:
+
+iPhone 15 Pro Max:
+https://images.unsplash.com/photo-1592750475338-74b7b21085ab
+https://images.unsplash.com/photo-1620916566398-39f1143ab7be
+
+Samsung Galaxy S24:
+https://images.unsplash.com/photo-1511707171634-5f897ff02aa9
+https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb
+
+AirPods:
+https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1
+https://images.unsplash.com/photo-1590658268037-6bf12165a8df
+
+Наушники Sony:
+https://images.unsplash.com/photo-1505740420928-5e560c06d30e
+https://images.unsplash.com/photo-1484704849700-f032a568e944
+
+JBL наушники:
+https://images.unsplash.com/photo-1546435770-a3e426bf472b
+
+Apple Watch:
+https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d
+https://images.unsplash.com/photo-1523275335684-37898b6baf30
+
+Samsung Watch:
+https://images.unsplash.com/photo-1523275335684-37898b6baf30
+
+Кабели:
+https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04
+
+Чехлы:
+https://images.unsplash.com/photo-1556656793-08538906a9f8
+https://images.unsplash.com/photo-1597692455306-6e5df8c1da1e
+
+Powerbank:
+https://images.unsplash.com/photo-1609091839311-d5365f9ff1f8
+
+ШАГ 2: Сохраните файлы
+---------------------
+1. Откройте папку: proj\images\
+2. Сохраните все скачанные фото в эту папку
+3. Назовите их понятными именами:
+   - iphone15.jpg
+   - galaxy_s24.jpg
+   - airpods.jpg
+   - sony_headphones.jpg
+   и так далее...
+
+ШАГ 3: Обновите script.js
+--------------------------
+В файле script.js найдите массив products и замените ссылки:
+
+БЫЛО:
+image: "https://picsum.photos/400/280?random=1"
+
+СТАЛО:
+image: "images/iphone15.jpg"
+
+ПОВТОРИТЕ для всех товаров!
+
+ВАРИАНТ 3: Использовать случайные фото с Lorem Picsum
+------------------------------------------------------
+Все уже настроено! Просто перезагрузите страницу (F5).
+Если фото не загружаются - используйте Вариант 2.
+
+================================================
+Если ничего не работает, напишите мне!
+
