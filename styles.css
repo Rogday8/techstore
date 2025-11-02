@@ -1407,10 +1407,9 @@ model-viewer {
     }
     
     .header .container {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
-        flex-wrap: nowrap;
         gap: 0.5rem;
         padding: 0 15px;
         max-width: 100%;
@@ -1419,21 +1418,22 @@ model-viewer {
     
     .mobile-menu-toggle {
         display: flex !important;
-        order: 1;
-        padding: 0.4rem;
+        padding: 0.5rem;
         flex-shrink: 0;
         margin: 0;
+        width: 40px;
+        height: 40px;
     }
     
     .logo {
-        font-size: 1.1rem;
-        flex: 1;
-        order: 2;
+        font-size: 1rem;
         gap: 0.4rem;
         min-width: 0;
         overflow: hidden;
+        justify-self: center;
+        display: flex;
+        align-items: center;
         justify-content: center;
-        margin: 0 auto;
     }
     
     .logo-text {
@@ -1444,8 +1444,8 @@ model-viewer {
     }
     
     .apple-logo {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         flex-shrink: 0;
     }
     
@@ -1467,16 +1467,16 @@ model-viewer {
     }
     
     .header > .container > div:last-child {
-        order: 3;
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         flex-shrink: 0;
-        margin-left: auto;
+        gap: 0;
     }
     
     .cart-icon {
         font-size: 0.85rem;
-        padding: 0.4rem;
+        padding: 0.5rem;
         text-align: center;
         flex-shrink: 0;
         margin: 0;
