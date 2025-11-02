@@ -279,6 +279,9 @@ body {
     background: #ffffff;
     flex-shrink: 0;
     padding: 2rem;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .product-arrow {
@@ -1443,17 +1446,19 @@ model-viewer {
     
     .product-images-container {
         background: #ffffff;
+        min-height: 400px;
     }
     
     .product-image,
     .product-images {
-        height: 320px;
+        height: 400px;
         background: #ffffff;
-        padding: 1.5rem;
+        padding: 1rem;
     }
     
     .product-image {
-        padding: 1.5rem;
+        padding: 1rem;
+        object-fit: contain;
     }
     
     .product-info {
@@ -1659,17 +1664,19 @@ model-viewer {
     
     .product-images-container {
         background: #ffffff;
+        min-height: 350px;
     }
     
     .product-image,
     .product-images {
-        height: 280px;
+        height: 350px;
         background: #ffffff;
-        padding: 1.2rem;
+        padding: 0.8rem;
     }
     
     .product-image {
-        padding: 1.2rem;
+        padding: 0.8rem;
+        object-fit: contain;
     }
     
     .viewer3d-container {
