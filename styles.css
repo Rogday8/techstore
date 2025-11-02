@@ -1274,6 +1274,17 @@ model-viewer {
     border-bottom: 1px solid var(--border-color);
     text-transform: uppercase;
     letter-spacing: 2px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s;
+    display: block;
+}
+
+.mobile-nav a:hover,
+.mobile-nav a:active {
+    background: var(--bg-light);
+    padding-left: 1rem;
+    color: var(--accent);
 }
 
 .mobile-nav-header {
@@ -1311,35 +1322,62 @@ model-viewer {
 @media (max-width: 768px) {
     /* Header Mobile */
     .header {
-        padding: 1rem 0;
+        padding: 0.8rem 0;
+        position: sticky;
+        top: 0;
+        background: var(--text-inverse);
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     
     .header .container {
-        flex-wrap: wrap;
-        gap: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        padding: 0 15px;
     }
     
     .logo {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        flex: 1;
+        order: 2;
     }
     
     .nav {
-        display: none;
+        display: none !important;
     }
     
     .mobile-menu-toggle {
-        display: flex;
-        order: -1;
+        display: flex !important;
+        order: 1;
+        padding: 0.5rem;
+        margin-right: 0.5rem;
     }
     
     .mobile-nav {
         display: flex;
     }
     
-    .admin-toggle,
+    .admin-toggle {
+        display: none !important;
+    }
+    
     .cart-icon {
         font-size: 0.85rem;
-        padding: 0.4rem;
+        padding: 0.5rem;
+        order: 3;
+        min-width: 50px;
+        text-align: center;
+    }
+    
+    .cart-count {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65rem;
+        top: -3px;
+        right: -3px;
     }
     
     /* Hero Mobile */
@@ -1539,6 +1577,16 @@ model-viewer {
     .footer {
         padding: 1.5rem 15px;
     }
+    
+    /* Notification Mobile */
+    .notification {
+        right: 15px !important;
+        left: 15px !important;
+        max-width: calc(100% - 30px) !important;
+        top: 80px !important;
+        padding: 15px 20px !important;
+        font-size: 0.9rem !important;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1604,6 +1652,13 @@ model-viewer {
     
     .logo {
         font-size: 1.3rem;
+    }
+    
+    /* Notification Small Mobile */
+    .notification {
+        font-size: 0.85rem !important;
+        padding: 12px 18px !important;
+        top: 70px !important;
     }
 }
 

@@ -1098,15 +1098,26 @@ function removeFromCart(index) {
 }
 
 // Показ уведомления
-function showNotification(message) {
+function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.textContent = message;
+    
+    // Разные цвета для разных типов
+    let bgColor = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    if (type === 'warning') {
+        bgColor = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+    } else if (type === 'info') {
+        bgColor = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+    } else if (type === 'error') {
+        bgColor = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+    }
+    
     notification.style.cssText = `
         position: fixed;
         top: 100px;
         right: 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: ${bgColor};
         color: white;
         padding: 20px 30px;
         border-radius: 15px;
@@ -1269,20 +1280,55 @@ function view3D(modelPath, productId) {
     const modelViewer = document.getElementById('model-viewer');
     
     if (modelViewer) {
-        // Если передали productId, пытаемся загрузить из IndexedDB
-        if (productId && db) {
+        // Всегда сначала пытаемся загрузить стандартную модель из папки models/
+        // Это работает на всех устройствах через GitHub Pages
+        if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
+            const src = encodeURI(modelPath);
+            modelViewer.src = src;
+            console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
+            
+            // Если есть локальная модель в IndexedDB, показываем уведомление
+            if (productId && db) {
+                checkLocalModel(productId);
+            }
+        } else if (productId && db) {
+            // Пытаемся загрузить из IndexedDB только если нет стандартной модели
             loadModelFromDB(productId, modelViewer);
         } else {
-            // Иначе загружаем стандартный путь
-            const src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
-            modelViewer.src = src;
-            console.log('Загружаем стандартную модель:', modelPath);
+            // Fallback на стандартный путь
+            const src = modelPath ? (modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath)) : '';
+            if (src) {
+                modelViewer.src = src;
+            } else {
+                showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
+            }
         }
     }
 }
 
-// Загрузка модели из IndexedDB
+// Проверка наличия локальной модели
+function checkLocalModel(productId) {
+    if (!db) return;
+    
+    const transaction = db.transaction(['models'], 'readonly');
+    const store = transaction.objectStore('models');
+    const request = store.get(productId);
+    
+    request.onsuccess = () => {
+        if (request.result) {
+            // Есть локальная модель, но мы показываем стандартную
+            console.log('ℹ️ Локальная модель найдена, но показываем стандартную для совместимости');
+        }
+    };
+}
+
+// Загрузка модели из IndexedDB (только локально, не работает на GitHub Pages на других устройствах)
 function loadModelFromDB(productId, modelViewer) {
+    if (!db) {
+        console.log('IndexedDB не доступна, используем стандартную модель');
+        return;
+    }
+    
     const transaction = db.transaction(['models'], 'readonly');
     const store = transaction.objectStore('models');
     const request = store.get(productId);
@@ -1293,9 +1339,10 @@ function loadModelFromDB(productId, modelViewer) {
             const blob = new Blob([arrayBuffer]);
             const blobUrl = URL.createObjectURL(blob);
             modelViewer.src = blobUrl;
-            console.log('✅ Модель загружена из IndexedDB для товара:', productId);
+            console.log('✅ Локальная модель загружена из IndexedDB для товара:', productId);
+            showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
         } else {
-            console.log('Нет сохраненной модели, используем стандартную');
+            console.log('Нет локальной модели, используем стандартную');
         }
     };
     
