@@ -288,22 +288,27 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: var(--text-inverse);
-    border: 1px solid var(--border-color);
-    border-radius: 0;
+    background: transparent;
+    border: none;
     width: 40px;
     height: 40px;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     cursor: pointer;
     opacity: 0;
     transition: all 0.3s;
     z-index: 10;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .product-arrow:hover {
-    background: var(--accent);
-    color: var(--text-inverse);
-    border-color: var(--accent);
+    opacity: 1;
+    color: var(--accent);
+    transform: translateY(-50%) scale(1.2);
 }
 
 .product-arrow-left {
@@ -554,22 +559,27 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: var(--text-inverse);
-    border: 1px solid var(--border-color);
-    border-radius: 0;
+    background: transparent;
+    border: none;
     width: 50px;
     height: 50px;
-    font-size: 1.5rem;
+    font-size: 2rem;
     cursor: pointer;
     opacity: 0;
     transition: all 0.3s;
     z-index: 10;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .modal-arrow:hover {
-    background: var(--accent);
-    color: var(--text-inverse);
-    border-color: var(--accent);
+    opacity: 1;
+    color: var(--accent);
+    transform: translateY(-50%) scale(1.2);
 }
 
 .modal-arrow-left {
@@ -1835,7 +1845,7 @@ model-viewer {
     .product-arrow,
     .modal-arrow {
         opacity: 1;
-        background: rgba(255, 255, 255, 0.9);
+        background: transparent;
     }
     
     .btn-primary,
