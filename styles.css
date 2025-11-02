@@ -377,6 +377,7 @@ body {
     background: transparent;
     border: none;
     border-radius: 3px;
+    pointer-events: none;
 }
 
 .price-slider::-moz-range-track {
@@ -385,6 +386,7 @@ body {
     background: transparent;
     border: none;
     border-radius: 3px;
+    pointer-events: none;
 }
 
 .price-slider-min {
