@@ -1570,6 +1570,11 @@ model-viewer {
         height: 70px;
     }
     
+    /* Скрываем цвет "Титановый" на мобильных для iPhone 15 Pro Max */
+    .color-btn[title="Титановый"] {
+        display: none !important;
+    }
+    
     .viewer3d-container {
         height: calc(100vh - 2rem);
         min-height: 600px;
