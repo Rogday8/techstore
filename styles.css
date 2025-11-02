@@ -262,6 +262,7 @@ body {
     position: relative;
     overflow: hidden;
     background: #ffffff;
+    width: 100%;
 }
 
 .product-images {
@@ -270,6 +271,7 @@ body {
     display: flex;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     background: #ffffff;
+    overflow: hidden;
 }
 
 .product-image {
@@ -280,8 +282,7 @@ body {
     flex-shrink: 0;
     padding: 2rem;
     display: block;
-    max-width: 100%;
-    max-height: 100%;
+    box-sizing: border-box;
 }
 
 .product-arrow {
@@ -1446,17 +1447,24 @@ model-viewer {
     
     .product-images-container {
         background: #ffffff;
+        width: 100%;
+        overflow: hidden;
     }
     
-    .product-image,
     .product-images {
+        width: 100%;
         height: 240px;
         background: #ffffff;
-        padding: 1.5rem;
+        overflow: hidden;
     }
     
     .product-image {
+        width: 100%;
+        height: 240px;
+        background: #ffffff;
         padding: 1.5rem;
+        box-sizing: border-box;
+        flex-shrink: 0;
     }
     
     .product-info {
@@ -1474,10 +1482,32 @@ model-viewer {
     /* Modal Mobile */
     .modal-content {
         padding: 1.5rem;
-        margin: 2% auto;
-        width: 98%;
-        max-height: 96vh;
+        margin: 1% auto;
+        width: 100%;
+        max-width: 100%;
+        max-height: 98vh;
         overflow-y: auto;
+        box-sizing: border-box;
+    }
+    
+    .modal-image-container {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .modal-images {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .modal-main-image {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .modal-image img {
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .close {
@@ -1495,17 +1525,23 @@ model-viewer {
     .modal-image-container,
     .modal-images {
         height: 450px;
+        width: 100%;
         background: #ffffff;
+        box-sizing: border-box;
     }
     
     .modal-main-image {
         height: 450px;
+        width: 100%;
         background: #ffffff;
+        box-sizing: border-box;
     }
     
     .modal-image img {
         height: 450px;
+        width: 100%;
         background: #ffffff;
+        box-sizing: border-box;
     }
     
     .modal-details h2 {
@@ -1651,32 +1687,45 @@ model-viewer {
     .modal-image-container,
     .modal-images {
         height: 400px;
+        width: 100%;
         background: #ffffff;
+        box-sizing: border-box;
     }
     
     .modal-main-image {
         height: 400px;
+        width: 100%;
         background: #ffffff;
+        box-sizing: border-box;
     }
     
     .modal-image img {
         height: 400px;
+        width: 100%;
         background: #ffffff;
+        box-sizing: border-box;
     }
     
     .product-images-container {
         background: #ffffff;
+        width: 100%;
+        overflow: hidden;
     }
     
-    .product-image,
     .product-images {
+        width: 100%;
         height: 200px;
         background: #ffffff;
-        padding: 1rem;
+        overflow: hidden;
     }
     
     .product-image {
+        width: 100%;
+        height: 200px;
+        background: #ffffff;
         padding: 1rem;
+        box-sizing: border-box;
+        flex-shrink: 0;
     }
     
     .viewer3d-container {
