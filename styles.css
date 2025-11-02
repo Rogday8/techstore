@@ -1113,6 +1113,10 @@ model-viewer {
     margin: 0;
 }
 
+.contact-card p + p {
+    margin-top: 0.3rem;
+}
+
 .contact-card a {
     color: var(--accent);
     text-decoration: none;
