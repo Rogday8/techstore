@@ -812,14 +812,31 @@ function renderProducts() {
         let productImage = product.image;
         if (product.hasColors && product.colors) {
             // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
-            const defaultColor = product.id === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+            let defaultColor = product.id === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+            
+            // На мобильных устройствах для iPhone 15 Pro Max исключаем "Титановый"
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                             (window.innerWidth <= 768 && window.innerHeight <= 1024);
+            if (product.id === 1 && isMobile && currentProductColor[product.id] === "Титановый") {
+                currentProductColor[product.id] = null; // Сбрасываем если выбран Титановый на мобильном
+            }
+            if (product.id === 1 && isMobile && defaultColor === "Титановый" && product.colors["Черный"]) {
+                defaultColor = "Черный"; // Заменяем Титановый на Черный на мобильных
+            }
+            
             const selectedColor = currentProductColor[product.id] || defaultColor;
-            productImages = product.colors[selectedColor].images;
-            productImage = product.colors[selectedColor].image;
+            
+            // Если на мобильном выбран Титановый, заменяем на Черный
+            const finalColor = (product.id === 1 && isMobile && selectedColor === "Титановый" && product.colors["Черный"]) 
+                ? "Черный" 
+                : selectedColor;
+            
+            productImages = product.colors[finalColor].images;
+            productImage = product.colors[finalColor].image;
             
             // Сохраняем выбранный цвет если его еще нет
-            if (!currentProductColor[product.id]) {
-                currentProductColor[product.id] = selectedColor;
+            if (!currentProductColor[product.id] || (product.id === 1 && isMobile && currentProductColor[product.id] === "Титановый")) {
+                currentProductColor[product.id] = finalColor;
             }
         }
         
@@ -853,13 +870,30 @@ function renderProducts() {
         let productImages = product.images;
         if (product.hasColors && product.colors) {
             // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
-            const defaultColor = product.id === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+            let defaultColor = product.id === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+            
+            // На мобильных устройствах для iPhone 15 Pro Max исключаем "Титановый"
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                             (window.innerWidth <= 768 && window.innerHeight <= 1024);
+            if (product.id === 1 && isMobile && currentProductColor[product.id] === "Титановый") {
+                currentProductColor[product.id] = null; // Сбрасываем если выбран Титановый на мобильном
+            }
+            if (product.id === 1 && isMobile && defaultColor === "Титановый" && product.colors["Черный"]) {
+                defaultColor = "Черный"; // Заменяем Титановый на Черный на мобильных
+            }
+            
             const selectedColor = currentProductColor[product.id] || defaultColor;
-            productImages = product.colors[selectedColor].images;
+            
+            // Если на мобильном выбран Титановый, заменяем на Черный
+            const finalColor = (product.id === 1 && isMobile && selectedColor === "Титановый" && product.colors["Черный"]) 
+                ? "Черный" 
+                : selectedColor;
+            
+            productImages = product.colors[finalColor].images;
             
             // Сохраняем выбранный цвет если его еще нет
-            if (!currentProductColor[product.id]) {
-                currentProductColor[product.id] = selectedColor;
+            if (!currentProductColor[product.id] || (product.id === 1 && isMobile && currentProductColor[product.id] === "Титановый")) {
+                currentProductColor[product.id] = finalColor;
             }
         }
         
@@ -897,6 +931,15 @@ function filterProducts(category) {
 
 // Выбор цвета товара
 function selectColor(productId, color) {
+    // На мобильных устройствах для iPhone 15 Pro Max запрещаем выбор "Титановый"
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     (window.innerWidth <= 768 && window.innerHeight <= 1024);
+    
+    if (productId === 1 && isMobile && color === "Титановый") {
+        // Если пытаются выбрать Титановый на мобильном, выбираем Черный вместо этого
+        color = "Черный";
+    }
+    
     currentProductColor[productId] = color;
     
     // Сбрасываем индекс изображения при смене цвета
@@ -1048,13 +1091,30 @@ function openModal(productId) {
     let modalImages = product.images;
     if (product.hasColors && product.colors) {
         // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
-        const defaultColor = productId === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+        let defaultColor = productId === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+        
+        // На мобильных устройствах для iPhone 15 Pro Max исключаем "Титановый"
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                         (window.innerWidth <= 768 && window.innerHeight <= 1024);
+        if (productId === 1 && isMobile && currentProductColor[productId] === "Титановый") {
+            currentProductColor[productId] = null; // Сбрасываем если выбран Титановый на мобильном
+        }
+        if (productId === 1 && isMobile && defaultColor === "Титановый" && product.colors["Черный"]) {
+            defaultColor = "Черный"; // Заменяем Титановый на Черный на мобильных
+        }
+        
         const selectedColor = currentProductColor[productId] || defaultColor;
-        modalImages = product.colors[selectedColor].images;
+        
+        // Если на мобильном выбран Титановый, заменяем на Черный
+        const finalColor = (productId === 1 && isMobile && selectedColor === "Титановый" && product.colors["Черный"]) 
+            ? "Черный" 
+            : selectedColor;
+        
+        modalImages = product.colors[finalColor].images;
         
         // Сохраняем выбранный цвет если его еще нет
-        if (!currentProductColor[productId]) {
-            currentProductColor[productId] = selectedColor;
+        if (!currentProductColor[productId] || (productId === 1 && isMobile && currentProductColor[productId] === "Титановый")) {
+            currentProductColor[productId] = finalColor;
         }
     }
     
@@ -1080,6 +1140,13 @@ function openModal(productId) {
                 ${product.hasColors && product.colors ? `
                     <div class="modal-colors">
                         ${Object.keys(product.colors).map(color => {
+                            // На мобильных устройствах для iPhone 15 Pro Max скрываем "Титановый"
+                            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                                             (window.innerWidth <= 768 && window.innerHeight <= 1024);
+                            if (productId === 1 && isMobile && color === "Титановый") {
+                                return ''; // Не показываем кнопку Титановый на мобильных
+                            }
+                            
                             const defaultColor = productId === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
                             const isActive = (currentProductColor[productId] || defaultColor) === color;
                             return `
