@@ -1038,39 +1038,41 @@ function setupDualSlider() {
     // Удаляем обработчики кликов на контейнере
     
     // Активация при взаимодействии с самими слайдерами
-    sliderMin.addEventListener('mousedown', () => {
-        sliderMin.style.zIndex = '6';
-        sliderMax.style.zIndex = '3';
+    sliderMin.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        sliderMin.style.zIndex = '10';
+        sliderMax.style.zIndex = '4';
     });
     
-    sliderMin.addEventListener('touchstart', () => {
-        sliderMin.style.zIndex = '6';
-        sliderMax.style.zIndex = '3';
+    sliderMin.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        sliderMin.style.zIndex = '10';
+        sliderMax.style.zIndex = '4';
     });
     
-    sliderMax.addEventListener('mousedown', () => {
-        sliderMax.style.zIndex = '6';
+    sliderMax.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        sliderMax.style.zIndex = '10';
         sliderMin.style.zIndex = '3';
     });
     
-    sliderMax.addEventListener('touchstart', () => {
-        sliderMax.style.zIndex = '6';
+    sliderMax.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        sliderMax.style.zIndex = '10';
         sliderMin.style.zIndex = '3';
     });
     
     // Возврат z-index после завершения взаимодействия
-    document.addEventListener('mouseup', () => {
+    const resetZIndex = () => {
         sliderMin.style.zIndex = '3';
         sliderMax.style.zIndex = '4';
-    });
+    };
     
-    document.addEventListener('touchend', () => {
-        sliderMin.style.zIndex = '3';
-        sliderMax.style.zIndex = '4';
-    });
+    document.addEventListener('mouseup', resetZIndex);
+    document.addEventListener('touchend', resetZIndex);
     
-    // Устанавливаем начальные z-index
-    sliderMin.style.zIndex = '3';
+    // Устанавливаем начальные z-index - левая точка должна быть доступна
+    sliderMin.style.zIndex = '5';
     sliderMax.style.zIndex = '4';
 }
 
