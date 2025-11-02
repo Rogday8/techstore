@@ -394,10 +394,6 @@ body {
     background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
 }
 
-.color-btn[title="Титановый"] {
-    background: linear-gradient(135deg, #8b8b8b, #5a5a5a);
-}
-
 .color-btn[title="Черный"] {
     background: linear-gradient(135deg, #1a1a1a, #000000);
 }
@@ -1570,10 +1566,6 @@ model-viewer {
         height: 70px;
     }
     
-    /* Скрываем цвет "Титановый" на мобильных для iPhone 15 Pro Max */
-    .color-btn[title="Титановый"] {
-        display: none !important;
-    }
     
     .viewer3d-container {
         height: calc(100vh - 2rem);
