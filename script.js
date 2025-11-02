@@ -1400,6 +1400,26 @@ function open3DViewer(modelPath, productId) {
     // Показываем модальное окно
     modal.style.display = 'block';
     
+    // Вспомогательная функция для загрузки стандартной модели
+    function loadStandardModel() {
+        const currentViewer = document.getElementById('model-viewer');
+        if (!currentViewer) {
+            console.error('❌ model-viewer элемент не найден');
+            return;
+        }
+        
+        if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
+            const standardSrc = encodeURI(modelPath);
+            currentViewer.src = standardSrc;
+            console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
+        } else if (modelPath) {
+            const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
+            currentViewer.src = fallbackSrc;
+        } else {
+            showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
+        }
+    }
+    
     // Увеличиваем задержку для полной инициализации кастомного элемента
     // Web Components требуют времени для регистрации
     setTimeout(() => {
@@ -1409,73 +1429,67 @@ function open3DViewer(modelPath, productId) {
             return;
         }
         
-        let src = '';
-        
         // СНАЧАЛА проверяем есть ли локальная модель в IndexedDB
         // Локальная модель имеет приоритет над стандартной
-        if (productId && db) {
-            // Пытаемся загрузить из IndexedDB
-            const transaction = db.transaction(['models'], 'readonly');
-            const store = transaction.objectStore('models');
-            const request = store.get(productId);
+        if (productId) {
+            // Убеждаемся что db инициализирована, если нет - инициализируем
+            const dbCheck = db ? Promise.resolve(db) : initDB();
             
-            request.onsuccess = () => {
-                const currentViewer = document.getElementById('model-viewer');
-                if (!currentViewer) return;
+            dbCheck.then(() => {
+                if (!db) {
+                    console.warn('⚠️ IndexedDB недоступна, загружаем стандартную модель');
+                    loadStandardModel();
+                    return;
+                }
                 
-                if (request.result) {
-                    // Локальная модель найдена - используем её
-                    const arrayBuffer = request.result.model;
-                    const blob = new Blob([arrayBuffer]);
-                    const blobUrl = URL.createObjectURL(blob);
-                    activeBlobUrls.add(blobUrl);
-                    
-                    currentViewer.src = blobUrl;
-                    console.log('✅ Локальная модель загружена из IndexedDB для товара ID:', productId);
-                    showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
-                } else {
-                    // Локальной модели нет - используем стандартную из папки models/
-                    if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
-                        const standardSrc = encodeURI(modelPath);
-                        currentViewer.src = standardSrc;
-                        console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
-                    } else if (modelPath) {
-                        const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
-                        currentViewer.src = fallbackSrc;
-                    } else {
-                        showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
+                // Пытаемся загрузить из IndexedDB
+                const transaction = db.transaction(['models'], 'readonly');
+                const store = transaction.objectStore('models');
+                const request = store.get(productId);
+                
+                request.onsuccess = () => {
+                    const currentViewer = document.getElementById('model-viewer');
+                    if (!currentViewer) {
+                        console.error('❌ model-viewer элемент не найден после задержки');
+                        return;
                     }
-                }
-            };
-            
-            request.onerror = () => {
-                const currentViewer = document.getElementById('model-viewer');
-                console.error('Ошибка загрузки из IndexedDB:', request.error);
-                // При ошибке загружаем стандартную модель
-                if (modelPath && currentViewer) {
-                    const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
-                    currentViewer.src = fallbackSrc;
-                }
-            };
+                    
+                    if (request.result && request.result.model) {
+                        // Локальная модель найдена - используем её
+                        const arrayBuffer = request.result.model;
+                        const blob = new Blob([arrayBuffer]);
+                        const blobUrl = URL.createObjectURL(blob);
+                        activeBlobUrls.add(blobUrl);
+                        
+                        currentViewer.src = blobUrl;
+                        console.log('✅ Локальная модель загружена из IndexedDB для товара ID:', productId, 'размер:', arrayBuffer.byteLength, 'байт');
+                        showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
+                    } else {
+                        // Локальной модели нет - используем стандартную из папки models/
+                        console.log('ℹ️ Локальная модель не найдена для товара ID:', productId, '- загружаем стандартную');
+                        loadStandardModel();
+                    }
+                };
+                
+                request.onerror = () => {
+                    console.error('❌ Ошибка загрузки из IndexedDB:', request.error);
+                    // При ошибке загружаем стандартную модель
+                    loadStandardModel();
+                };
+            }).catch(err => {
+                console.error('❌ Ошибка инициализации IndexedDB:', err);
+                loadStandardModel();
+            });
             
             return; // Выходим, так как загрузка асинхронная
         }
         
-        // Если IndexedDB не доступна или нет productId - используем стандартную модель
-        if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
-            src = encodeURI(modelPath);
-            console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
-            readyViewer.src = src;
-        } else if (modelPath) {
-            src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
-            readyViewer.src = src;
-        } else {
-            showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
-        }
+        // Если нет productId - используем стандартную модель
+        loadStandardModel();
     }, 400); // Увеличенная задержка для надежной инициализации
 }
 
-// Проверка наличия локальной модели
+// Проверка наличия локальной модели (устаревшая функция, оставлена для совместимости)
 function checkLocalModel(productId) {
     if (!db) return;
     
@@ -1485,8 +1499,8 @@ function checkLocalModel(productId) {
     
     request.onsuccess = () => {
         if (request.result) {
-            // Есть локальная модель, но мы показываем стандартную
-            console.log('ℹ️ Локальная модель найдена, но показываем стандартную для совместимости');
+            // Локальная модель найдена - она будет автоматически загружена при открытии 3D viewer
+            console.log('ℹ️ Локальная модель найдена для товара ID:', productId);
         }
     };
 }
