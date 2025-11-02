@@ -1436,9 +1436,12 @@ function open3DViewer(modelPath, productId) {
     modelViewer.setAttribute('shadow-intensity', '1');
     modelViewer.setAttribute('environment-image', 'neutral');
     modelViewer.setAttribute('interaction-policy', 'allow-when-focused');
+    modelViewer.setAttribute('loading', 'auto'); // Важно для корректной загрузки
+    modelViewer.setAttribute('reveal', 'auto'); // Автоматическое раскрытие
     modelViewer.style.width = '100%';
     modelViewer.style.height = '100%';
     modelViewer.style.display = 'block';
+    modelViewer.style.background = 'transparent'; // Прозрачный фон до загрузки
     
     // AR кнопка
     const arButton = document.createElement('button');
@@ -1464,12 +1467,53 @@ function open3DViewer(modelPath, productId) {
         const path = pathToUse || modelPath;
         
         if (path && !path.startsWith('blob:') && !path.startsWith('data:')) {
-            const standardSrc = encodeURI(path);
+            // Кодируем путь правильно для GitHub Pages (обрабатываем пробелы)
+            const standardSrc = encodeURI(path).replace(/%20/g, '%20');
+            
+            console.log('📁 Загружаем стандартную модель:', {
+                оригинальныйПуть: path,
+                закодированныйПуть: standardSrc,
+                устройство: isMobile ? 'mobile' : 'desktop'
+            });
+            
+            // Устанавливаем src
             currentViewer.src = standardSrc;
-            console.log('✅ Загружаем стандартную модель из папки models/:', path);
+            
+            // Добавляем обработчики событий для отладки
+            currentViewer.addEventListener('load', () => {
+                console.log('✅ Модель успешно загружена:', standardSrc);
+            });
+            
+            currentViewer.addEventListener('error', (event) => {
+                console.error('❌ Ошибка загрузки модели:', {
+                    путь: standardSrc,
+                    ошибка: event.detail || 'Неизвестная ошибка',
+                    устройство: isMobile ? 'mobile' : 'desktop'
+                });
+                
+                // Показываем уведомление об ошибке
+                showNotification('⚠️ Ошибка загрузки 3D модели. Проверьте консоль браузера.', 'error');
+            });
+            
+            // На PC добавляем дополнительную проверку через таймаут
+            if (!isMobile) {
+                setTimeout(() => {
+                    if (!currentViewer.loaded && !currentViewer.loading) {
+                        console.error('❌ Модель не загружается на PC, проверяем путь:', standardSrc);
+                        
+                        // Пробуем альтернативный путь без encodeURI для некоторых случаев
+                        const altPath = path.replace(/\s/g, '%20');
+                        if (altPath !== standardSrc) {
+                            console.log('🔄 Пробуем альтернативный путь:', altPath);
+                            currentViewer.src = altPath;
+                        }
+                    }
+                }, 2000);
+            }
         } else if (path) {
             const fallbackSrc = path.startsWith('blob:') || path.startsWith('data:') ? path : encodeURI(path);
             currentViewer.src = fallbackSrc;
+            console.log('✅ Загружаем модель (fallback):', fallbackSrc);
         } else {
             console.warn('⚠️ Путь к модели не указан');
         }
@@ -1479,10 +1523,11 @@ function open3DViewer(modelPath, productId) {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
                      (window.innerWidth <= 768 && window.innerHeight <= 1024);
     
-    // На мобильных устройствах нужна большая задержка для инициализации
-    const initDelay = isMobile ? 600 : 400;
+    // На PC нужна большая задержка для инициализации model-viewer
+    // На мобильных устройствах тоже увеличиваем для надежности
+    const initDelay = isMobile ? 600 : 800;
     
-    console.log('📱 Устройство:', isMobile ? 'мобильное' : 'десктоп', 'задержка:', initDelay, 'ms', 'productId:', productId);
+    console.log('📱 Устройство:', isMobile ? 'мобильное' : 'десктоп', 'задержка:', initDelay, 'ms', 'productId:', productId, 'modelPath:', modelPath);
     
     // Увеличиваем задержку для полной инициализации кастомного элемента
     // Web Components требуют времени для регистрации
@@ -1498,8 +1543,15 @@ function open3DViewer(modelPath, productId) {
         // ПРИОРИТЕТ 1: Загружаем стандартную модель из папки models/ (если есть modelPath)
         // Стандартные модели доступны везде (PC и мобильные)
         if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
-            console.log('📁 Загружаем стандартную модель из папки models/:', modelPath);
-            loadStandardModel();
+            console.log('📁 Начинаем загрузку стандартной модели из папки models/:', modelPath);
+            
+            // На PC добавляем небольшую задержку перед загрузкой для полной инициализации viewer
+            const loadDelay = isMobile ? 0 : 200;
+            
+            setTimeout(() => {
+                loadStandardModel();
+            }, loadDelay);
+            
             return; // Завершаем - стандартная модель приоритетна
         }
         
