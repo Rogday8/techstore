@@ -1310,37 +1310,49 @@ function view3D(modelPath, productId) {
     clearBlobUrls();
     
     const modal = document.getElementById('viewer3DModal');
-    const modelViewer = document.getElementById('model-viewer');
+    const container = document.getElementById('viewer3D');
     
-    if (!modelViewer) {
-        console.error('model-viewer элемент не найден');
+    if (!container) {
+        console.error('Контейнер viewer3D не найден');
         return;
     }
     
-    // Сбрасываем состояние model-viewer
-    modelViewer.src = '';
-    modelViewer.loaded = false;
+    // Полностью очищаем контейнер и пересоздаем model-viewer для предотвращения зависаний
+    container.innerHTML = '';
+    
+    // Создаем новый элемент model-viewer
+    const modelViewer = document.createElement('model-viewer');
+    modelViewer.id = 'model-viewer';
+    modelViewer.setAttribute('camera-controls', '');
+    modelViewer.setAttribute('auto-rotate', '');
+    modelViewer.setAttribute('auto-rotate-delay', '0');
+    modelViewer.setAttribute('rotation-per-second', '30deg');
+    modelViewer.setAttribute('shadow-intensity', '1');
+    modelViewer.setAttribute('environment-image', 'neutral');
+    modelViewer.style.width = '100%';
+    modelViewer.style.height = '100%';
+    
+    // AR кнопка
+    const arButton = document.createElement('button');
+    arButton.setAttribute('slot', 'ar-button');
+    arButton.className = 'btn-control';
+    arButton.style.cssText = 'position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);';
+    arButton.textContent = 'AR Просмотр';
+    modelViewer.appendChild(arButton);
+    
+    container.appendChild(modelViewer);
     
     // Показываем модальное окно
     modal.style.display = 'block';
     
-    // Небольшая задержка для полной очистки состояния перед загрузкой новой модели
+    // Небольшая задержка для полной инициализации нового элемента
     setTimeout(() => {
+        let src = '';
+        let useBlob = false;
+        
         // Всегда сначала пытаемся загрузить стандартную модель из папки models/
-        // Это работает на всех устройствах через GitHub Pages
         if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
-            const src = encodeURI(modelPath);
-            
-            // Сброс камеры перед загрузкой
-            try {
-                if (modelViewer.resetCamera) {
-                    modelViewer.resetCamera();
-                }
-            } catch (e) {
-                // Игнорируем ошибки
-            }
-            
-            modelViewer.src = src;
+            src = encodeURI(modelPath);
             console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
             
             // Если есть локальная модель в IndexedDB, показываем уведомление
@@ -1348,25 +1360,56 @@ function view3D(modelPath, productId) {
                 checkLocalModel(productId);
             }
         } else if (productId && db) {
-            // Пытаемся загрузить из IndexedDB только если нет стандартной модели
-            loadModelFromDB(productId, modelViewer);
+            // Пытаемся загрузить из IndexedDB
+            const transaction = db.transaction(['models'], 'readonly');
+            const store = transaction.objectStore('models');
+            const request = store.get(productId);
+            
+            request.onsuccess = () => {
+                if (request.result) {
+                    const arrayBuffer = request.result.model;
+                    const blob = new Blob([arrayBuffer]);
+                    const blobUrl = URL.createObjectURL(blob);
+                    activeBlobUrls.add(blobUrl);
+                    modelViewer.src = blobUrl;
+                    useBlob = true;
+                    console.log('✅ Локальная модель загружена из IndexedDB');
+                    showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
+                } else {
+                    // Fallback
+                    if (modelPath) {
+                        src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
+                        modelViewer.src = src;
+                    }
+                }
+            };
+            
+            request.onerror = () => {
+                console.error('Ошибка загрузки из IndexedDB:', request.error);
+                if (modelPath) {
+                    src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
+                    modelViewer.src = src;
+                }
+            };
+            
+            return; // Выходим, так как загрузка асинхронная
         } else {
             // Fallback на стандартный путь
-            const src = modelPath ? (modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath)) : '';
-            if (src) {
-                try {
-                    if (modelViewer.resetCamera) {
-                        modelViewer.resetCamera();
-                    }
-                } catch (e) {
-                    // Игнорируем ошибки
-                }
-                modelViewer.src = src;
+            if (modelPath) {
+                src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
             } else {
                 showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
+                return;
             }
         }
-    }, 150);
+        
+        // Загружаем модель
+        if (src && !useBlob) {
+            // Добавляем timestamp чтобы заставить перезагрузить модель
+            const urlWithTimestamp = src.includes('?') ? `${src}&t=${Date.now()}` : `${src}?t=${Date.now()}`;
+            modelViewer.src = urlWithTimestamp;
+        }
+    }, 200);
 }
 
 // Проверка наличия локальной модели
@@ -1418,54 +1461,40 @@ function loadModelFromDB(productId, modelViewer) {
 // Закрытие 3D просмотра
 function close3DViewer() {
     const modal = document.getElementById('viewer3DModal');
+    const container = document.getElementById('viewer3D');
     const modelViewer = document.getElementById('model-viewer');
     
-    if (!modelViewer || !modal) return;
-    
-    // Останавливаем автоповорот и анимации
-    try {
-        if (modelViewer.pause) {
-            modelViewer.pause();
-        }
-        if (modelViewer.resetCamera) {
-            modelViewer.resetCamera();
-        }
-    } catch (e) {
-        console.log('Ошибка при сбросе камеры:', e);
-    }
+    if (!modal) return;
     
     // Освобождаем blob URLs
     clearBlobUrls();
     
-    // Сбрасываем состояние model-viewer
-    modelViewer.src = '';
-    
-    // Сбрасываем загруженное состояние
-    if (modelViewer.dismissPoster) {
+    // Останавливаем все операции model-viewer
+    if (modelViewer) {
         try {
-            modelViewer.dismissPoster();
+            if (modelViewer.pause) {
+                modelViewer.pause();
+            }
+            if (modelViewer.resetCamera) {
+                modelViewer.resetCamera();
+            }
+            // Очищаем src
+            modelViewer.src = '';
         } catch (e) {
-            // Игнорируем ошибки
+            console.log('Ошибка при очистке model-viewer:', e);
         }
     }
     
     // Скрываем модальное окно
     modal.style.display = 'none';
     
-    // Дополнительная очистка через небольшую задержку
+    // Полностью очищаем контейнер через небольшую задержку
+    // Это гарантирует полную очистку состояния
     setTimeout(() => {
-        if (modelViewer && modelViewer.src) {
-            modelViewer.src = '';
+        if (container) {
+            container.innerHTML = '';
         }
-        // Дополнительный сброс для полной очистки
-        if (modelViewer && modelViewer.resetCamera) {
-            try {
-                modelViewer.resetCamera();
-            } catch (e) {
-                // Игнорируем ошибки
-            }
-        }
-    }, 300);
+    }, 100);
 }
 
 // Добавляем стили для уведомлений
@@ -1494,3 +1523,4 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
