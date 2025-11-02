@@ -396,12 +396,12 @@ body {
 }
 
 .price-slider-min {
-    z-index: 7;
+    z-index: 5;
     pointer-events: auto !important;
 }
 
 .price-slider-max {
-    z-index: 6;
+    z-index: 5;
     pointer-events: auto !important;
 }
 

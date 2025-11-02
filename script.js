@@ -996,7 +996,7 @@ function debouncePriceFilter() {
     }, 150);
 }
 
-// Настройка двойного слайдера - обе точки работают независимо
+// Настройка двойного слайдера - обе точки работают полностью независимо
 function setupDualSlider() {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
@@ -1004,55 +1004,56 @@ function setupDualSlider() {
     
     if (!sliderMin || !sliderMax || !container) return;
     
-    // Левая точка выше по умолчанию для доступности
-    sliderMin.style.zIndex = '7';
-    sliderMax.style.zIndex = '6';
+    // Обе точки с одинаковым z-index по умолчанию - они равны
+    sliderMin.style.zIndex = '5';
+    sliderMax.style.zIndex = '5';
     
-    // При взаимодействии поднимаем активный слайдер максимально высоко
-    const activateSlider = (slider) => {
-        if (slider === sliderMin) {
-            sliderMin.style.zIndex = '10';
-            sliderMax.style.zIndex = '6';
-        } else {
-            sliderMax.style.zIndex = '10';
-            sliderMin.style.zIndex = '7';
-        }
-    };
-    
-    // Возврат к нормальному состоянию после взаимодействия
-    const deactivateSlider = () => {
-        sliderMin.style.zIndex = '7';
-        sliderMax.style.zIndex = '6';
-    };
-    
-    // Отключаем клики по контейнеру и треку, но оставляем слайдеры активными
+    // Отключаем клики по контейнеру и треку
     container.style.pointerEvents = 'none';
-    sliderMin.style.pointerEvents = 'auto';
-    sliderMax.style.pointerEvents = 'auto';
     
-    // Обработчики для левого слайдера
+    // Каждая точка работает независимо
+    // Обработчики для левого слайдера - только для него самого
     sliderMin.addEventListener('mousedown', (e) => {
         e.stopPropagation();
-        activateSlider(sliderMin);
-    });
+        e.stopImmediatePropagation();
+        sliderMin.style.zIndex = '10';
+        sliderMax.style.zIndex = '5';
+    }, true);
+    
     sliderMin.addEventListener('touchstart', (e) => {
         e.stopPropagation();
-        activateSlider(sliderMin);
-    });
+        e.stopImmediatePropagation();
+        sliderMin.style.zIndex = '10';
+        sliderMax.style.zIndex = '5';
+    }, true);
     
-    // Обработчики для правого слайдера
+    // Обработчики для правого слайдера - только для него самого
     sliderMax.addEventListener('mousedown', (e) => {
         e.stopPropagation();
-        activateSlider(sliderMax);
-    });
+        e.stopImmediatePropagation();
+        sliderMax.style.zIndex = '10';
+        sliderMin.style.zIndex = '5';
+    }, true);
+    
     sliderMax.addEventListener('touchstart', (e) => {
         e.stopPropagation();
-        activateSlider(sliderMax);
-    });
+        e.stopImmediatePropagation();
+        sliderMax.style.zIndex = '10';
+        sliderMin.style.zIndex = '5';
+    }, true);
     
-    // Возврат после окончания перетаскивания
-    document.addEventListener('mouseup', deactivateSlider);
-    document.addEventListener('touchend', deactivateSlider);
+    // Возврат z-index после окончания перетаскивания
+    const resetZIndex = () => {
+        sliderMin.style.zIndex = '5';
+        sliderMax.style.zIndex = '5';
+    };
+    
+    document.addEventListener('mouseup', resetZIndex);
+    document.addEventListener('touchend', resetZIndex);
+    
+    // Убеждаемся, что слайдеры могут получать события
+    sliderMin.style.pointerEvents = 'auto';
+    sliderMax.style.pointerEvents = 'auto';
 }
 
 // Обновление визуального индикатора диапазона
