@@ -545,6 +545,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         priceSliderMin.value = minPrice;
         priceSliderMax.value = maxPrice;
         
+        // Настраиваем обработчики для правильного взаимодействия ползунков
+        setupDualSlider();
+        
         // Обновляем визуальный индикатор после небольшой задержки
         setTimeout(() => {
             updateTrackRange();
