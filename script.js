@@ -748,9 +748,21 @@ function renderProducts() {
         }
         
         if (productImages && productImages.length > 1) {
-            updateCarouselPosition(product.id);
+            // Инициализируем позицию карусели после небольшой задержки
+            setTimeout(() => {
+                updateCarouselPosition(product.id);
+            }, 100);
         }
     });
+    
+    // Инициализируем все карусели после рендера
+    setTimeout(() => {
+        filteredProducts.forEach(product => {
+            if (document.getElementById(`images-${product.id}`)) {
+                updateCarouselPosition(product.id);
+            }
+        });
+    }, 200);
 }
 
 // Фильтрация товаров по категории
