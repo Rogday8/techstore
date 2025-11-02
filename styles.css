@@ -406,6 +406,8 @@ body {
     cursor: grab;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(0, 0, 0, 0.2);
+    margin-top: -9px;
+    pointer-events: auto;
 }
 
 .price-slider-min::-webkit-slider-thumb:hover {
@@ -430,6 +432,8 @@ body {
     cursor: grab;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(0, 0, 0, 0.2);
+    margin-top: -9px;
+    pointer-events: auto;
 }
 
 .price-slider-max::-webkit-slider-thumb:hover {
@@ -452,6 +456,7 @@ body {
     cursor: grab;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
 }
 
 .price-slider-min::-moz-range-thumb:hover {
@@ -474,6 +479,7 @@ body {
     cursor: grab;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
 }
 
 .price-slider-max::-moz-range-thumb:hover {
