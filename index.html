@@ -2,7 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>TechStore - Премиальная Техника</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,23 +15,43 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <div class="logo">TechStore</div>
             <nav class="nav">
                 <a href="#products">Каталог</a>
-                <a onclick="openAboutModal()">О нас</a>
-                <a onclick="openContactModal()">Контакты</a>
+                <a onclick="openAboutModal(); closeMobileMenu();">О нас</a>
+                <a onclick="openContactModal(); closeMobileMenu();">Контакты</a>
             </nav>
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <div class="admin-toggle" id="adminToggle" onclick="toggleAdminMode()" style="cursor: pointer;" title="Админ режим">
                     ADMIN
                 </div>
-                <div class="cart-icon" onclick="toggleCart()" style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">
+                <div class="cart-icon" onclick="toggleCart(); closeMobileMenu();" style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">
                     CART
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
             </div>
         </div>
     </header>
+    
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <div class="logo">TechStore</div>
+            <button class="mobile-menu-toggle active" onclick="closeMobileMenu()" aria-label="Закрыть">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <a href="#products" onclick="closeMobileMenu()">Каталог</a>
+        <a onclick="openAboutModal(); closeMobileMenu();">О нас</a>
+        <a onclick="openContactModal(); closeMobileMenu();">Контакты</a>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero">

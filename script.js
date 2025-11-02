@@ -718,7 +718,7 @@ function renderProducts() {
             <div class="product-card">
                 <div class="product-images-container">
                     ${productImages && productImages.length > 1 ? `
-                        <div class="product-images" id="images-${product.id}" onwheel="handleProductScroll(event, ${product.id})">
+                        <div class="product-images" id="images-${product.id}" onwheel="handleProductScroll(event, ${product.id})" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event, ${product.id}, false)">
                             ${productImages.map((img, idx) => `
                                 <img src="${img}" alt="${product.name}" class="product-image">
                             `).join('')}
@@ -859,6 +859,44 @@ function navigateProductImage(productId, direction) {
     }
 }
 
+// Touch жесты для мобильных устройств
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+function handleTouchStart(event) {
+    touchStartX = event.changedTouches[0].screenX;
+    touchStartY = event.changedTouches[0].screenY;
+}
+
+function handleTouchEnd(event, productId, isModal = false) {
+    touchEndX = event.changedTouches[0].screenX;
+    touchEndY = event.changedTouches[0].screenY;
+    
+    const deltaX = touchStartX - touchEndX;
+    const deltaY = touchStartY - touchEndY;
+    
+    // Проверяем что это горизонтальный свайп (не вертикальный скролл)
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+        if (deltaX > 0) {
+            // Свайп влево - следующее изображение
+            if (isModal) {
+                navigateModalImage(productId, 1);
+            } else {
+                navigateProductImage(productId, 1);
+            }
+        } else {
+            // Свайп вправо - предыдущее изображение
+            if (isModal) {
+                navigateModalImage(productId, -1);
+            } else {
+                navigateProductImage(productId, -1);
+            }
+        }
+    }
+}
+
 // Открытие модального окна
 function openModal(productId) {
     // Сохраняем ID текущего товара
@@ -882,7 +920,7 @@ function openModal(productId) {
         <div class="modal-header">
             <div class="modal-image-container">
                 ${modalImages && modalImages.length > 1 ? `
-                    <div class="modal-images" id="modal-images-${productId}" onwheel="handleModalScroll(event, ${productId})">
+                    <div class="modal-images" id="modal-images-${productId}" onwheel="handleModalScroll(event, ${productId})" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event, ${productId}, true)">
                         ${modalImages.map((img, idx) => `
                             <img src="${img}" alt="${product.name}" class="modal-main-image">
                         `).join('')}
@@ -1092,7 +1130,59 @@ function updateCartCount() {
 // Переключение корзины
 function toggleCart() {
     document.getElementById('cart').classList.toggle('open');
+    // Закрываем мобильное меню при открытии корзины
+    closeMobileMenu();
 }
+
+// Мобильное меню
+function toggleMobileMenu() {
+    const mobileNav = document.getElementById('mobileNav');
+    const toggle = document.getElementById('mobileMenuToggle');
+    
+    mobileNav.classList.toggle('active');
+    toggle.classList.toggle('active');
+    
+    // Блокируем прокрутку body при открытом меню
+    if (mobileNav.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
+function closeMobileMenu() {
+    const mobileNav = document.getElementById('mobileNav');
+    const toggle = document.getElementById('mobileMenuToggle');
+    
+    mobileNav.classList.remove('active');
+    toggle.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Закрытие мобильного меню при клике вне его
+document.addEventListener('click', function(event) {
+    const mobileNav = document.getElementById('mobileNav');
+    const toggle = document.getElementById('mobileMenuToggle');
+    
+    if (mobileNav && mobileNav.classList.contains('active')) {
+        if (!mobileNav.contains(event.target) && !toggle.contains(event.target)) {
+            closeMobileMenu();
+        }
+    }
+});
+
+// Закрытие мобильного меню при прокрутке
+let lastScrollTop = 0;
+window.addEventListener('scroll', function() {
+    const mobileNav = document.getElementById('mobileNav');
+    if (mobileNav && mobileNav.classList.contains('active')) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (Math.abs(scrollTop - lastScrollTop) > 5) {
+            closeMobileMenu();
+        }
+        lastScrollTop = scrollTop;
+    }
+});
 
 // Рендер корзины
 function renderCart() {
