@@ -991,6 +991,98 @@ function debouncePriceFilter() {
     }, 150);
 }
 
+// Настройка двойного слайдера для правильного взаимодействия
+function setupDualSlider() {
+    const sliderMin = document.getElementById('priceSliderMin');
+    const sliderMax = document.getElementById('priceSliderMax');
+    const container = document.getElementById('dualRangeSlider');
+    
+    if (!sliderMin || !sliderMax || !container) return;
+    
+    // Функция для определения, какой слайдер должен быть активным
+    function getActiveSlider(event) {
+        const rect = container.getBoundingClientRect();
+        const x = (event.clientX || (event.touches && event.touches[0].clientX) || 0) - rect.left;
+        const width = rect.width;
+        const percent = (x / width) * 100;
+        
+        const minValue = parseInt(sliderMin.value);
+        const maxValue = parseInt(sliderMax.value);
+        const maxRange = parseInt(sliderMax.max);
+        
+        const minPercent = (minValue / maxRange) * 100;
+        const maxPercent = (maxValue / maxRange) * 100;
+        
+        // Определяем, к какому ползунку ближе клик
+        const distToMin = Math.abs(percent - minPercent);
+        const distToMax = Math.abs(percent - maxPercent);
+        
+        return distToMin < distToMax ? sliderMin : sliderMax;
+    }
+    
+    // Обработчик для активации нужного слайдера
+    function activateSlider(slider) {
+        if (slider === sliderMin) {
+            sliderMin.style.zIndex = '6';
+            sliderMax.style.zIndex = '3';
+        } else {
+            sliderMax.style.zIndex = '6';
+            sliderMin.style.zIndex = '3';
+        }
+    }
+    
+    // Обработчик клика на контейнер для активации ближайшего слайдера
+    container.addEventListener('mousedown', (e) => {
+        if (e.target !== sliderMin && e.target !== sliderMax) {
+            const activeSlider = getActiveSlider(e);
+            activateSlider(activeSlider);
+        }
+    });
+    
+    container.addEventListener('touchstart', (e) => {
+        if (e.target !== sliderMin && e.target !== sliderMax) {
+            const activeSlider = getActiveSlider(e);
+            activateSlider(activeSlider);
+        }
+    });
+    
+    // Активация при взаимодействии с самими слайдерами
+    sliderMin.addEventListener('mousedown', () => {
+        sliderMin.style.zIndex = '6';
+        sliderMax.style.zIndex = '3';
+    });
+    
+    sliderMin.addEventListener('touchstart', () => {
+        sliderMin.style.zIndex = '6';
+        sliderMax.style.zIndex = '3';
+    });
+    
+    sliderMax.addEventListener('mousedown', () => {
+        sliderMax.style.zIndex = '6';
+        sliderMin.style.zIndex = '3';
+    });
+    
+    sliderMax.addEventListener('touchstart', () => {
+        sliderMax.style.zIndex = '6';
+        sliderMin.style.zIndex = '3';
+    });
+    
+    // Возврат z-index после завершения взаимодействия
+    document.addEventListener('mouseup', () => {
+        sliderMin.style.zIndex = '3';
+        sliderMax.style.zIndex = '4';
+    });
+    
+    document.addEventListener('touchend', () => {
+        sliderMin.style.zIndex = '3';
+        sliderMax.style.zIndex = '4';
+    });
+    
+    // Устанавливаем начальные z-index
+    sliderMin.style.zIndex = '3';
+    sliderMax.style.zIndex = '4';
+}
+
 // Обновление визуального индикатора диапазона
 function updateTrackRange() {
     const sliderMin = document.getElementById('priceSliderMin');
@@ -1008,18 +1100,6 @@ function updateTrackRange() {
     
     track.style.setProperty('--track-left', `${leftPercent}%`);
     track.style.setProperty('--track-right', `${rightPercent}%`);
-    
-    // Обновляем z-index в зависимости от позиции для лучшего взаимодействия
-    // Когда min близко к max справа, делаем max активным
-    // Когда max близко к min слева, делаем min активным
-    const distance = max - min;
-    const totalRange = maxValue;
-    const threshold = totalRange * 0.1; // 10% от общего диапазона
-    
-    if (distance < threshold) {
-        // Если ползунки близко, приоритет зависит от направления движения
-        // Это обрабатывается через события
-    }
 }
 
 // Обновление фильтра по цене
