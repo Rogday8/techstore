@@ -1640,6 +1640,23 @@ model-viewer {
         min-width: fit-content;
     }
     
+    .price-filter {
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .price-filter-header {
+        font-size: 0.85rem;
+        margin-bottom: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .price-range-display {
+        font-size: 0.9rem;
+    }
+    
     .products-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
