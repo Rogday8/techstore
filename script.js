@@ -1015,29 +1015,27 @@ function updatePriceFilter(type, value) {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
     
+    if (!sliderMin || !sliderMax) return;
+    
+    const newValue = parseInt(value);
+    
     if (type === 'min') {
-        minPrice = parseInt(value);
-        // Обеспечиваем, чтобы min не был больше max
-        if (minPrice > maxPrice) {
-            minPrice = maxPrice;
-            if (sliderMin) sliderMin.value = minPrice;
-        }
-        // Обеспечиваем, чтобы max был не меньше min
-        if (sliderMax && parseInt(sliderMax.value) < minPrice) {
-            sliderMax.value = minPrice;
-            maxPrice = minPrice;
+        // Проверяем, что новое значение не больше текущего max
+        const currentMax = parseInt(sliderMax.value);
+        if (newValue > currentMax) {
+            minPrice = currentMax;
+            sliderMin.value = currentMax;
+        } else {
+            minPrice = newValue;
         }
     } else if (type === 'max') {
-        maxPrice = parseInt(value);
-        // Обеспечиваем, чтобы max не был меньше min
-        if (maxPrice < minPrice) {
-            maxPrice = minPrice;
-            if (sliderMax) sliderMax.value = maxPrice;
-        }
-        // Обеспечиваем, чтобы min был не больше max
-        if (sliderMin && parseInt(sliderMin.value) > maxPrice) {
-            sliderMin.value = maxPrice;
-            minPrice = maxPrice;
+        // Проверяем, что новое значение не меньше текущего min
+        const currentMin = parseInt(sliderMin.value);
+        if (newValue < currentMin) {
+            maxPrice = currentMin;
+            sliderMax.value = currentMin;
+        } else {
+            maxPrice = newValue;
         }
     }
     

@@ -331,18 +331,6 @@ body {
     z-index: 1;
 }
 
-.price-slider-track::before {
-    content: '';
-    position: absolute;
-    height: 100%;
-    background: var(--accent);
-    border-radius: 3px;
-    left: 0;
-    right: 0;
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0.3;
-}
-
 .price-slider-track::after {
     content: '';
     position: absolute;
@@ -369,6 +357,25 @@ body {
     margin: 0;
     padding: 0;
     transition: all 0.15s ease-out;
+    pointer-events: auto;
+}
+
+.price-slider-min {
+    z-index: 3;
+}
+
+.price-slider-max {
+    z-index: 2;
+}
+
+.price-slider-min:active,
+.price-slider-min:hover {
+    z-index: 4;
+}
+
+.price-slider-max:active,
+.price-slider-max:hover {
+    z-index: 3;
 }
 
 .price-slider-min::-webkit-slider-thumb {
