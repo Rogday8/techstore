@@ -1007,7 +1007,7 @@ function setupDualSlider() {
     // Отключаем клики по контейнеру и треку
     container.style.pointerEvents = 'none';
     
-    // Убеждаемся, что слайдеры могут получать события и они равны
+    // Убеждаемся, что слайдеры могут получать события
     sliderMin.style.pointerEvents = 'auto';
     sliderMax.style.pointerEvents = 'auto';
     sliderMin.style.zIndex = '5';
@@ -1015,25 +1015,25 @@ function setupDualSlider() {
     
     // Функция для обработки взаимодействия с левым слайдером - только управляем z-index
     const handleMinInteraction = (e) => {
-        e.stopPropagation(); // Останавливаем всплытие, но НЕ блокируем стандартное поведение
+        // НЕ используем stopPropagation - позволяем событиям работать нормально
         sliderMin.style.zIndex = '10';
         sliderMax.style.zIndex = '6';
     };
     
     // Функция для обработки взаимодействия с правым слайдером - только управляем z-index
     const handleMaxInteraction = (e) => {
-        e.stopPropagation(); // Останавливаем всплытие, но НЕ блокируем стандартное поведение
+        // НЕ используем stopPropagation - позволяем событиям работать нормально
         sliderMax.style.zIndex = '10';
         sliderMin.style.zIndex = '5';
     };
     
-    // Обработчики для левого слайдера - только для управления z-index при начале перетаскивания
-    sliderMin.addEventListener('mousedown', handleMinInteraction, { capture: true });
-    sliderMin.addEventListener('touchstart', handleMinInteraction, { capture: true });
+    // Обработчики для левого слайдера - БЕЗ capture, чтобы не блокировать стандартные события
+    sliderMin.addEventListener('mousedown', handleMinInteraction);
+    sliderMin.addEventListener('touchstart', handleMinInteraction);
     
-    // Обработчики для правого слайдера - только для управления z-index при начале перетаскивания
-    sliderMax.addEventListener('mousedown', handleMaxInteraction, { capture: true });
-    sliderMax.addEventListener('touchstart', handleMaxInteraction, { capture: true });
+    // Обработчики для правого слайдера - БЕЗ capture, чтобы не блокировать стандартные события
+    sliderMax.addEventListener('mousedown', handleMaxInteraction);
+    sliderMax.addEventListener('touchstart', handleMaxInteraction);
     
     // Возврат z-index после окончания перетаскивания
     const resetZIndex = () => {
