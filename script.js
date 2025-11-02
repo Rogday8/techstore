@@ -516,7 +516,10 @@ const products = [
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Админ режим
+// Секретный пароль для доступа к админ-панели (можно изменить)
+const ADMIN_PASSWORD = 'admin2024';
 let isAdmin = localStorage.getItem('adminMode') === 'true';
+let isAdminAuthorized = localStorage.getItem('adminAuthorized') === 'true';
 
 // Текущая выбранная категория
 let currentCategory = 'all';
@@ -526,6 +529,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     renderProducts();
     renderCart();
     updateCartCount();
+    
+    // Проверяем авторизацию админа при загрузке страницы
+    // Кнопка ADMIN будет скрыта по умолчанию в HTML
     initAdminMode();
     
     // Инициализируем IndexedDB
@@ -537,11 +543,31 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// Секретная комбинация клавиш для входа в админ-панель: Ctrl+Shift+A
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        if (!isAdminAuthorized) {
+            showAdminLogin();
+        }
+    }
+});
+
 // Инициализация админ режима
 function initAdminMode() {
+    const adminToggle = document.getElementById('adminToggle');
     const adminBtn = document.getElementById('adminUploadBtn');
     const clearBtn = document.getElementById('adminClearBtn');
-    if (isAdmin) {
+    
+    // Показываем кнопку ADMIN только если пользователь авторизован
+    if (isAdminAuthorized && adminToggle) {
+        adminToggle.style.display = 'flex';
+    } else if (adminToggle) {
+        adminToggle.style.display = 'none';
+    }
+    
+    // Показываем функции админа только если режим включен
+    if (isAdmin && isAdminAuthorized) {
         if (adminBtn) adminBtn.style.display = 'inline-block';
         if (clearBtn) clearBtn.style.display = 'inline-block';
     } else {
@@ -550,8 +576,36 @@ function initAdminMode() {
     }
 }
 
+// Показать модальное окно для ввода пароля
+function showAdminLogin() {
+    // Если уже авторизован, просто переключаем режим
+    if (isAdminAuthorized) {
+        toggleAdminMode();
+        return;
+    }
+    
+    const password = prompt('Введите пароль для доступа к админ-панели:');
+    if (password === ADMIN_PASSWORD) {
+        isAdminAuthorized = true;
+        localStorage.setItem('adminAuthorized', 'true');
+        showNotification('✅ Доступ к админ-панели получен');
+        initAdminMode();
+        // Автоматически включаем админ-режим после авторизации
+        isAdmin = true;
+        localStorage.setItem('adminMode', 'true');
+        initAdminMode();
+    } else if (password !== null) {
+        showNotification('❌ Неверный пароль');
+    }
+}
+
 // Переключение админ режима
 function toggleAdminMode() {
+    if (!isAdminAuthorized) {
+        showAdminLogin();
+        return;
+    }
+    
     isAdmin = !isAdmin;
     localStorage.setItem('adminMode', isAdmin.toString());
     initAdminMode();
@@ -561,6 +615,16 @@ function toggleAdminMode() {
     } else {
         showNotification('👤 Админ режим выключен');
     }
+}
+
+// Функция для выхода из админ-панели (можно вызвать через консоль)
+function logoutAdmin() {
+    isAdminAuthorized = false;
+    isAdmin = false;
+    localStorage.removeItem('adminAuthorized');
+    localStorage.removeItem('adminMode');
+    showNotification('👋 Выход из админ-панели');
+    initAdminMode();
 }
 
 // Инициализация IndexedDB для больших файлов
