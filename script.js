@@ -1067,12 +1067,16 @@ function updateTrackRange() {
     
     if (!sliderMin || !sliderMax || !track) return;
     
-    const min = parseInt(sliderMin.value);
-    const max = parseInt(sliderMax.value);
-    const maxValue = parseInt(sliderMax.max);
+    const minValue = parseInt(sliderMin.value);
+    const maxValue = parseInt(sliderMax.value);
+    const sliderMaxValue = parseInt(sliderMax.max);
     
-    const leftPercent = (min / maxValue) * 100;
-    const rightPercent = (max / maxValue) * 100;
+    // Всегда используем меньшее значение для левого края, большее для правого
+    const actualMin = Math.min(minValue, maxValue);
+    const actualMax = Math.max(minValue, maxValue);
+    
+    const leftPercent = (actualMin / sliderMaxValue) * 100;
+    const rightPercent = (actualMax / sliderMaxValue) * 100;
     
     track.style.setProperty('--track-left', `${leftPercent}%`);
     track.style.setProperty('--track-right', `${rightPercent}%`);
