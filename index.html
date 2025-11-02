@@ -112,9 +112,9 @@
                 </div>
                 <div class="price-slider-container">
                     <div class="dual-range-slider">
-                        <input type="range" id="priceSliderMin" class="price-slider price-slider-min" min="0" max="500000" step="1000" value="0" oninput="updatePriceFilter('min', this.value)" onchange="updatePriceFilter('min', this.value)">
-                        <input type="range" id="priceSliderMax" class="price-slider price-slider-max" min="0" max="500000" step="1000" value="500000" oninput="updatePriceFilter('max', this.value)" onchange="updatePriceFilter('max', this.value)">
                         <div class="price-slider-track"></div>
+                        <input type="range" id="priceSliderMin" class="price-slider price-slider-min" min="0" max="500000" step="1000" value="0" oninput="updatePriceFilter('min', this.value)" onchange="updatePriceFilter('min', this.value)" onmousedown="this.style.zIndex='6'; document.getElementById('priceSliderMax').style.zIndex='3';" onmouseup="this.style.zIndex='3'; document.getElementById('priceSliderMax').style.zIndex='4';" ontouchstart="this.style.zIndex='6'; document.getElementById('priceSliderMax').style.zIndex='3';" ontouchend="this.style.zIndex='3'; document.getElementById('priceSliderMax').style.zIndex='4';">
+                        <input type="range" id="priceSliderMax" class="price-slider price-slider-max" min="0" max="500000" step="1000" value="500000" oninput="updatePriceFilter('max', this.value)" onchange="updatePriceFilter('max', this.value)" onmousedown="this.style.zIndex='6'; document.getElementById('priceSliderMin').style.zIndex='3';" onmouseup="this.style.zIndex='4'; document.getElementById('priceSliderMin').style.zIndex='3';" ontouchstart="this.style.zIndex='6'; document.getElementById('priceSliderMin').style.zIndex='3';" ontouchend="this.style.zIndex='4'; document.getElementById('priceSliderMin').style.zIndex='3';">
                     </div>
                 </div>
             </div>
