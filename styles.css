@@ -142,44 +142,6 @@ body {
     overflow: hidden;
 }
 
-.hero::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100vh;
-    background: 
-        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.02) 0%, transparent 50%),
-        linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
-    z-index: 0;
-    pointer-events: none;
-    animation: backgroundShift 20s ease-in-out infinite;
-}
-
-@keyframes backgroundShift {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: translateY(-20px) scale(1.02);
-        opacity: 0.95;
-    }
-}
-
-.hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 150px;
-    background: linear-gradient(180deg, transparent 0%, var(--bg-light) 100%);
-    z-index: 0;
-}
-
 .hero .container {
     position: relative;
     z-index: 1;
@@ -232,18 +194,6 @@ body {
     border-top: 1px solid var(--border-color);
     min-height: 100vh;
     position: relative;
-    z-index: 10;
-}
-
-.products::before {
-    content: '';
-    position: absolute;
-    top: -150px;
-    left: 0;
-    right: 0;
-    height: 150px;
-    background: linear-gradient(180deg, transparent 0%, var(--bg-light) 100%);
-    z-index: 0;
 }
 
 .products h2 {
@@ -254,8 +204,6 @@ body {
     color: var(--accent);
     font-weight: 300;
     letter-spacing: -1px;
-    position: relative;
-    z-index: 1;
 }
 
 .categories-filter {
@@ -264,8 +212,6 @@ body {
     flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: 3rem;
-    position: relative;
-    z-index: 1;
 }
 
 .filter-btn {
@@ -297,8 +243,6 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 3rem;
-    position: relative;
-    z-index: 1;
 }
 
 .product-card {
