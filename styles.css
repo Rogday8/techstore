@@ -1446,19 +1446,17 @@ model-viewer {
     
     .product-images-container {
         background: #ffffff;
-        min-height: 400px;
     }
     
     .product-image,
     .product-images {
-        height: 400px;
+        height: 240px;
         background: #ffffff;
-        padding: 1rem;
+        padding: 1.5rem;
     }
     
     .product-image {
-        padding: 1rem;
-        object-fit: contain;
+        padding: 1.5rem;
     }
     
     .product-info {
@@ -1496,11 +1494,17 @@ model-viewer {
     .modal-image,
     .modal-image-container,
     .modal-images {
-        height: 300px;
+        height: 450px;
         background: #ffffff;
     }
     
     .modal-main-image {
+        height: 450px;
+        background: #ffffff;
+    }
+    
+    .modal-image img {
+        height: 450px;
         background: #ffffff;
     }
     
@@ -1650,33 +1654,33 @@ model-viewer {
     .modal-image,
     .modal-image-container,
     .modal-images {
-        height: 250px;
+        height: 400px;
         background: #ffffff;
     }
     
     .modal-main-image {
+        height: 400px;
         background: #ffffff;
     }
     
     .modal-image img {
+        height: 400px;
         background: #ffffff;
     }
     
     .product-images-container {
         background: #ffffff;
-        min-height: 350px;
     }
     
     .product-image,
     .product-images {
-        height: 350px;
+        height: 200px;
         background: #ffffff;
-        padding: 0.8rem;
+        padding: 1rem;
     }
     
     .product-image {
-        padding: 0.8rem;
-        object-fit: contain;
+        padding: 1rem;
     }
     
     .viewer3d-container {
