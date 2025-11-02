@@ -1106,6 +1106,8 @@ function updateTrackRange() {
 }
 
 // Обновление фильтра по цене
+// ЛЕВАЯ точка (min) - цена ОТ (минимальная)
+// ПРАВАЯ точка (max) - цена ДО (максимальная)
 function updatePriceFilter(type, value) {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
@@ -1115,7 +1117,7 @@ function updatePriceFilter(type, value) {
     const newValue = parseInt(value);
     
     if (type === 'min') {
-        // Проверяем, что новое значение не больше текущего max
+        // ЛЕВАЯ точка - минимальная цена (цена ОТ)
         const currentMax = parseInt(sliderMax.value);
         if (newValue > currentMax) {
             minPrice = currentMax;
@@ -1124,7 +1126,7 @@ function updatePriceFilter(type, value) {
             minPrice = newValue;
         }
     } else if (type === 'max') {
-        // Проверяем, что новое значение не меньше текущего min
+        // ПРАВАЯ точка - максимальная цена (цена ДО)
         const currentMin = parseInt(sliderMin.value);
         if (newValue < currentMin) {
             maxPrice = currentMin;
@@ -1139,7 +1141,8 @@ function updatePriceFilter(type, value) {
     
     const priceDisplay = document.getElementById('priceRange');
     if (priceDisplay) {
-        priceDisplay.textContent = `${minPrice.toLocaleString()} ₽ - ${maxPrice.toLocaleString()} ₽`;
+        // Показываем: цена ОТ ... цена ДО
+        priceDisplay.textContent = `от ${minPrice.toLocaleString()} ₽ - до ${maxPrice.toLocaleString()} ₽`;
     }
     
     // Используем debounce для плавной фильтрации
