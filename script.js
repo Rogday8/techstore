@@ -594,11 +594,25 @@ function upload3DModel(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    const currentProductId = getCurrentProductId();
+    let currentProductId = getCurrentProductId();
+    
+    // Если productId не найден, пытаемся получить из последнего открытого модального окна
     if (!currentProductId) {
-        alert('❌ Не выбран товар');
+        currentProductId = window.currentProductId;
+    }
+    
+    // Если всё ещё нет, показываем ошибку
+    if (!currentProductId) {
+        alert('❌ Не выбран товар. Откройте товар в модальном окне и затем откройте 3D просмотр перед загрузкой модели.');
+        console.error('currentProductId не найден. Доступные значения:', {
+            windowCurrentProductId: window.currentProductId,
+            modalOpen: document.getElementById('productModal')?.style.display,
+            viewerOpen: document.getElementById('viewer3DModal')?.style.display
+        });
         return;
     }
+    
+    console.log('📦 Загружаем модель для товара ID:', currentProductId);
     
     // Проверяем размер (макс 50MB для IndexedDB)
     if (file.size > 50 * 1024 * 1024) {
@@ -629,7 +643,24 @@ function upload3DModel(event) {
             const request = store.put(record);
             
             request.onsuccess = () => {
-                console.log('✅ Модель сохранена в IndexedDB для товара:', currentProductId);
+                console.log('✅ Модель успешно сохранена в IndexedDB:', {
+                    productId: currentProductId,
+                    fileSize: file.size,
+                    timestamp: new Date(record.timestamp).toLocaleString('ru-RU')
+                });
+                
+                // Проверяем что запись действительно сохранена
+                const verifyTransaction = db.transaction(['models'], 'readonly');
+                const verifyStore = verifyTransaction.objectStore('models');
+                const verifyRequest = verifyStore.get(currentProductId);
+                
+                verifyRequest.onsuccess = () => {
+                    if (verifyRequest.result) {
+                        console.log('✅ Подтверждено: модель сохранена для товара ID', currentProductId, 'размер:', verifyRequest.result.model.byteLength, 'байт');
+                    } else {
+                        console.error('❌ ОШИБКА: Модель не найдена в IndexedDB после сохранения!');
+                    }
+                };
                 
                 // Загружаем в viewer
                 const modelViewer = document.getElementById('model-viewer');
@@ -642,7 +673,7 @@ function upload3DModel(event) {
                     const blobUrl = URL.createObjectURL(blob);
                     activeBlobUrls.add(blobUrl);
                     modelViewer.src = blobUrl;
-                    showNotification('✅ 3D модель загружена и сохранена!');
+                    showNotification(`✅ 3D модель загружена и сохранена для товара ID ${currentProductId}!`, 'success');
                 }
             };
             
@@ -1322,6 +1353,11 @@ function view3D(modelPath, productId) {
 function open3DViewer(modelPath, productId) {
     closeModal();
     
+    // ВАЖНО: Сохраняем productId для загрузки модели через админ-панель
+    if (productId) {
+        window.currentProductId = productId;
+    }
+    
     // Очищаем предыдущие blob URLs
     clearBlobUrls();
     
@@ -1374,18 +1410,10 @@ function open3DViewer(modelPath, productId) {
         }
         
         let src = '';
-        let useBlob = false;
         
-        // Всегда сначала пытаемся загрузить стандартную модель из папки models/
-        if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
-            src = encodeURI(modelPath);
-            console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
-            
-            // Если есть локальная модель в IndexedDB, показываем уведомление
-            if (productId && db) {
-                checkLocalModel(productId);
-            }
-        } else if (productId && db) {
+        // СНАЧАЛА проверяем есть ли локальная модель в IndexedDB
+        // Локальная модель имеет приоритет над стандартной
+        if (productId && db) {
             // Пытаемся загрузить из IndexedDB
             const transaction = db.transaction(['models'], 'readonly');
             const store = transaction.objectStore('models');
@@ -1396,19 +1424,26 @@ function open3DViewer(modelPath, productId) {
                 if (!currentViewer) return;
                 
                 if (request.result) {
+                    // Локальная модель найдена - используем её
                     const arrayBuffer = request.result.model;
                     const blob = new Blob([arrayBuffer]);
                     const blobUrl = URL.createObjectURL(blob);
                     activeBlobUrls.add(blobUrl);
                     
                     currentViewer.src = blobUrl;
-                    console.log('✅ Локальная модель загружена из IndexedDB');
+                    console.log('✅ Локальная модель загружена из IndexedDB для товара ID:', productId);
                     showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
                 } else {
-                    // Fallback
-                    if (modelPath) {
+                    // Локальной модели нет - используем стандартную из папки models/
+                    if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
+                        const standardSrc = encodeURI(modelPath);
+                        currentViewer.src = standardSrc;
+                        console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
+                    } else if (modelPath) {
                         const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
                         currentViewer.src = fallbackSrc;
+                    } else {
+                        showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
                     }
                 }
             };
@@ -1416,6 +1451,7 @@ function open3DViewer(modelPath, productId) {
             request.onerror = () => {
                 const currentViewer = document.getElementById('model-viewer');
                 console.error('Ошибка загрузки из IndexedDB:', request.error);
+                // При ошибке загружаем стандартную модель
                 if (modelPath && currentViewer) {
                     const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
                     currentViewer.src = fallbackSrc;
@@ -1423,19 +1459,18 @@ function open3DViewer(modelPath, productId) {
             };
             
             return; // Выходим, так как загрузка асинхронная
-        } else {
-            // Fallback на стандартный путь
-            if (modelPath) {
-                src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
-            } else {
-                showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
-                return;
-            }
         }
         
-        // Загружаем модель БЕЗ timestamp - просто чистая загрузка
-        if (src && !useBlob) {
+        // Если IndexedDB не доступна или нет productId - используем стандартную модель
+        if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
+            src = encodeURI(modelPath);
+            console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
             readyViewer.src = src;
+        } else if (modelPath) {
+            src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
+            readyViewer.src = src;
+        } else {
+            showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
         }
     }, 400); // Увеличенная задержка для надежной инициализации
 }
