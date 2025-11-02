@@ -1035,43 +1035,54 @@ function setupDualSlider() {
     }
     
     // Убираем клики по полосе - можно только перетаскивать точки
-    // Удаляем обработчики кликов на контейнере
     
-    // Активация при взаимодействии с самими слайдерами
-    sliderMin.addEventListener('mousedown', (e) => {
+    // Переменная для отслеживания состояния перетаскивания
+    let isDragging = false;
+    let activeSlider = null;
+    
+    // Обработчик начала перетаскивания
+    const handleStart = (e, slider) => {
         e.stopPropagation();
-        sliderMin.style.zIndex = '10';
-        sliderMax.style.zIndex = '4';
-    });
-    
-    sliderMin.addEventListener('touchstart', (e) => {
-        e.stopPropagation();
-        sliderMin.style.zIndex = '10';
-        sliderMax.style.zIndex = '4';
-    });
-    
-    sliderMax.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        sliderMax.style.zIndex = '10';
-        sliderMin.style.zIndex = '3';
-    });
-    
-    sliderMax.addEventListener('touchstart', (e) => {
-        e.stopPropagation();
-        sliderMax.style.zIndex = '10';
-        sliderMin.style.zIndex = '3';
-    });
-    
-    // Возврат z-index после завершения взаимодействия
-    const resetZIndex = () => {
-        sliderMin.style.zIndex = '3';
-        sliderMax.style.zIndex = '4';
+        isDragging = true;
+        activeSlider = slider;
+        
+        if (slider === sliderMin) {
+            sliderMin.style.zIndex = '10';
+            sliderMax.style.zIndex = '4';
+        } else {
+            sliderMax.style.zIndex = '10';
+            sliderMin.style.zIndex = '5';
+        }
     };
     
-    document.addEventListener('mouseup', resetZIndex);
-    document.addEventListener('touchend', resetZIndex);
+    // Обработчик окончания перетаскивания
+    const handleEnd = () => {
+        if (isDragging) {
+            isDragging = false;
+            // Сбрасываем z-index с задержкой, чтобы не блокировать следующее взаимодействие
+            setTimeout(() => {
+                if (!isDragging) {
+                    sliderMin.style.zIndex = '5';
+                    sliderMax.style.zIndex = '4';
+                    activeSlider = null;
+                }
+            }, 150);
+        }
+    };
     
-    // Устанавливаем начальные z-index - левая точка должна быть доступна
+    // Добавляем обработчики для левого слайдера
+    sliderMin.addEventListener('mousedown', (e) => handleStart(e, sliderMin));
+    sliderMin.addEventListener('touchstart', (e) => handleStart(e, sliderMin));
+    
+    // Добавляем обработчики для правого слайдера
+    sliderMax.addEventListener('mousedown', (e) => handleStart(e, sliderMax));
+    sliderMax.addEventListener('touchstart', (e) => handleStart(e, sliderMax));
+    
+    // Глобальные обработчики окончания перетаскивания
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchend', handleEnd);
+    
+    // Устанавливаем начальные z-index - левая точка выше, чтобы была доступна
     sliderMin.style.zIndex = '5';
     sliderMax.style.zIndex = '4';
 }
