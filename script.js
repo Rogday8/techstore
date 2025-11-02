@@ -567,6 +567,9 @@ function toggleAdminMode() {
 
 // Инициализация IndexedDB для больших файлов
 let db = null;
+// Хранилище для blob URLs (чтобы освобождать память)
+const activeBlobUrls = new Set();
+
 function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open('3dModelsDB', 1);
@@ -631,9 +634,13 @@ function upload3DModel(event) {
                 // Загружаем в viewer
                 const modelViewer = document.getElementById('model-viewer');
                 if (modelViewer) {
+                    // Очищаем предыдущие blob URLs
+                    clearBlobUrls();
+                    
                     // Создаем blob URL из ArrayBuffer
                     const blob = new Blob([arrayBuffer]);
                     const blobUrl = URL.createObjectURL(blob);
+                    activeBlobUrls.add(blobUrl);
                     modelViewer.src = blobUrl;
                     showNotification('✅ 3D модель загружена и сохранена!');
                 }
@@ -1283,19 +1290,56 @@ function submitOrder(event) {
     document.getElementById('checkoutForm').reset();
 }
 
+// Функция для освобождения blob URLs
+function clearBlobUrls() {
+    activeBlobUrls.forEach(url => {
+        try {
+            URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error('Ошибка при освобождении blob URL:', e);
+        }
+    });
+    activeBlobUrls.clear();
+}
+
 // 3D просмотр с model-viewer
 function view3D(modelPath, productId) {
     closeModal();
-    document.getElementById('viewer3DModal').style.display = 'block';
     
-    // Получаем model-viewer элемент
+    // Очищаем предыдущие blob URLs перед открытием
+    clearBlobUrls();
+    
+    const modal = document.getElementById('viewer3DModal');
     const modelViewer = document.getElementById('model-viewer');
     
-    if (modelViewer) {
+    if (!modelViewer) {
+        console.error('model-viewer элемент не найден');
+        return;
+    }
+    
+    // Сбрасываем состояние model-viewer
+    modelViewer.src = '';
+    modelViewer.loaded = false;
+    
+    // Показываем модальное окно
+    modal.style.display = 'block';
+    
+    // Небольшая задержка для полной очистки состояния перед загрузкой новой модели
+    setTimeout(() => {
         // Всегда сначала пытаемся загрузить стандартную модель из папки models/
         // Это работает на всех устройствах через GitHub Pages
         if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
             const src = encodeURI(modelPath);
+            
+            // Сброс камеры перед загрузкой
+            try {
+                if (modelViewer.resetCamera) {
+                    modelViewer.resetCamera();
+                }
+            } catch (e) {
+                // Игнорируем ошибки
+            }
+            
             modelViewer.src = src;
             console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
             
@@ -1310,12 +1354,19 @@ function view3D(modelPath, productId) {
             // Fallback на стандартный путь
             const src = modelPath ? (modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath)) : '';
             if (src) {
+                try {
+                    if (modelViewer.resetCamera) {
+                        modelViewer.resetCamera();
+                    }
+                } catch (e) {
+                    // Игнорируем ошибки
+                }
                 modelViewer.src = src;
             } else {
                 showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
             }
         }
-    }
+    }, 150);
 }
 
 // Проверка наличия локальной модели
@@ -1350,6 +1401,7 @@ function loadModelFromDB(productId, modelViewer) {
             const arrayBuffer = request.result.model;
             const blob = new Blob([arrayBuffer]);
             const blobUrl = URL.createObjectURL(blob);
+            activeBlobUrls.add(blobUrl);
             modelViewer.src = blobUrl;
             console.log('✅ Локальная модель загружена из IndexedDB для товара:', productId);
             showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
@@ -1365,13 +1417,55 @@ function loadModelFromDB(productId, modelViewer) {
 
 // Закрытие 3D просмотра
 function close3DViewer() {
-    document.getElementById('viewer3DModal').style.display = 'none';
-    
-    // Очищаем модель
+    const modal = document.getElementById('viewer3DModal');
     const modelViewer = document.getElementById('model-viewer');
-    if (modelViewer) {
-        modelViewer.src = '';
+    
+    if (!modelViewer || !modal) return;
+    
+    // Останавливаем автоповорот и анимации
+    try {
+        if (modelViewer.pause) {
+            modelViewer.pause();
+        }
+        if (modelViewer.resetCamera) {
+            modelViewer.resetCamera();
+        }
+    } catch (e) {
+        console.log('Ошибка при сбросе камеры:', e);
     }
+    
+    // Освобождаем blob URLs
+    clearBlobUrls();
+    
+    // Сбрасываем состояние model-viewer
+    modelViewer.src = '';
+    
+    // Сбрасываем загруженное состояние
+    if (modelViewer.dismissPoster) {
+        try {
+            modelViewer.dismissPoster();
+        } catch (e) {
+            // Игнорируем ошибки
+        }
+    }
+    
+    // Скрываем модальное окно
+    modal.style.display = 'none';
+    
+    // Дополнительная очистка через небольшую задержку
+    setTimeout(() => {
+        if (modelViewer && modelViewer.src) {
+            modelViewer.src = '';
+        }
+        // Дополнительный сброс для полной очистки
+        if (modelViewer && modelViewer.resetCamera) {
+            try {
+                modelViewer.resetCamera();
+            } catch (e) {
+                // Игнорируем ошибки
+            }
+        }
+    }, 300);
 }
 
 // Добавляем стили для уведомлений
