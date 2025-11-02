@@ -368,7 +368,7 @@ body {
     top: 0;
     left: 0;
     transition: none;
-    pointer-events: auto;
+    pointer-events: auto !important;
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
 }
@@ -396,11 +396,13 @@ body {
 }
 
 .price-slider-min {
-    z-index: 6;
+    z-index: 7;
+    pointer-events: auto !important;
 }
 
 .price-slider-max {
-    z-index: 5;
+    z-index: 6;
+    pointer-events: auto !important;
 }
 
 .price-slider-min::-webkit-slider-thumb {

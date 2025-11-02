@@ -1002,29 +1002,31 @@ function setupDualSlider() {
     
     if (!sliderMin || !sliderMax || !container) return;
     
-    // Левая точка выше по умолчанию
-    sliderMin.style.zIndex = '6';
-    sliderMax.style.zIndex = '5';
+    // Левая точка выше по умолчанию для доступности
+    sliderMin.style.zIndex = '7';
+    sliderMax.style.zIndex = '6';
     
     // При взаимодействии поднимаем активный слайдер максимально высоко
     const activateSlider = (slider) => {
         if (slider === sliderMin) {
             sliderMin.style.zIndex = '10';
-            sliderMax.style.zIndex = '5';
+            sliderMax.style.zIndex = '6';
         } else {
             sliderMax.style.zIndex = '10';
-            sliderMin.style.zIndex = '6';
+            sliderMin.style.zIndex = '7';
         }
     };
     
     // Возврат к нормальному состоянию после взаимодействия
     const deactivateSlider = () => {
-        sliderMin.style.zIndex = '6';
-        sliderMax.style.zIndex = '5';
+        sliderMin.style.zIndex = '7';
+        sliderMax.style.zIndex = '6';
     };
     
-    // Отключаем клики по контейнеру и треку
+    // Отключаем клики по контейнеру и треку, но оставляем слайдеры активными
     container.style.pointerEvents = 'none';
+    sliderMin.style.pointerEvents = 'auto';
+    sliderMax.style.pointerEvents = 'auto';
     
     // Обработчики для левого слайдера
     sliderMin.addEventListener('mousedown', (e) => {
