@@ -620,77 +620,130 @@ function upload3DModel(event) {
         return;
     }
     
+    // Определяем мобильное устройство для отладки
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     (window.innerWidth <= 768 && window.innerHeight <= 1024);
+    
+    console.log('📱 Загрузка модели на', isMobile ? 'мобильном устройстве' : 'десктопе');
+    
     // Инициализируем DB если нужно
     const initPromise = db ? Promise.resolve(db) : initDB();
     
     initPromise.then(() => {
+        if (!db) {
+            console.error('❌ IndexedDB не инициализирована после промиса');
+            alert('❌ Ошибка базы данных');
+            return;
+        }
+        
+        console.log('📂 Читаем файл для сохранения, размер:', file.size, 'байт');
+        
         // Читаем файл как ArrayBuffer для эффективного хранения
         const reader = new FileReader();
         
         reader.onload = function(e) {
             const arrayBuffer = e.target.result;
+            console.log('✅ Файл прочитан, размер ArrayBuffer:', arrayBuffer.byteLength, 'байт');
             
-            // Сохраняем в IndexedDB
-            const transaction = db.transaction(['models'], 'readwrite');
-            const store = transaction.objectStore('models');
+            // На мобильных устройствах добавляем небольшую задержку перед сохранением
+            const saveDelay = isMobile ? 100 : 0;
             
-            const record = {
-                productId: currentProductId,
-                model: arrayBuffer,
-                timestamp: Date.now()
-            };
-            
-            const request = store.put(record);
-            
-            request.onsuccess = () => {
-                console.log('✅ Модель успешно сохранена в IndexedDB:', {
-                    productId: currentProductId,
-                    fileSize: file.size,
-                    timestamp: new Date(record.timestamp).toLocaleString('ru-RU')
-                });
-                
-                // Проверяем что запись действительно сохранена
-                const verifyTransaction = db.transaction(['models'], 'readonly');
-                const verifyStore = verifyTransaction.objectStore('models');
-                const verifyRequest = verifyStore.get(currentProductId);
-                
-                verifyRequest.onsuccess = () => {
-                    if (verifyRequest.result) {
-                        console.log('✅ Подтверждено: модель сохранена для товара ID', currentProductId, 'размер:', verifyRequest.result.model.byteLength, 'байт');
-                    } else {
-                        console.error('❌ ОШИБКА: Модель не найдена в IndexedDB после сохранения!');
-                    }
-                };
-                
-                // Загружаем в viewer
-                const modelViewer = document.getElementById('model-viewer');
-                if (modelViewer) {
-                    // Очищаем предыдущие blob URLs
-                    clearBlobUrls();
+            setTimeout(() => {
+                try {
+                    // Сохраняем в IndexedDB
+                    const transaction = db.transaction(['models'], 'readwrite');
+                    const store = transaction.objectStore('models');
                     
-                    // Создаем blob URL из ArrayBuffer
-                    const blob = new Blob([arrayBuffer]);
-                    const blobUrl = URL.createObjectURL(blob);
-                    activeBlobUrls.add(blobUrl);
-                    modelViewer.src = blobUrl;
-                    showNotification(`✅ 3D модель загружена и сохранена для товара ID ${currentProductId}!`, 'success');
+                    const record = {
+                        productId: currentProductId,
+                        model: arrayBuffer,
+                        timestamp: Date.now()
+                    };
+                    
+                    console.log('💾 Сохраняем модель в IndexedDB для товара ID:', currentProductId);
+                    
+                    const request = store.put(record);
+                    
+                    request.onsuccess = () => {
+                        console.log('✅ Модель успешно сохранена в IndexedDB:', {
+                            productId: currentProductId,
+                            fileSize: file.size,
+                            arrayBufferSize: arrayBuffer.byteLength,
+                            timestamp: new Date(record.timestamp).toLocaleString('ru-RU'),
+                            device: isMobile ? 'mobile' : 'desktop'
+                        });
+                        
+                        // На мобильных устройствах добавляем задержку перед проверкой
+                        const verifyDelay = isMobile ? 200 : 100;
+                        
+                        setTimeout(() => {
+                            // Проверяем что запись действительно сохранена
+                            const verifyTransaction = db.transaction(['models'], 'readonly');
+                            const verifyStore = verifyTransaction.objectStore('models');
+                            const verifyRequest = verifyStore.get(currentProductId);
+                            
+                            verifyRequest.onsuccess = () => {
+                                if (verifyRequest.result && verifyRequest.result.model) {
+                                    console.log('✅ Подтверждено: модель сохранена для товара ID', currentProductId, 'размер:', verifyRequest.result.model.byteLength, 'байт');
+                                } else {
+                                    console.error('❌ ОШИБКА: Модель не найдена в IndexedDB после сохранения!');
+                                }
+                            };
+                            
+                            verifyRequest.onerror = () => {
+                                console.error('❌ Ошибка проверки сохранения:', verifyRequest.error);
+                            };
+                        }, verifyDelay);
+                        
+                        // Загружаем в viewer
+                        const modelViewer = document.getElementById('model-viewer');
+                        if (modelViewer) {
+                            // Очищаем предыдущие blob URLs
+                            clearBlobUrls();
+                            
+                            // На мобильных устройствах добавляем задержку перед созданием blob
+                            const viewerDelay = isMobile ? 150 : 50;
+                            
+                            setTimeout(() => {
+                                try {
+                                    // Создаем blob URL из ArrayBuffer
+                                    const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+                                    const blobUrl = URL.createObjectURL(blob);
+                                    activeBlobUrls.add(blobUrl);
+                                    modelViewer.src = blobUrl;
+                                    console.log('✅ Модель загружена в viewer, URL:', blobUrl.substring(0, 50) + '...');
+                                    showNotification(`✅ 3D модель загружена и сохранена для товара ID ${currentProductId}!`, 'success');
+                                } catch (blobError) {
+                                    console.error('❌ Ошибка создания blob для viewer:', blobError);
+                                    showNotification('✅ Модель сохранена, но ошибка загрузки в просмотр', 'warning');
+                                }
+                            }, viewerDelay);
+                        } else {
+                            console.warn('⚠️ model-viewer не найден, модель сохранена но не загружена в просмотр');
+                            showNotification(`✅ Модель сохранена для товара ID ${currentProductId}!`, 'success');
+                        }
+                    };
+                    
+                    request.onerror = () => {
+                        console.error('❌ Ошибка сохранения в IndexedDB:', request.error);
+                        alert('❌ Ошибка сохранения: ' + (request.error?.message || 'Неизвестная ошибка'));
+                    };
+                } catch (saveError) {
+                    console.error('❌ Ошибка при сохранении:', saveError);
+                    alert('❌ Ошибка сохранения');
                 }
-            };
-            
-            request.onerror = () => {
-                console.error('❌ Ошибка сохранения в IndexedDB:', request.error);
-                alert('❌ Ошибка сохранения');
-            };
+            }, saveDelay);
         };
         
-        reader.onerror = function() {
+        reader.onerror = function(error) {
+            console.error('❌ Ошибка чтения файла:', error);
             alert('❌ Ошибка чтения файла');
         };
         
         reader.readAsArrayBuffer(file);
     }).catch(err => {
-        console.error('Ошибка инициализации DB:', err);
-        alert('❌ Ошибка базы данных');
+        console.error('❌ Ошибка инициализации DB:', err);
+        alert('❌ Ошибка базы данных: ' + (err?.message || 'Неизвестная ошибка'));
     });
 }
 
@@ -1420,14 +1473,25 @@ function open3DViewer(modelPath, productId) {
         }
     }
     
+    // Определяем мобильное устройство
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     (window.innerWidth <= 768 && window.innerHeight <= 1024);
+    
+    // На мобильных устройствах нужна большая задержка для инициализации
+    const initDelay = isMobile ? 600 : 400;
+    
+    console.log('📱 Устройство:', isMobile ? 'мобильное' : 'десктоп', 'задержка:', initDelay, 'ms', 'productId:', productId);
+    
     // Увеличиваем задержку для полной инициализации кастомного элемента
     // Web Components требуют времени для регистрации
     setTimeout(() => {
         const readyViewer = document.getElementById('model-viewer');
         if (!readyViewer) {
-            console.error('model-viewer не создан после задержки');
+            console.error('❌ model-viewer не создан после задержки');
             return;
         }
+        
+        console.log('✅ model-viewer найден, начинаем загрузку модели');
         
         // СНАЧАЛА проверяем есть ли локальная модель в IndexedDB
         // Локальная модель имеет приоритет над стандартной
@@ -1442,40 +1506,82 @@ function open3DViewer(modelPath, productId) {
                     return;
                 }
                 
-                // Пытаемся загрузить из IndexedDB
-                const transaction = db.transaction(['models'], 'readonly');
-                const store = transaction.objectStore('models');
-                const request = store.get(productId);
+                console.log('🔍 Проверяем IndexedDB на наличие модели для товара ID:', productId);
                 
-                request.onsuccess = () => {
-                    const currentViewer = document.getElementById('model-viewer');
-                    if (!currentViewer) {
-                        console.error('❌ model-viewer элемент не найден после задержки');
-                        return;
-                    }
-                    
-                    if (request.result && request.result.model) {
-                        // Локальная модель найдена - используем её
-                        const arrayBuffer = request.result.model;
-                        const blob = new Blob([arrayBuffer]);
-                        const blobUrl = URL.createObjectURL(blob);
-                        activeBlobUrls.add(blobUrl);
+                // На мобильных устройствах добавляем небольшую задержку для IndexedDB
+                const dbDelay = isMobile ? 100 : 0;
+                
+                setTimeout(() => {
+                    try {
+                        // Пытаемся загрузить из IndexedDB
+                        const transaction = db.transaction(['models'], 'readonly');
+                        const store = transaction.objectStore('models');
+                        const request = store.get(productId);
                         
-                        currentViewer.src = blobUrl;
-                        console.log('✅ Локальная модель загружена из IndexedDB для товара ID:', productId, 'размер:', arrayBuffer.byteLength, 'байт');
-                        showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
-                    } else {
-                        // Локальной модели нет - используем стандартную из папки models/
-                        console.log('ℹ️ Локальная модель не найдена для товара ID:', productId, '- загружаем стандартную');
+                        request.onsuccess = () => {
+                            const currentViewer = document.getElementById('model-viewer');
+                            if (!currentViewer) {
+                                console.error('❌ model-viewer элемент не найден после задержки');
+                                loadStandardModel();
+                                return;
+                            }
+                            
+                            console.log('📦 Результат запроса IndexedDB:', request.result ? 'найдено' : 'не найдено');
+                            
+                            if (request.result && request.result.model) {
+                                // Локальная модель найдена - используем её
+                                const arrayBuffer = request.result.model;
+                                console.log('✅ Локальная модель найдена, размер:', arrayBuffer.byteLength, 'байт');
+                                
+                                // На мобильных устройствах может потребоваться дополнительная задержка
+                                const blobDelay = isMobile ? 50 : 0;
+                                
+                                setTimeout(() => {
+                                    try {
+                                        const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+                                        const blobUrl = URL.createObjectURL(blob);
+                                        activeBlobUrls.add(blobUrl);
+                                        
+                                        const finalViewer = document.getElementById('model-viewer');
+                                        if (finalViewer) {
+                                            finalViewer.src = blobUrl;
+                                            console.log('✅ Локальная модель загружена из IndexedDB для товара ID:', productId, 'размер:', arrayBuffer.byteLength, 'байт', 'URL:', blobUrl.substring(0, 50) + '...');
+                                            
+                                            // Проверяем что модель действительно загрузилась
+                                            setTimeout(() => {
+                                                if (finalViewer.loaded) {
+                                                    console.log('✅ Модель успешно загружена в viewer');
+                                                    showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
+                                                } else {
+                                                    console.warn('⚠️ Модель может не загрузиться, проверьте консоль');
+                                                }
+                                            }, 500);
+                                        } else {
+                                            console.error('❌ model-viewer не найден при загрузке blob');
+                                            loadStandardModel();
+                                        }
+                                    } catch (blobError) {
+                                        console.error('❌ Ошибка создания Blob:', blobError);
+                                        loadStandardModel();
+                                    }
+                                }, blobDelay);
+                            } else {
+                                // Локальной модели нет - используем стандартную из папки models/
+                                console.log('ℹ️ Локальная модель не найдена для товара ID:', productId, '- загружаем стандартную');
+                                loadStandardModel();
+                            }
+                        };
+                        
+                        request.onerror = () => {
+                            console.error('❌ Ошибка загрузки из IndexedDB:', request.error);
+                            // При ошибке загружаем стандартную модель
+                            loadStandardModel();
+                        };
+                    } catch (dbError) {
+                        console.error('❌ Ошибка при работе с IndexedDB:', dbError);
                         loadStandardModel();
                     }
-                };
-                
-                request.onerror = () => {
-                    console.error('❌ Ошибка загрузки из IndexedDB:', request.error);
-                    // При ошибке загружаем стандартную модель
-                    loadStandardModel();
-                };
+                }, dbDelay);
             }).catch(err => {
                 console.error('❌ Ошибка инициализации IndexedDB:', err);
                 loadStandardModel();
@@ -1485,8 +1591,9 @@ function open3DViewer(modelPath, productId) {
         }
         
         // Если нет productId - используем стандартную модель
+        console.log('⚠️ productId не указан, загружаем стандартную модель');
         loadStandardModel();
-    }, 400); // Увеличенная задержка для надежной инициализации
+    }, initDelay); // Увеличенная задержка для надежной инициализации
 }
 
 // Проверка наличия локальной модели (устаревшая функция, оставлена для совместимости)
