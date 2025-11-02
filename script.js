@@ -883,8 +883,10 @@ function renderProducts() {
         filteredProducts = products.filter(p => p.category === currentCategory);
     }
     
-    // Фильтруем товары по цене
-    filteredProducts = filteredProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
+    // Фильтруем товары по цене - используем реальный минимум и максимум
+    const actualMin = Math.min(minPrice, maxPrice);
+    const actualMax = Math.max(minPrice, maxPrice);
+    filteredProducts = filteredProducts.filter(p => p.price >= actualMin && p.price <= actualMax);
     
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = filteredProducts.map(product => {
@@ -1073,8 +1075,7 @@ function updateTrackRange() {
 }
 
 // Обновление фильтра по цене
-// ЛЕВАЯ точка (min) - цена ОТ (минимальная)
-// ПРАВАЯ точка (max) - цена ДО (максимальная)
+// Точка А (min) и Точка Б (max) работают независимо друг от друга
 function updatePriceFilter(type, value) {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
@@ -1083,33 +1084,24 @@ function updatePriceFilter(type, value) {
     
     const newValue = parseInt(value);
     
+    // Точки работают независимо - нет ограничений
     if (type === 'min') {
-        // ЛЕВАЯ точка - минимальная цена (цена ОТ)
-        const currentMax = parseInt(sliderMax.value);
-        if (newValue > currentMax) {
-            minPrice = currentMax;
-            sliderMin.value = currentMax;
-        } else {
-            minPrice = newValue;
-        }
+        minPrice = newValue;
     } else if (type === 'max') {
-        // ПРАВАЯ точка - максимальная цена (цена ДО)
-        const currentMin = parseInt(sliderMin.value);
-        if (newValue < currentMin) {
-            maxPrice = currentMin;
-            sliderMax.value = currentMin;
-        } else {
-            maxPrice = newValue;
-        }
+        maxPrice = newValue;
     }
     
     // Обновляем визуальный индикатор
     updateTrackRange();
     
+    // Определяем реальный минимум и максимум для отображения
+    const actualMin = Math.min(minPrice, maxPrice);
+    const actualMax = Math.max(minPrice, maxPrice);
+    
     const priceDisplay = document.getElementById('priceRange');
     if (priceDisplay) {
-        // Показываем: цена ОТ ... цена ДО
-        priceDisplay.textContent = `от ${minPrice.toLocaleString()} ₽ - до ${maxPrice.toLocaleString()} ₽`;
+        // Показываем диапазон от меньшего к большему
+        priceDisplay.textContent = `от ${actualMin.toLocaleString()} ₽ - до ${actualMax.toLocaleString()} ₽`;
     }
     
     // Используем debounce для плавной фильтрации
