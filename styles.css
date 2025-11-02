@@ -261,6 +261,7 @@ body {
 .product-images-container {
     position: relative;
     overflow: hidden;
+    background: #ffffff;
 }
 
 .product-images {
@@ -268,13 +269,14 @@ body {
     height: 280px;
     display: flex;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: #ffffff;
 }
 
 .product-image {
     width: 100%;
     height: 280px;
     object-fit: contain;
-    background: var(--bg-light);
+    background: #ffffff;
     flex-shrink: 0;
     padding: 2rem;
 }
@@ -503,7 +505,7 @@ body {
 .modal-image-container {
     border-radius: 0;
     overflow: hidden;
-    background: var(--bg-light);
+    background: #ffffff;
     position: relative;
     height: 500px;
     border: 1px solid var(--border-color);
@@ -512,7 +514,7 @@ body {
 .modal-image {
     border-radius: 0;
     overflow: hidden;
-    background: var(--bg-light);
+    background: #ffffff;
     position: relative;
     height: 500px;
     border: 1px solid var(--border-color);
@@ -523,6 +525,7 @@ body {
     height: 500px;
     display: flex;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: #ffffff;
 }
 
 .modal-main-image {
@@ -532,6 +535,7 @@ body {
     display: block;
     padding: 2rem;
     flex-shrink: 0;
+    background: #ffffff;
 }
 
 .modal-image img {
@@ -540,6 +544,7 @@ body {
     object-fit: contain;
     display: block;
     padding: 2rem;
+    background: #ffffff;
 }
 
 .modal-arrow {
@@ -1436,9 +1441,19 @@ model-viewer {
         gap: 2rem;
     }
     
+    .product-images-container {
+        background: #ffffff;
+    }
+    
     .product-image,
     .product-images {
-        height: 240px;
+        height: 320px;
+        background: #ffffff;
+        padding: 1.5rem;
+    }
+    
+    .product-image {
+        padding: 1.5rem;
     }
     
     .product-info {
@@ -1477,6 +1492,15 @@ model-viewer {
     .modal-image-container,
     .modal-images {
         height: 300px;
+        background: #ffffff;
+    }
+    
+    .modal-main-image {
+        background: #ffffff;
+    }
+    
+    .modal-image img {
+        background: #ffffff;
     }
     
     .modal-details h2 {
@@ -1622,12 +1646,30 @@ model-viewer {
     .modal-image-container,
     .modal-images {
         height: 250px;
+        background: #ffffff;
+    }
+    
+    .modal-main-image {
+        background: #ffffff;
+    }
+    
+    .modal-image img {
+        background: #ffffff;
+    }
+    
+    .product-images-container {
+        background: #ffffff;
     }
     
     .product-image,
     .product-images {
-        height: 200px;
-        padding: 1rem;
+        height: 280px;
+        background: #ffffff;
+        padding: 1.2rem;
+    }
+    
+    .product-image {
+        padding: 1.2rem;
     }
     
     .viewer3d-container {
