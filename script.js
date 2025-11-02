@@ -994,97 +994,46 @@ function debouncePriceFilter() {
     }, 150);
 }
 
-// Настройка двойного слайдера для правильного взаимодействия
+// Настройка двойного слайдера - простая и надежная реализация
 function setupDualSlider() {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
-    const container = document.getElementById('dualRangeSlider');
     
-    if (!sliderMin || !sliderMax || !container) return;
+    if (!sliderMin || !sliderMax) return;
     
-    // Функция для определения, какой слайдер должен быть активным
-    function getActiveSlider(event) {
-        const rect = container.getBoundingClientRect();
-        const x = (event.clientX || (event.touches && event.touches[0].clientX) || 0) - rect.left;
-        const width = rect.width;
-        const percent = (x / width) * 100;
-        
-        const minValue = parseInt(sliderMin.value);
-        const maxValue = parseInt(sliderMax.value);
-        const maxRange = parseInt(sliderMax.max);
-        
-        const minPercent = (minValue / maxRange) * 100;
-        const maxPercent = (maxValue / maxRange) * 100;
-        
-        // Определяем, к какому ползунку ближе клик
-        const distToMin = Math.abs(percent - minPercent);
-        const distToMax = Math.abs(percent - maxPercent);
-        
-        return distToMin < distToMax ? sliderMin : sliderMax;
-    }
+    // Простая установка z-index - левая точка всегда выше правой
+    // Это обеспечивает доступность обеих точек
+    sliderMin.style.zIndex = '6';
+    sliderMax.style.zIndex = '5';
     
-    // Обработчик для активации нужного слайдера
-    function activateSlider(slider) {
-        if (slider === sliderMin) {
-            sliderMin.style.zIndex = '6';
-            sliderMax.style.zIndex = '3';
-        } else {
-            sliderMax.style.zIndex = '6';
-            sliderMin.style.zIndex = '3';
-        }
-    }
-    
-    // Убираем клики по полосе - можно только перетаскивать точки
-    
-    // Переменная для отслеживания состояния перетаскивания
-    let isDragging = false;
-    let activeSlider = null;
-    
-    // Обработчик начала перетаскивания
-    const handleStart = (e, slider) => {
-        e.stopPropagation();
-        isDragging = true;
-        activeSlider = slider;
-        
+    // При взаимодействии поднимаем активный слайдер выше
+    const activateSlider = (slider) => {
         if (slider === sliderMin) {
             sliderMin.style.zIndex = '10';
-            sliderMax.style.zIndex = '4';
+            sliderMax.style.zIndex = '5';
         } else {
             sliderMax.style.zIndex = '10';
-            sliderMin.style.zIndex = '5';
+            sliderMin.style.zIndex = '6';
         }
     };
     
-    // Обработчик окончания перетаскивания
-    const handleEnd = () => {
-        if (isDragging) {
-            isDragging = false;
-            // Сбрасываем z-index с задержкой, чтобы не блокировать следующее взаимодействие
-            setTimeout(() => {
-                if (!isDragging) {
-                    sliderMin.style.zIndex = '5';
-                    sliderMax.style.zIndex = '4';
-                    activeSlider = null;
-                }
-            }, 150);
-        }
+    // Возврат к нормальному состоянию после взаимодействия
+    const deactivateSlider = () => {
+        sliderMin.style.zIndex = '6';
+        sliderMax.style.zIndex = '5';
     };
     
-    // Добавляем обработчики для левого слайдера
-    sliderMin.addEventListener('mousedown', (e) => handleStart(e, sliderMin));
-    sliderMin.addEventListener('touchstart', (e) => handleStart(e, sliderMin));
+    // Обработчики для левого слайдера
+    sliderMin.addEventListener('mousedown', () => activateSlider(sliderMin));
+    sliderMin.addEventListener('touchstart', () => activateSlider(sliderMin));
     
-    // Добавляем обработчики для правого слайдера
-    sliderMax.addEventListener('mousedown', (e) => handleStart(e, sliderMax));
-    sliderMax.addEventListener('touchstart', (e) => handleStart(e, sliderMax));
+    // Обработчики для правого слайдера
+    sliderMax.addEventListener('mousedown', () => activateSlider(sliderMax));
+    sliderMax.addEventListener('touchstart', () => activateSlider(sliderMax));
     
-    // Глобальные обработчики окончания перетаскивания
-    document.addEventListener('mouseup', handleEnd);
-    document.addEventListener('touchend', handleEnd);
-    
-    // Устанавливаем начальные z-index - левая точка выше, чтобы была доступна
-    sliderMin.style.zIndex = '5';
-    sliderMax.style.zIndex = '4';
+    // Возврат после окончания перетаскивания
+    document.addEventListener('mouseup', deactivateSlider);
+    document.addEventListener('touchend', deactivateSlider);
 }
 
 // Обновление визуального индикатора диапазона

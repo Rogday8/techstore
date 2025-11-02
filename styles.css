@@ -356,8 +356,7 @@ body {
     outline: none;
     border: none;
     border-radius: 0;
-    cursor: pointer;
-    z-index: inherit;
+    cursor: grab;
     margin: 0;
     padding: 0;
     top: 0;
@@ -366,6 +365,10 @@ body {
     pointer-events: auto;
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
+}
+
+.price-slider:active {
+    cursor: grabbing;
 }
 
 .price-slider::-webkit-slider-runnable-track {
@@ -385,19 +388,11 @@ body {
 }
 
 .price-slider-min {
-    z-index: 5;
+    z-index: 6;
 }
 
 .price-slider-max {
-    z-index: 4;
-}
-
-.price-slider-min:active {
-    z-index: 10;
-}
-
-.price-slider-max:active {
-    z-index: 10;
+    z-index: 5;
 }
 
 .price-slider-min::-webkit-slider-thumb {
