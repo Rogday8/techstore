@@ -9,6 +9,18 @@ const products = [
         category: "Смартфоны",
         hasColors: true,
         colors: {
+            "Черный": {
+                image: "images/15 pro max/15 pro max black/top1.webp",
+                images: [
+                    "images/15 pro max/15 pro max black/top1.webp",
+                    "images/15 pro max/15 pro max black/08fcd9b8265ee819547e65399faa3c2858ed767d03a126ce226fbd4dcdbc9b7f.jpg.webp",
+                    "images/15 pro max/15 pro max black/6f878d28c47b7aafce03870c5e00781ba530051ba788c07a2acd1e47b5a0c49f.jpg.webp",
+                    "images/15 pro max/15 pro max black/6f8fe505a22427c326d5e21e89fe319d8678d18117db92ee145b796bc5a3170c.jpg.webp",
+                    "images/15 pro max/15 pro max black/90521544990b8b6141a0ceb95cb3c92b1c1f67aec43e5bf3c102e0bf1ed55066.jpg.webp",
+                    "images/15 pro max/15 pro max black/9b5079c958ad321a3ee57aadebbde9830fc35b3cd0a6ea3eb31483a6b78a6597.jpg.webp",
+                    "images/15 pro max/15 pro max black/e5dfaaf92fa0a6b31e9cccb4d88a5d1a58ce35c97b055efae6f1373ee6be0e5b.jpg.webp"
+                ]
+            },
             "Титановый": {
                 image: "images/15 pro max/top1.webp",
                 images: [
@@ -58,16 +70,15 @@ const products = [
                 ]
             }
         },
-        image: "images/15 pro max/top1.webp",
+        image: "images/15 pro max/15 pro max black/top1.webp",
         images: [
-            "images/15 pro max/top1.webp",
-            "images/15 pro max/optimize (1).webp",
-            "images/15 pro max/optimize (2).webp",
-            "images/15 pro max/optimize (3).webp",
-            "images/15 pro max/optimize (4).webp",
-            "images/15 pro max/optimize (5).webp",
-            "images/15 pro max/optimize (6).webp",
-            "images/15 pro max/optimize (7).webp"
+            "images/15 pro max/15 pro max black/top1.webp",
+            "images/15 pro max/15 pro max black/08fcd9b8265ee819547e65399faa3c2858ed767d03a126ce226fbd4dcdbc9b7f.jpg.webp",
+            "images/15 pro max/15 pro max black/6f878d28c47b7aafce03870c5e00781ba530051ba788c07a2acd1e47b5a0c49f.jpg.webp",
+            "images/15 pro max/15 pro max black/6f8fe505a22427c326d5e21e89fe319d8678d18117db92ee145b796bc5a3170c.jpg.webp",
+            "images/15 pro max/15 pro max black/90521544990b8b6141a0ceb95cb3c92b1c1f67aec43e5bf3c102e0bf1ed55066.jpg.webp",
+            "images/15 pro max/15 pro max black/9b5079c958ad321a3ee57aadebbde9830fc35b3cd0a6ea3eb31483a6b78a6597.jpg.webp",
+            "images/15 pro max/15 pro max black/e5dfaaf92fa0a6b31e9cccb4d88a5d1a58ce35c97b055efae6f1373ee6be0e5b.jpg.webp"
         ],
         specs: [
             "Процессор: Apple A17 Pro",
