@@ -66,8 +66,8 @@ body {
 .apple-logo,
 .apple-logo-fallback {
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     transition: transform 0.3s ease;
     object-fit: contain;
 }
@@ -1420,8 +1420,8 @@ model-viewer {
     }
     
     .apple-logo {
-        width: 28px;
-        height: 28px;
+        width: 40px;
+        height: 40px;
     }
     
     .logo-accent {
