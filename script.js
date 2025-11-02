@@ -1304,72 +1304,75 @@ function clearBlobUrls() {
 
 // 3D просмотр с model-viewer
 function view3D(modelPath, productId) {
+    // Проверяем не открыт ли уже 3D viewer
+    const currentModal = document.getElementById('viewer3DModal');
+    if (currentModal && currentModal.style.display === 'block') {
+        // Если открыт, сначала закрываем и ждем
+        close3DViewer();
+        setTimeout(() => {
+            open3DViewer(modelPath, productId);
+        }, 350);
+        return;
+    }
+    
+    open3DViewer(modelPath, productId);
+}
+
+// Отдельная функция для открытия 3D viewer
+function open3DViewer(modelPath, productId) {
     closeModal();
     
-    // Очищаем предыдущие blob URLs перед открытием
+    // Очищаем предыдущие blob URLs
     clearBlobUrls();
     
     const modal = document.getElementById('viewer3DModal');
     const container = document.getElementById('viewer3D');
-    let modelViewer = document.getElementById('model-viewer');
     
-    if (!container) {
-        console.error('Контейнер viewer3D не найден');
+    if (!container || !modal) {
+        console.error('Контейнер или модальное окно не найдены');
         return;
     }
     
-    // Если элемента нет, создаем его (только один раз)
-    if (!modelViewer) {
-        modelViewer = document.createElement('model-viewer');
-        modelViewer.id = 'model-viewer';
-        modelViewer.setAttribute('camera-controls', '');
-        modelViewer.setAttribute('auto-rotate', '');
-        modelViewer.setAttribute('auto-rotate-delay', '0');
-        modelViewer.setAttribute('rotation-per-second', '30deg');
-        modelViewer.setAttribute('shadow-intensity', '1');
-        modelViewer.setAttribute('environment-image', 'neutral');
-        modelViewer.style.width = '100%';
-        modelViewer.style.height = '100%';
-        
-        // AR кнопка
-        const arButton = document.createElement('button');
-        arButton.setAttribute('slot', 'ar-button');
-        arButton.className = 'btn-control';
-        arButton.style.cssText = 'position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);';
-        arButton.textContent = 'AR Просмотр';
-        modelViewer.appendChild(arButton);
-        
-        container.appendChild(modelViewer);
-    }
+    // ВАЖНО: Полностью очищаем контейнер - пересоздаем элемент каждый раз
+    // Это гарантирует чистое состояние без накопленных проблем
+    container.innerHTML = '';
     
-    // Полная очистка состояния перед загрузкой новой модели
-    try {
-        // Очищаем src
-        modelViewer.src = '';
-        
-        // Сбрасываем камеру если доступно
-        if (modelViewer.resetCamera) {
-            modelViewer.resetCamera();
-        }
-        
-        // Останавливаем автоповорот
-        if (modelViewer.pause) {
-            modelViewer.pause();
-        }
-        
-        // Очищаем загруженное состояние
-        if (modelViewer.dismissPoster) {
-            modelViewer.dismissPoster();
-        }
-    } catch (e) {
-        console.log('Ошибка при очистке состояния:', e);
-    }
+    // Создаем новый чистый элемент model-viewer
+    const modelViewer = document.createElement('model-viewer');
+    modelViewer.id = 'model-viewer';
+    modelViewer.setAttribute('camera-controls', '');
+    modelViewer.setAttribute('auto-rotate', '');
+    modelViewer.setAttribute('auto-rotate-delay', '0');
+    modelViewer.setAttribute('rotation-per-second', '30deg');
+    modelViewer.setAttribute('shadow-intensity', '1');
+    modelViewer.setAttribute('environment-image', 'neutral');
+    modelViewer.setAttribute('interaction-policy', 'allow-when-focused');
+    modelViewer.style.width = '100%';
+    modelViewer.style.height = '100%';
+    modelViewer.style.display = 'block';
+    
+    // AR кнопка
+    const arButton = document.createElement('button');
+    arButton.setAttribute('slot', 'ar-button');
+    arButton.className = 'btn-control';
+    arButton.style.cssText = 'position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 10;';
+    arButton.textContent = 'AR Просмотр';
+    modelViewer.appendChild(arButton);
+    
+    container.appendChild(modelViewer);
     
     // Показываем модальное окно
     modal.style.display = 'block';
     
-    // Задержка для полной очистки перед загрузкой
+    // Увеличиваем задержку для полной инициализации кастомного элемента
+    // Web Components требуют времени для регистрации
     setTimeout(() => {
+        const readyViewer = document.getElementById('model-viewer');
+        if (!readyViewer) {
+            console.error('model-viewer не создан после задержки');
+            return;
+        }
+        
         let src = '';
         let useBlob = false;
         
@@ -1389,40 +1392,33 @@ function view3D(modelPath, productId) {
             const request = store.get(productId);
             
             request.onsuccess = () => {
+                const currentViewer = document.getElementById('model-viewer');
+                if (!currentViewer) return;
+                
                 if (request.result) {
                     const arrayBuffer = request.result.model;
                     const blob = new Blob([arrayBuffer]);
                     const blobUrl = URL.createObjectURL(blob);
                     activeBlobUrls.add(blobUrl);
                     
-                    // Небольшая задержка перед установкой blob URL
-                    setTimeout(() => {
-                        if (modelViewer) {
-                            modelViewer.src = blobUrl;
-                        }
-                    }, 50);
-                    
-                    useBlob = true;
+                    currentViewer.src = blobUrl;
                     console.log('✅ Локальная модель загружена из IndexedDB');
                     showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
                 } else {
                     // Fallback
                     if (modelPath) {
-                        src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
-                        if (modelViewer) {
-                            modelViewer.src = src;
-                        }
+                        const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
+                        currentViewer.src = fallbackSrc;
                     }
                 }
             };
             
             request.onerror = () => {
+                const currentViewer = document.getElementById('model-viewer');
                 console.error('Ошибка загрузки из IndexedDB:', request.error);
-                if (modelPath) {
-                    src = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
-                    if (modelViewer) {
-                        modelViewer.src = src;
-                    }
+                if (modelPath && currentViewer) {
+                    const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
+                    currentViewer.src = fallbackSrc;
                 }
             };
             
@@ -1437,13 +1433,11 @@ function view3D(modelPath, productId) {
             }
         }
         
-        // Загружаем модель
-        if (src && !useBlob && modelViewer) {
-            // Добавляем timestamp чтобы заставить перезагрузить модель
-            const urlWithTimestamp = src.includes('?') ? `${src}&t=${Date.now()}` : `${src}?t=${Date.now()}`;
-            modelViewer.src = urlWithTimestamp;
+        // Загружаем модель БЕЗ timestamp - просто чистая загрузка
+        if (src && !useBlob) {
+            readyViewer.src = src;
         }
-    }, 100);
+    }, 400); // Увеличенная задержка для надежной инициализации
 }
 
 // Проверка наличия локальной модели
@@ -1495,6 +1489,7 @@ function loadModelFromDB(productId, modelViewer) {
 // Закрытие 3D просмотра
 function close3DViewer() {
     const modal = document.getElementById('viewer3DModal');
+    const container = document.getElementById('viewer3D');
     const modelViewer = document.getElementById('model-viewer');
     
     if (!modal) return;
@@ -1502,7 +1497,7 @@ function close3DViewer() {
     // Освобождаем blob URLs
     clearBlobUrls();
     
-    // Останавливаем все операции model-viewer
+    // Останавливаем все операции model-viewer перед удалением
     if (modelViewer) {
         try {
             // Останавливаем автоповорот и анимации
@@ -1510,41 +1505,23 @@ function close3DViewer() {
                 modelViewer.pause();
             }
             
-            // Сбрасываем камеру
-            if (modelViewer.resetCamera) {
-                modelViewer.resetCamera();
-            }
-            
-            // Очищаем src
+            // Очищаем src перед удалением
             modelViewer.src = '';
-            
-            // Очищаем загруженное состояние
-            if (modelViewer.dismissPoster) {
-                modelViewer.dismissPoster();
-            }
         } catch (e) {
-            console.log('Ошибка при очистке model-viewer:', e);
+            // Игнорируем ошибки при очистке
         }
     }
     
     // Скрываем модальное окно
     modal.style.display = 'none';
     
-    // Дополнительная очистка через задержку для гарантии
+    // Полностью удаляем элемент через задержку
+    // Это гарантирует полную очистку всех ресурсов
     setTimeout(() => {
-        if (modelViewer) {
-            try {
-                if (modelViewer.src) {
-                    modelViewer.src = '';
-                }
-                if (modelViewer.resetCamera) {
-                    modelViewer.resetCamera();
-                }
-            } catch (e) {
-                // Игнорируем ошибки
-            }
+        if (container) {
+            container.innerHTML = '';
         }
-    }, 200);
+    }, 150);
 }
 
 // Добавляем стили для уведомлений
