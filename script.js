@@ -128,7 +128,7 @@ const products = [
             "Дополнительно: S Pen в комплекте"
         ],
         has3D: true,
-        model3D: "models/Samsung Galaxy S24 Ultra/samsung_s24_ultra.glb"
+        model3D: "models/samsung_s24_ultra.glb"
     },
     {
         id: 3,
