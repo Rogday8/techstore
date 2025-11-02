@@ -712,7 +712,7 @@ function upload3DModel(event) {
                                     activeBlobUrls.add(blobUrl);
                                     modelViewer.src = blobUrl;
                                     console.log('✅ Модель загружена в viewer, URL:', blobUrl.substring(0, 50) + '...');
-                                    showNotification(`✅ 3D модель загружена и сохранена для товара ID ${currentProductId}!`, 'success');
+                                    showNotification(`✅ 3D модель сохранена локально (только на этом устройстве). Для глобальной доступности добавьте модель в папку models/ на GitHub.`, 'success');
                                 } catch (blobError) {
                                     console.error('❌ Ошибка создания blob для viewer:', blobError);
                                     showNotification('✅ Модель сохранена, но ошибка загрузки в просмотр', 'warning');
@@ -720,7 +720,7 @@ function upload3DModel(event) {
                             }, viewerDelay);
                         } else {
                             console.warn('⚠️ model-viewer не найден, модель сохранена но не загружена в просмотр');
-                            showNotification(`✅ Модель сохранена для товара ID ${currentProductId}!`, 'success');
+                            showNotification(`✅ Модель сохранена локально (только на этом устройстве). Для глобальной доступности добавьте модель в папку models/ на GitHub.`, 'success');
                         }
                     };
                     
@@ -1454,22 +1454,24 @@ function open3DViewer(modelPath, productId) {
     modal.style.display = 'block';
     
     // Вспомогательная функция для загрузки стандартной модели
-    function loadStandardModel() {
+    function loadStandardModel(pathToUse) {
         const currentViewer = document.getElementById('model-viewer');
         if (!currentViewer) {
             console.error('❌ model-viewer элемент не найден');
             return;
         }
         
-        if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
-            const standardSrc = encodeURI(modelPath);
+        const path = pathToUse || modelPath;
+        
+        if (path && !path.startsWith('blob:') && !path.startsWith('data:')) {
+            const standardSrc = encodeURI(path);
             currentViewer.src = standardSrc;
-            console.log('✅ Загружаем стандартную модель из папки models/:', modelPath);
-        } else if (modelPath) {
-            const fallbackSrc = modelPath.startsWith('blob:') || modelPath.startsWith('data:') ? modelPath : encodeURI(modelPath);
+            console.log('✅ Загружаем стандартную модель из папки models/:', path);
+        } else if (path) {
+            const fallbackSrc = path.startsWith('blob:') || path.startsWith('data:') ? path : encodeURI(path);
             currentViewer.src = fallbackSrc;
         } else {
-            showNotification('⚠️ 3D модель не найдена. Используйте админ-панель для загрузки.', 'warning');
+            console.warn('⚠️ Путь к модели не указан');
         }
     }
     
@@ -1493,20 +1495,28 @@ function open3DViewer(modelPath, productId) {
         
         console.log('✅ model-viewer найден, начинаем загрузку модели');
         
-        // СНАЧАЛА проверяем есть ли локальная модель в IndexedDB
-        // Локальная модель имеет приоритет над стандартной
+        // ПРИОРИТЕТ 1: Загружаем стандартную модель из папки models/ (если есть modelPath)
+        // Стандартные модели доступны везде (PC и мобильные)
+        if (modelPath && !modelPath.startsWith('blob:') && !modelPath.startsWith('data:')) {
+            console.log('📁 Загружаем стандартную модель из папки models/:', modelPath);
+            loadStandardModel();
+            return; // Завершаем - стандартная модель приоритетна
+        }
+        
+        // ПРИОРИТЕТ 2: Если стандартной модели нет, пытаемся загрузить локальную из IndexedDB
+        // Локальные модели доступны только на текущем устройстве
         if (productId) {
             // Убеждаемся что db инициализирована, если нет - инициализируем
             const dbCheck = db ? Promise.resolve(db) : initDB();
             
             dbCheck.then(() => {
                 if (!db) {
-                    console.warn('⚠️ IndexedDB недоступна, загружаем стандартную модель');
-                    loadStandardModel();
+                    console.warn('⚠️ IndexedDB недоступна. Стандартная модель не найдена.');
+                    showNotification('⚠️ 3D модель не найдена. Добавьте модель в папку models/ на сервере.', 'warning');
                     return;
                 }
                 
-                console.log('🔍 Проверяем IndexedDB на наличие модели для товара ID:', productId);
+                console.log('🔍 Стандартной модели нет, проверяем IndexedDB на наличие локальной модели для товара ID:', productId);
                 
                 // На мобильных устройствах добавляем небольшую задержку для IndexedDB
                 const dbDelay = isMobile ? 100 : 0;
@@ -1522,16 +1532,15 @@ function open3DViewer(modelPath, productId) {
                             const currentViewer = document.getElementById('model-viewer');
                             if (!currentViewer) {
                                 console.error('❌ model-viewer элемент не найден после задержки');
-                                loadStandardModel();
                                 return;
                             }
                             
                             console.log('📦 Результат запроса IndexedDB:', request.result ? 'найдено' : 'не найдено');
                             
                             if (request.result && request.result.model) {
-                                // Локальная модель найдена - используем её
+                                // Локальная модель найдена - используем её как fallback
                                 const arrayBuffer = request.result.model;
-                                console.log('✅ Локальная модель найдена, размер:', arrayBuffer.byteLength, 'байт');
+                                console.log('✅ Локальная модель найдена (fallback), размер:', arrayBuffer.byteLength, 'байт');
                                 
                                 // На мобильных устройствах может потребоваться дополнительная задержка
                                 const blobDelay = isMobile ? 50 : 0;
@@ -1545,54 +1554,42 @@ function open3DViewer(modelPath, productId) {
                                         const finalViewer = document.getElementById('model-viewer');
                                         if (finalViewer) {
                                             finalViewer.src = blobUrl;
-                                            console.log('✅ Локальная модель загружена из IndexedDB для товара ID:', productId, 'размер:', arrayBuffer.byteLength, 'байт', 'URL:', blobUrl.substring(0, 50) + '...');
-                                            
-                                            // Проверяем что модель действительно загрузилась
-                                            setTimeout(() => {
-                                                if (finalViewer.loaded) {
-                                                    console.log('✅ Модель успешно загружена в viewer');
-                                                    showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
-                                                } else {
-                                                    console.warn('⚠️ Модель может не загрузиться, проверьте консоль');
-                                                }
-                                            }, 500);
+                                            console.log('✅ Локальная модель загружена из IndexedDB для товара ID:', productId, 'размер:', arrayBuffer.byteLength, 'байт');
+                                            showNotification('ℹ️ Показана локальная модель (доступна только на этом устройстве)', 'info');
                                         } else {
                                             console.error('❌ model-viewer не найден при загрузке blob');
-                                            loadStandardModel();
                                         }
                                     } catch (blobError) {
                                         console.error('❌ Ошибка создания Blob:', blobError);
-                                        loadStandardModel();
                                     }
                                 }, blobDelay);
                             } else {
-                                // Локальной модели нет - используем стандартную из папки models/
-                                console.log('ℹ️ Локальная модель не найдена для товара ID:', productId, '- загружаем стандартную');
-                                loadStandardModel();
+                                // Локальной модели тоже нет
+                                console.log('⚠️ Локальная модель не найдена');
+                                showNotification('⚠️ 3D модель не найдена. Добавьте модель в папку models/ на сервере.', 'warning');
                             }
                         };
                         
                         request.onerror = () => {
                             console.error('❌ Ошибка загрузки из IndexedDB:', request.error);
-                            // При ошибке загружаем стандартную модель
-                            loadStandardModel();
+                            showNotification('⚠️ 3D модель не найдена. Добавьте модель в папку models/ на сервере.', 'warning');
                         };
                     } catch (dbError) {
                         console.error('❌ Ошибка при работе с IndexedDB:', dbError);
-                        loadStandardModel();
+                        showNotification('⚠️ 3D модель не найдена. Добавьте модель в папку models/ на сервере.', 'warning');
                     }
                 }, dbDelay);
             }).catch(err => {
                 console.error('❌ Ошибка инициализации IndexedDB:', err);
-                loadStandardModel();
+                showNotification('⚠️ 3D модель не найдена. Добавьте модель в папку models/ на сервере.', 'warning');
             });
             
             return; // Выходим, так как загрузка асинхронная
         }
         
-        // Если нет productId - используем стандартную модель
-        console.log('⚠️ productId не указан, загружаем стандартную модель');
-        loadStandardModel();
+        // Если нет ни стандартной модели, ни productId
+        console.log('⚠️ Стандартная модель не указана и productId не найден');
+        showNotification('⚠️ 3D модель не найдена. Добавьте модель в папку models/ на сервере.', 'warning');
     }, initDelay); // Увеличенная задержка для надежной инициализации
 }
 
