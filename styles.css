@@ -63,14 +63,17 @@ body {
     transform: scale(1.05);
 }
 
-.apple-logo {
+.apple-logo,
+.apple-logo-fallback {
     flex-shrink: 0;
     width: 32px;
     height: 32px;
     transition: transform 0.3s ease;
+    object-fit: contain;
 }
 
-.logo:hover .apple-logo {
+.logo:hover .apple-logo,
+.logo:hover .apple-logo-fallback {
     transform: rotate(-10deg) scale(1.1);
 }
 
