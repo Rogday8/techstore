@@ -1508,10 +1508,6 @@ model-viewer {
         background: #ffffff;
     }
     
-    .modal-image img {
-        background: #ffffff;
-    }
-    
     .modal-details h2 {
         font-size: 1.8rem;
     }
