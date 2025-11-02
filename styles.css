@@ -1123,6 +1123,32 @@ model-viewer {
     border-bottom-color: var(--accent);
 }
 
+.btn-map {
+    margin-top: 1rem;
+    padding: 0.8rem 1.5rem;
+    background: var(--accent);
+    color: var(--text-inverse);
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    font-family: 'Space Grotesk', sans-serif;
+    border: 1px solid var(--accent);
+}
+
+.btn-map:hover {
+    background: transparent;
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.btn-map:active {
+    transform: translateY(0);
+}
+
 .contact-info {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1684,6 +1710,12 @@ model-viewer {
     .about-card,
     .contact-card {
         padding: 1.5rem;
+    }
+    
+    .btn-map {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.85rem;
+        width: 100%;
     }
     
     .contact-info {

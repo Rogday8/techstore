@@ -1462,6 +1462,12 @@ function closeContactModal() {
     document.getElementById('contactModal').style.display = 'none';
 }
 
+// Открытие карты Яндекс в новом окне
+function openYandexMap() {
+    const mapUrl = 'https://yandex.ru/profile/1725823890?lang=ru&no-distribution=1&view-state=mini&source=wizbiz_new_map_single';
+    window.open(mapUrl, '_blank', 'noopener,noreferrer');
+}
+
 // Отправка заказа
 function submitOrder(event) {
     event.preventDefault();
