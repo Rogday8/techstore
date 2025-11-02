@@ -1008,6 +1008,18 @@ function updateTrackRange() {
     
     track.style.setProperty('--track-left', `${leftPercent}%`);
     track.style.setProperty('--track-right', `${rightPercent}%`);
+    
+    // Обновляем z-index в зависимости от позиции для лучшего взаимодействия
+    // Когда min близко к max справа, делаем max активным
+    // Когда max близко к min слева, делаем min активным
+    const distance = max - min;
+    const totalRange = maxValue;
+    const threshold = totalRange * 0.1; // 10% от общего диапазона
+    
+    if (distance < threshold) {
+        // Если ползунки близко, приоритет зависит от направления движения
+        // Это обрабатывается через события
+    }
 }
 
 // Обновление фильтра по цене

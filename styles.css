@@ -329,6 +329,8 @@ body {
     border-radius: 3px;
     pointer-events: none;
     z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .price-slider-track::after {
@@ -346,18 +348,38 @@ body {
 .price-slider {
     position: absolute;
     width: 100%;
-    height: 6px;
+    height: 40px;
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
     outline: none;
-    border-radius: 3px;
+    border: none;
+    border-radius: 0;
     cursor: pointer;
     z-index: 2;
     margin: 0;
     padding: 0;
-    transition: all 0.15s ease-out;
+    top: 0;
+    left: 0;
+    transition: none;
     pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.price-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    border: none;
+    border-radius: 3px;
+}
+
+.price-slider::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    border: none;
+    border-radius: 3px;
 }
 
 .price-slider-min {
@@ -365,17 +387,15 @@ body {
 }
 
 .price-slider-max {
-    z-index: 2;
-}
-
-.price-slider-min:active,
-.price-slider-min:hover {
     z-index: 4;
 }
 
-.price-slider-max:active,
-.price-slider-max:hover {
-    z-index: 3;
+.price-slider-min:active {
+    z-index: 5;
+}
+
+.price-slider-max:active {
+    z-index: 5;
 }
 
 .price-slider-min::-webkit-slider-thumb {
