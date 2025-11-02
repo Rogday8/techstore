@@ -311,6 +311,11 @@ body {
     width: 100%;
     padding: 1rem 0;
     position: relative;
+    pointer-events: none;
+}
+
+.price-slider-container * {
+    pointer-events: auto;
 }
 
 .dual-range-slider {
@@ -319,6 +324,7 @@ body {
     height: 40px;
     display: flex;
     align-items: center;
+    pointer-events: none;
 }
 
 .price-slider-track {
@@ -327,7 +333,7 @@ body {
     height: 6px;
     background: var(--bg-light);
     border-radius: 3px;
-    pointer-events: none;
+    pointer-events: none !important;
     z-index: 1;
     top: 50%;
     transform: translateY(-50%);
@@ -390,11 +396,11 @@ body {
 }
 
 .price-slider-min {
-    z-index: 5;
+    z-index: 6;
 }
 
 .price-slider-max {
-    z-index: 6;
+    z-index: 5;
 }
 
 .price-slider-min::-webkit-slider-thumb {

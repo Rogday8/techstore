@@ -998,29 +998,33 @@ function debouncePriceFilter() {
 function setupDualSlider() {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
+    const container = document.getElementById('dualRangeSlider');
     
-    if (!sliderMin || !sliderMax) return;
+    if (!sliderMin || !sliderMax || !container) return;
     
-    // Обе точки с одинаковым z-index по умолчанию - правая выше
-    sliderMin.style.zIndex = '5';
-    sliderMax.style.zIndex = '6';
+    // Левая точка выше по умолчанию
+    sliderMin.style.zIndex = '6';
+    sliderMax.style.zIndex = '5';
     
     // При взаимодействии поднимаем активный слайдер максимально высоко
     const activateSlider = (slider) => {
         if (slider === sliderMin) {
             sliderMin.style.zIndex = '10';
-            sliderMax.style.zIndex = '6';
+            sliderMax.style.zIndex = '5';
         } else {
             sliderMax.style.zIndex = '10';
-            sliderMin.style.zIndex = '5';
+            sliderMin.style.zIndex = '6';
         }
     };
     
     // Возврат к нормальному состоянию после взаимодействия
     const deactivateSlider = () => {
-        sliderMin.style.zIndex = '5';
-        sliderMax.style.zIndex = '6';
+        sliderMin.style.zIndex = '6';
+        sliderMax.style.zIndex = '5';
     };
+    
+    // Отключаем клики по контейнеру и треку
+    container.style.pointerEvents = 'none';
     
     // Обработчики для левого слайдера
     sliderMin.addEventListener('mousedown', (e) => {
