@@ -1013,31 +1013,27 @@ function setupDualSlider() {
     sliderMin.style.zIndex = '5';
     sliderMax.style.zIndex = '6'; // Правая точка выше по умолчанию
     
-    // Функция для обработки клика по левому слайдеру
+    // Функция для обработки взаимодействия с левым слайдером - только управляем z-index
     const handleMinInteraction = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
+        e.stopPropagation(); // Останавливаем всплытие, но НЕ блокируем стандартное поведение
         sliderMin.style.zIndex = '10';
         sliderMax.style.zIndex = '6';
     };
     
-    // Функция для обработки клика по правому слайдеру
+    // Функция для обработки взаимодействия с правым слайдером - только управляем z-index
     const handleMaxInteraction = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
+        e.stopPropagation(); // Останавливаем всплытие, но НЕ блокируем стандартное поведение
         sliderMax.style.zIndex = '10';
         sliderMin.style.zIndex = '5';
     };
     
-    // Обработчики для левого слайдера
+    // Обработчики для левого слайдера - только для управления z-index при начале перетаскивания
     sliderMin.addEventListener('mousedown', handleMinInteraction, { capture: true });
     sliderMin.addEventListener('touchstart', handleMinInteraction, { capture: true });
-    sliderMin.addEventListener('click', (e) => e.stopPropagation(), { capture: true });
     
-    // Обработчики для правого слайдера
+    // Обработчики для правого слайдера - только для управления z-index при начале перетаскивания
     sliderMax.addEventListener('mousedown', handleMaxInteraction, { capture: true });
     sliderMax.addEventListener('touchstart', handleMaxInteraction, { capture: true });
-    sliderMax.addEventListener('click', (e) => e.stopPropagation(), { capture: true });
     
     // Возврат z-index после окончания перетаскивания
     const resetZIndex = () => {
