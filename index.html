@@ -111,7 +111,11 @@
                     <span id="priceRange" class="price-range-display">0 ₽ - 500 000 ₽</span>
                 </div>
                 <div class="price-slider-container">
-                    <input type="range" id="priceSlider" class="price-slider" min="0" max="500000" step="5000" value="500000" oninput="updatePriceFilter(this.value)" onchange="updatePriceFilter(this.value)">
+                    <div class="dual-range-slider">
+                        <input type="range" id="priceSliderMin" class="price-slider price-slider-min" min="0" max="500000" step="1000" value="0" oninput="updatePriceFilter('min', this.value)" onchange="updatePriceFilter('min', this.value)">
+                        <input type="range" id="priceSliderMax" class="price-slider price-slider-max" min="0" max="500000" step="1000" value="500000" oninput="updatePriceFilter('max', this.value)" onchange="updatePriceFilter('max', this.value)">
+                        <div class="price-slider-track"></div>
+                    </div>
                 </div>
             </div>
             <div class="products-grid" id="productsGrid">

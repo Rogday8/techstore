@@ -534,11 +534,21 @@ let maxPrice = 500000;
 window.addEventListener('DOMContentLoaded', async () => {
     // Вычисляем максимальную цену для слайдера
     const maxProductPrice = Math.max(...products.map(p => p.price));
-    maxPrice = Math.ceil(maxProductPrice / 10000) * 10000; // Округляем до 10000
-    const priceSlider = document.getElementById('priceSlider');
-    if (priceSlider) {
-        priceSlider.max = maxPrice;
-        priceSlider.value = maxPrice;
+    const calculatedMaxPrice = Math.ceil(maxProductPrice / 10000) * 10000; // Округляем до 10000
+    maxPrice = calculatedMaxPrice;
+    
+    const priceSliderMin = document.getElementById('priceSliderMin');
+    const priceSliderMax = document.getElementById('priceSliderMax');
+    if (priceSliderMin && priceSliderMax) {
+        priceSliderMin.max = calculatedMaxPrice;
+        priceSliderMax.max = calculatedMaxPrice;
+        priceSliderMin.value = minPrice;
+        priceSliderMax.value = maxPrice;
+        
+        // Обновляем визуальный индикатор после небольшой задержки
+        setTimeout(() => {
+            updateTrackRange();
+        }, 100);
     }
     const priceDisplay = document.getElementById('priceRange');
     if (priceDisplay) {
@@ -972,14 +982,75 @@ function filterProducts(category) {
     renderProducts();
 }
 
+// Debounce для плавной фильтрации
+let priceFilterTimeout;
+function debouncePriceFilter() {
+    clearTimeout(priceFilterTimeout);
+    priceFilterTimeout = setTimeout(() => {
+        renderProducts();
+    }, 150);
+}
+
+// Обновление визуального индикатора диапазона
+function updateTrackRange() {
+    const sliderMin = document.getElementById('priceSliderMin');
+    const sliderMax = document.getElementById('priceSliderMax');
+    const track = document.querySelector('.price-slider-track');
+    
+    if (!sliderMin || !sliderMax || !track) return;
+    
+    const min = parseInt(sliderMin.value);
+    const max = parseInt(sliderMax.value);
+    const maxValue = parseInt(sliderMax.max);
+    
+    const leftPercent = (min / maxValue) * 100;
+    const rightPercent = (max / maxValue) * 100;
+    
+    track.style.setProperty('--track-left', `${leftPercent}%`);
+    track.style.setProperty('--track-right', `${rightPercent}%`);
+}
+
 // Обновление фильтра по цене
-function updatePriceFilter(value) {
-    maxPrice = parseInt(value);
+function updatePriceFilter(type, value) {
+    const sliderMin = document.getElementById('priceSliderMin');
+    const sliderMax = document.getElementById('priceSliderMax');
+    
+    if (type === 'min') {
+        minPrice = parseInt(value);
+        // Обеспечиваем, чтобы min не был больше max
+        if (minPrice > maxPrice) {
+            minPrice = maxPrice;
+            if (sliderMin) sliderMin.value = minPrice;
+        }
+        // Обеспечиваем, чтобы max был не меньше min
+        if (sliderMax && parseInt(sliderMax.value) < minPrice) {
+            sliderMax.value = minPrice;
+            maxPrice = minPrice;
+        }
+    } else if (type === 'max') {
+        maxPrice = parseInt(value);
+        // Обеспечиваем, чтобы max не был меньше min
+        if (maxPrice < minPrice) {
+            maxPrice = minPrice;
+            if (sliderMax) sliderMax.value = maxPrice;
+        }
+        // Обеспечиваем, чтобы min был не больше max
+        if (sliderMin && parseInt(sliderMin.value) > maxPrice) {
+            sliderMin.value = maxPrice;
+            minPrice = maxPrice;
+        }
+    }
+    
+    // Обновляем визуальный индикатор
+    updateTrackRange();
+    
     const priceDisplay = document.getElementById('priceRange');
     if (priceDisplay) {
         priceDisplay.textContent = `${minPrice.toLocaleString()} ₽ - ${maxPrice.toLocaleString()} ₽`;
     }
-    renderProducts();
+    
+    // Используем debounce для плавной фильтрации
+    debouncePriceFilter();
 }
 
 // Открытие окна Trade-in
