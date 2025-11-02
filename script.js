@@ -1015,25 +1015,38 @@ function setupDualSlider() {
     
     // Функция для обработки взаимодействия с левым слайдером - только управляем z-index
     const handleMinInteraction = (e) => {
-        // НЕ используем stopPropagation - позволяем событиям работать нормально
         sliderMin.style.zIndex = '10';
         sliderMax.style.zIndex = '6';
     };
     
     // Функция для обработки взаимодействия с правым слайдером - только управляем z-index
     const handleMaxInteraction = (e) => {
-        // НЕ используем stopPropagation - позволяем событиям работать нормально
         sliderMax.style.zIndex = '10';
         sliderMin.style.zIndex = '5';
     };
     
-    // Обработчики для левого слайдера - БЕЗ capture, чтобы не блокировать стандартные события
+    // Обработчики для левого слайдера - только для z-index
     sliderMin.addEventListener('mousedown', handleMinInteraction);
     sliderMin.addEventListener('touchstart', handleMinInteraction);
     
-    // Обработчики для правого слайдера - БЕЗ capture, чтобы не блокировать стандартные события
+    // Обработчики для правого слайдера - только для z-index
     sliderMax.addEventListener('mousedown', handleMaxInteraction);
     sliderMax.addEventListener('touchstart', handleMaxInteraction);
+    
+    // Добавляем явные обработчики input и change для гарантированной работы
+    sliderMin.addEventListener('input', function(e) {
+        updatePriceFilter('min', this.value);
+    });
+    sliderMin.addEventListener('change', function(e) {
+        updatePriceFilter('min', this.value);
+    });
+    
+    sliderMax.addEventListener('input', function(e) {
+        updatePriceFilter('max', this.value);
+    });
+    sliderMax.addEventListener('change', function(e) {
+        updatePriceFilter('max', this.value);
+    });
     
     // Возврат z-index после окончания перетаскивания
     const resetZIndex = () => {
