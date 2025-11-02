@@ -1408,25 +1408,36 @@ model-viewer {
         justify-content: space-between;
         align-items: center;
         flex-wrap: nowrap;
-        gap: 0.5rem;
-        padding: 0 15px;
+        gap: 0.3rem;
+        padding: 0 10px;
+        max-width: 100%;
+        overflow: hidden;
     }
     
     .logo {
-        font-size: 1.4rem;
+        font-size: 1rem;
         flex: 1;
         order: 2;
-        gap: 0.5rem;
+        gap: 0.3rem;
+        min-width: 0;
+        overflow: hidden;
+    }
+    
+    .logo-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     .apple-logo {
-        width: 40px;
-        height: 40px;
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
     }
     
     .logo-accent {
-        padding: 0.1rem 0.4rem;
-        font-size: 0.9em;
+        padding: 0.08rem 0.3rem;
+        font-size: 0.85em;
     }
     
     .nav {
@@ -1449,11 +1460,13 @@ model-viewer {
     }
     
     .cart-icon {
-        font-size: 0.85rem;
-        padding: 0.5rem;
+        font-size: 0.75rem;
+        padding: 0.3rem;
         order: 3;
-        min-width: 50px;
+        min-width: 45px;
+        max-width: 45px;
         text-align: center;
+        flex-shrink: 0;
     }
     
     .cart-count {
