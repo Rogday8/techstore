@@ -388,11 +388,11 @@ body {
 }
 
 .price-slider-min {
-    z-index: 6;
+    z-index: 5;
 }
 
 .price-slider-max {
-    z-index: 5;
+    z-index: 6;
 }
 
 .price-slider-min::-webkit-slider-thumb {

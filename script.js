@@ -994,42 +994,53 @@ function debouncePriceFilter() {
     }, 150);
 }
 
-// Настройка двойного слайдера - простая и надежная реализация
+// Настройка двойного слайдера - обе точки работают независимо
 function setupDualSlider() {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
     
     if (!sliderMin || !sliderMax) return;
     
-    // Простая установка z-index - левая точка всегда выше правой
-    // Это обеспечивает доступность обеих точек
-    sliderMin.style.zIndex = '6';
-    sliderMax.style.zIndex = '5';
+    // Обе точки с одинаковым z-index по умолчанию - правая выше
+    sliderMin.style.zIndex = '5';
+    sliderMax.style.zIndex = '6';
     
-    // При взаимодействии поднимаем активный слайдер выше
+    // При взаимодействии поднимаем активный слайдер максимально высоко
     const activateSlider = (slider) => {
         if (slider === sliderMin) {
             sliderMin.style.zIndex = '10';
-            sliderMax.style.zIndex = '5';
+            sliderMax.style.zIndex = '6';
         } else {
             sliderMax.style.zIndex = '10';
-            sliderMin.style.zIndex = '6';
+            sliderMin.style.zIndex = '5';
         }
     };
     
     // Возврат к нормальному состоянию после взаимодействия
     const deactivateSlider = () => {
-        sliderMin.style.zIndex = '6';
-        sliderMax.style.zIndex = '5';
+        sliderMin.style.zIndex = '5';
+        sliderMax.style.zIndex = '6';
     };
     
     // Обработчики для левого слайдера
-    sliderMin.addEventListener('mousedown', () => activateSlider(sliderMin));
-    sliderMin.addEventListener('touchstart', () => activateSlider(sliderMin));
+    sliderMin.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        activateSlider(sliderMin);
+    });
+    sliderMin.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        activateSlider(sliderMin);
+    });
     
     // Обработчики для правого слайдера
-    sliderMax.addEventListener('mousedown', () => activateSlider(sliderMax));
-    sliderMax.addEventListener('touchstart', () => activateSlider(sliderMax));
+    sliderMax.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        activateSlider(sliderMax);
+    });
+    sliderMax.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        activateSlider(sliderMax);
+    });
     
     // Возврат после окончания перетаскивания
     document.addEventListener('mouseup', deactivateSlider);
