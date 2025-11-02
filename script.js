@@ -811,9 +811,16 @@ function renderProducts() {
         let productImages = product.images;
         let productImage = product.image;
         if (product.hasColors && product.colors) {
-            const selectedColor = currentProductColor[product.id] || Object.keys(product.colors)[0];
+            // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
+            const defaultColor = product.id === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+            const selectedColor = currentProductColor[product.id] || defaultColor;
             productImages = product.colors[selectedColor].images;
             productImage = product.colors[selectedColor].image;
+            
+            // Сохраняем выбранный цвет если его еще нет
+            if (!currentProductColor[product.id]) {
+                currentProductColor[product.id] = selectedColor;
+            }
         }
         
         return `
@@ -845,8 +852,15 @@ function renderProducts() {
         // Определяем изображения в зависимости от выбранного цвета
         let productImages = product.images;
         if (product.hasColors && product.colors) {
-            const selectedColor = currentProductColor[product.id] || Object.keys(product.colors)[0];
+            // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
+            const defaultColor = product.id === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+            const selectedColor = currentProductColor[product.id] || defaultColor;
             productImages = product.colors[selectedColor].images;
+            
+            // Сохраняем выбранный цвет если его еще нет
+            if (!currentProductColor[product.id]) {
+                currentProductColor[product.id] = selectedColor;
+            }
         }
         
         if (productImages && productImages.length > 1) {
@@ -909,8 +923,15 @@ function updateCarouselPosition(productId, withBounce = false) {
     // Определяем количество изображений в зависимости от выбранного цвета
     let imagesArray = product.images;
     if (product.hasColors && product.colors) {
-        const selectedColor = currentProductColor[productId] || Object.keys(product.colors)[0];
+        // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
+        const defaultColor = productId === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+        const selectedColor = currentProductColor[productId] || defaultColor;
         imagesArray = product.colors[selectedColor].images;
+        
+        // Сохраняем выбранный цвет если его еще нет
+        if (!currentProductColor[productId]) {
+            currentProductColor[productId] = selectedColor;
+        }
     }
     const maxIndex = imagesArray ? imagesArray.length - 1 : 0;
     
@@ -1026,8 +1047,15 @@ function openModal(productId) {
     // Определяем изображения в зависимости от выбранного цвета
     let modalImages = product.images;
     if (product.hasColors && product.colors) {
-        const selectedColor = currentProductColor[productId] || Object.keys(product.colors)[0];
+        // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
+        const defaultColor = productId === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+        const selectedColor = currentProductColor[productId] || defaultColor;
         modalImages = product.colors[selectedColor].images;
+        
+        // Сохраняем выбранный цвет если его еще нет
+        if (!currentProductColor[productId]) {
+            currentProductColor[productId] = selectedColor;
+        }
     }
     
     content.innerHTML = `
@@ -1051,11 +1079,14 @@ function openModal(productId) {
                 <p class="modal-description">${product.description}</p>
                 ${product.hasColors && product.colors ? `
                     <div class="modal-colors">
-                        ${Object.keys(product.colors).map(color => `
-                            <button class="color-btn ${(currentProductColor[productId] || Object.keys(product.colors)[0]) === color ? 'active' : ''}" 
+                        ${Object.keys(product.colors).map(color => {
+                            const defaultColor = productId === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+                            const isActive = (currentProductColor[productId] || defaultColor) === color;
+                            return `
+                            <button class="color-btn ${isActive ? 'active' : ''}" 
                                     onclick="selectColor(${productId}, '${color}');"
                                     title="${color}"></button>
-                        `).join('')}
+                        `}).join('')}
                     </div>
                 ` : ''}
                 ${product.has3D ? `<button class="btn-3d" onclick="view3D('${product.model3D}', ${productId})">👁️ Просмотр 3D модели</button>` : ''}
@@ -1096,8 +1127,15 @@ function updateModalCarouselPosition(productId, withBounce = false) {
     // Определяем количество изображений в зависимости от выбранного цвета
     let imagesArray = product.images;
     if (product.hasColors && product.colors) {
-        const selectedColor = currentProductColor[productId] || Object.keys(product.colors)[0];
+        // Для iPhone 15 Pro Max по умолчанию выбираем "Черный"
+        const defaultColor = productId === 1 && product.colors["Черный"] ? "Черный" : Object.keys(product.colors)[0];
+        const selectedColor = currentProductColor[productId] || defaultColor;
         imagesArray = product.colors[selectedColor].images;
+        
+        // Сохраняем выбранный цвет если его еще нет
+        if (!currentProductColor[productId]) {
+            currentProductColor[productId] = selectedColor;
+        }
     }
     const maxIndex = imagesArray ? imagesArray.length - 1 : 0;
     
