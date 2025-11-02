@@ -1034,20 +1034,8 @@ function setupDualSlider() {
         }
     }
     
-    // Обработчик клика на контейнер для активации ближайшего слайдера
-    container.addEventListener('mousedown', (e) => {
-        if (e.target !== sliderMin && e.target !== sliderMax) {
-            const activeSlider = getActiveSlider(e);
-            activateSlider(activeSlider);
-        }
-    });
-    
-    container.addEventListener('touchstart', (e) => {
-        if (e.target !== sliderMin && e.target !== sliderMax) {
-            const activeSlider = getActiveSlider(e);
-            activateSlider(activeSlider);
-        }
-    });
+    // Убираем клики по полосе - можно только перетаскивать точки
+    // Удаляем обработчики кликов на контейнере
     
     // Активация при взаимодействии с самими слайдерами
     sliderMin.addEventListener('mousedown', () => {
