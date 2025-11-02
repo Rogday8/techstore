@@ -52,6 +52,19 @@ body {
     font-family: 'Space Grotesk', sans-serif;
     color: var(--accent);
     letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.logo-accent {
+    color: var(--text-inverse);
+    background: linear-gradient(135deg, var(--accent), #000000);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .nav {
@@ -1379,6 +1392,11 @@ model-viewer {
         order: 2;
     }
     
+    .logo-accent {
+        padding: 0.1rem 0.4rem;
+        font-size: 0.9em;
+    }
+    
     .nav {
         display: none !important;
     }
@@ -1852,6 +1870,11 @@ model-viewer {
     
     .logo {
         font-size: 1.3rem;
+    }
+    
+    .logo-accent {
+        padding: 0.08rem 0.35rem;
+        font-size: 0.85em;
     }
     
     /* Notification Small Mobile */
