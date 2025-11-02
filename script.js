@@ -76,7 +76,8 @@ const products = [
             "Корпус: Титан, защита IP68"
         ],
         has3D: true,
-        model3D: "models/iphone 15 pro max black/apple_iphone_15_pro_max_black.glb"
+        model3D: "models/iphone 15 pro max black/apple_iphone_15_pro_max_black.glb",
+        hasTradeIn: true
     },
     {
         id: 2,
@@ -126,7 +127,8 @@ const products = [
             "Дополнительно: S Pen в комплекте"
         ],
         has3D: true,
-        model3D: "models/samsung_s24_ultra.glb"
+        model3D: "models/samsung_s24_ultra.glb",
+        hasTradeIn: true
     },
     {
         id: 3,
@@ -524,8 +526,25 @@ let isAdminAuthorized = localStorage.getItem('adminAuthorized') === 'true';
 // Текущая выбранная категория
 let currentCategory = 'all';
 
+// Фильтрация по цене
+let minPrice = 0;
+let maxPrice = 500000;
+
 // Инициализация
 window.addEventListener('DOMContentLoaded', async () => {
+    // Вычисляем максимальную цену для слайдера
+    const maxProductPrice = Math.max(...products.map(p => p.price));
+    maxPrice = Math.ceil(maxProductPrice / 10000) * 10000; // Округляем до 10000
+    const priceSlider = document.getElementById('priceSlider');
+    if (priceSlider) {
+        priceSlider.max = maxPrice;
+        priceSlider.value = maxPrice;
+    }
+    const priceDisplay = document.getElementById('priceRange');
+    if (priceDisplay) {
+        priceDisplay.textContent = `${minPrice.toLocaleString()} ₽ - ${maxPrice.toLocaleString()} ₽`;
+    }
+    
     renderProducts();
     renderCart();
     updateCartCount();
@@ -851,6 +870,9 @@ function renderProducts() {
         filteredProducts = products.filter(p => p.category === currentCategory);
     }
     
+    // Фильтруем товары по цене
+    filteredProducts = filteredProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
+    
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = filteredProducts.map(product => {
         // Инициализируем индекс для каждого товара
@@ -942,10 +964,41 @@ function filterProducts(category) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
     
     // Перерисовываем товары
     renderProducts();
+}
+
+// Обновление фильтра по цене
+function updatePriceFilter(value) {
+    maxPrice = parseInt(value);
+    const priceDisplay = document.getElementById('priceRange');
+    if (priceDisplay) {
+        priceDisplay.textContent = `${minPrice.toLocaleString()} ₽ - ${maxPrice.toLocaleString()} ₽`;
+    }
+    renderProducts();
+}
+
+// Открытие окна Trade-in
+function openTradeIn(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    const tradeInValue = Math.round(product.price * 0.6); // Примерно 60% от цены
+    const confirmation = confirm(
+        `💳 Trade-in для ${product.name}\n\n` +
+        `Оценочная стоимость вашего устройства: ${tradeInValue.toLocaleString()} ₽\n\n` +
+        `Вы можете обменять ваш старый смартфон на ${product.name} со скидкой!\n\n` +
+        `Остаток к доплате: ${(product.price - tradeInValue).toLocaleString()} ₽\n\n` +
+        `Оставить заявку на Trade-in?`
+    );
+    
+    if (confirmation) {
+        showNotification(`✅ Заявка на Trade-in для ${product.name} отправлена! Мы свяжемся с вами в ближайшее время.`);
+    }
 }
 
 // Выбор цвета товара
@@ -1144,6 +1197,7 @@ function openModal(productId) {
                     </div>
                 ` : ''}
                 ${product.has3D ? `<button class="btn-3d" onclick="view3D('${product.model3D}', ${productId})">👁️ Просмотр 3D модели</button>` : ''}
+                ${product.hasTradeIn ? `<button class="btn-trade-in" onclick="openTradeIn(${productId})">🔄 Trade-in</button>` : ''}
                 <div class="modal-actions">
                     <button class="btn-add-to-cart" onclick="addToCart(${product.id}); closeModal();">
                         Добавить в корзину

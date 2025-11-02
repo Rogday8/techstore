@@ -105,6 +105,15 @@
                 <button class="filter-btn" onclick="filterProducts('Чехлы')">Чехлы</button>
                 <button class="filter-btn" onclick="filterProducts('Аксессуары')">Аксессуары</button>
             </div>
+            <div class="price-filter">
+                <div class="price-filter-header">
+                    <span>Фильтр по цене:</span>
+                    <span id="priceRange" class="price-range-display">0 ₽ - 500 000 ₽</span>
+                </div>
+                <div class="price-slider-container">
+                    <input type="range" id="priceSlider" class="price-slider" min="0" max="500000" step="5000" value="500000" oninput="updatePriceFilter(this.value)" onchange="updatePriceFilter(this.value)">
+                </div>
+            </div>
             <div class="products-grid" id="productsGrid">
                 <!-- Товары будут добавлены через JavaScript -->
             </div>
