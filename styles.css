@@ -398,11 +398,13 @@ body {
 .price-slider-min {
     z-index: 5;
     pointer-events: auto !important;
+    position: relative;
 }
 
 .price-slider-max {
-    z-index: 5;
+    z-index: 6;
     pointer-events: auto !important;
+    position: relative;
 }
 
 .price-slider-min::-webkit-slider-thumb {
