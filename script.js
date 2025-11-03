@@ -1497,14 +1497,24 @@ function showNotification(message, type = 'success') {
     notification.className = 'notification';
     notification.textContent = message;
     
-    // Разные цвета для разных типов
-    let bgColor = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    // Строгий стиль - разные цвета для разных типов (без градиентов)
+    let bgColor = '#1a1a1a';
+    let textColor = '#ffffff';
+    let borderColor = '#000000';
+    let borderWidth = '2px';
+    
     if (type === 'warning') {
-        bgColor = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+        bgColor = '#ff9800';
+        textColor = '#000000';
+        borderColor = '#e68900';
     } else if (type === 'info') {
-        bgColor = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+        bgColor = '#2196f3';
+        textColor = '#ffffff';
+        borderColor = '#0b7dda';
     } else if (type === 'error') {
-        bgColor = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+        bgColor = '#f44336';
+        textColor = '#ffffff';
+        borderColor = '#d32f2f';
     }
     
     // Устанавливаем начальное состояние - элемент за левым краем экрана
@@ -1513,13 +1523,17 @@ function showNotification(message, type = 'success') {
         top: 100px;
         left: -500px;
         background: ${bgColor};
-        color: white;
-        padding: 20px 30px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        color: ${textColor};
+        padding: 16px 24px;
+        border: ${borderWidth} solid ${borderColor};
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 3000;
         opacity: 0;
         white-space: nowrap;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 0.3px;
     `;
     
     // Добавляем элемент в DOM сначала
