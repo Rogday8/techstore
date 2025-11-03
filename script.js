@@ -1522,7 +1522,7 @@ function showNotification(message, type = 'success') {
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-out';
+        notification.style.animation = 'slideOut 0.3s ease-in forwards';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
