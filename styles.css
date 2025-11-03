@@ -1544,24 +1544,24 @@ model-viewer {
     }
 }
 
-@keyframes slideIn {
+@keyframes slideInFromLeft {
     from {
-        transform: translateX(-100%);
+        left: -500px;
         opacity: 0;
     }
     to {
-        transform: translateX(0);
+        left: 30px;
         opacity: 1;
     }
 }
 
-@keyframes slideOut {
+@keyframes slideOutToLeft {
     from {
-        transform: translateX(0);
+        left: 30px;
         opacity: 1;
     }
     to {
-        transform: translateX(-150%);
+        left: -500px;
         opacity: 0;
     }
 }

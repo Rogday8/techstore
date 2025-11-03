@@ -1510,19 +1510,19 @@ function showNotification(message, type = 'success') {
     notification.style.cssText = `
         position: fixed;
         top: 100px;
-        left: 30px;
+        left: -500px;
         background: ${bgColor};
         color: white;
         padding: 20px 30px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         z-index: 3000;
-        animation: slideIn 0.3s ease-out;
+        animation: slideInFromLeft 0.3s ease-out forwards;
     `;
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-in forwards';
+        notification.style.animation = 'slideOutToLeft 0.3s ease-in forwards';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
