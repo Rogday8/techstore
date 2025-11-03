@@ -1507,6 +1507,7 @@ function showNotification(message, type = 'success') {
         bgColor = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
     }
     
+    // Устанавливаем начальное состояние - элемент за левым краем экрана
     notification.style.cssText = `
         position: fixed;
         top: 100px;
@@ -1517,11 +1518,21 @@ function showNotification(message, type = 'success') {
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         z-index: 3000;
-        animation: slideInFromLeft 0.3s ease-out forwards;
+        opacity: 0;
+        white-space: nowrap;
     `;
+    
+    // Добавляем элемент в DOM сначала
     document.body.appendChild(notification);
     
+    // Принудительный рефлоу для применения начального состояния
+    notification.offsetHeight;
+    
+    // Запускаем анимацию появления слева
+    notification.style.animation = 'slideInFromLeft 0.3s ease-out forwards';
+    
     setTimeout(() => {
+        // Анимация исчезновения влево
         notification.style.animation = 'slideOutToLeft 0.3s ease-in forwards';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
