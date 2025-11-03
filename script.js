@@ -1510,7 +1510,7 @@ function showNotification(message, type = 'success') {
     notification.style.cssText = `
         position: fixed;
         top: 100px;
-        right: 30px;
+        left: 30px;
         background: ${bgColor};
         color: white;
         padding: 20px 30px;

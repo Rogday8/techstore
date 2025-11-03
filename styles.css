@@ -2068,8 +2068,8 @@ model-viewer {
     
     /* Notification Mobile */
     .notification {
-        right: 15px !important;
         left: 15px !important;
+        right: auto !important;
         max-width: calc(100% - 30px) !important;
         top: 80px !important;
         padding: 15px 20px !important;
