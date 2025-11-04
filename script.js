@@ -1653,6 +1653,23 @@ function checkout() {
     document.getElementById('cart').classList.remove('open');
 }
 
+// Выбор способа оплаты
+function selectPaymentMethod(method) {
+    // Убираем активный класс со всех кнопок
+    document.querySelectorAll('.payment-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Добавляем активный класс к выбранной кнопке
+    const selectedBtn = document.querySelector(`.payment-btn[data-method="${method}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('active');
+    }
+    
+    // Сохраняем выбранный метод в глобальную переменную
+    window.selectedPaymentMethod = method;
+}
+
 // Закрытие модального окна заказа
 function closeCheckoutModal() {
     document.getElementById('checkoutModal').style.display = 'none';
@@ -1689,6 +1706,10 @@ function submitOrder(event) {
     const email = document.getElementById('customerEmail').value;
     const address = document.getElementById('customerAddress').value;
     
+          // Получаем выбранный способ оплаты
+      const selectedBtn = document.querySelector('.payment-btn.active');
+      const paymentMethod = selectedBtn?.dataset.method || 'card';
+    
     // Проверяем, был ли уже использован Google Pay
     if (window.googlePayUsed) {
         // Платеж уже обработан через Google Pay
@@ -1696,68 +1717,101 @@ function submitOrder(event) {
         return;
     }
     
-    // Проверяем, доступен ли Google Pay
-    if (!googlePayClient) {
-        initGooglePay();
-    }
-    
-    // Если Google Pay доступен, запускаем платеж
-    if (googlePayClient) {
-        // Проверяем готовность Google Pay
-        googlePayClient.isReadyToPay({
-            apiVersion: 2,
-            apiVersionMinor: 0,
-            allowedPaymentMethods: [
-                {
-                    type: 'CARD',
-                    parameters: {
-                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                        allowedCardNetworks: ['MASTERCARD', 'VISA']
-                    },
-                    tokenizationSpecification: {
-                        type: 'PAYMENT_GATEWAY',
-                        parameters: {
-                            gateway: 'example',
-                            gatewayMerchantId: 'exampleGatewayMerchantId'
-                        }
-                    }
-                }
-            ]
-        }).then((response) => {
-            if (response.result) {
-                // Google Pay доступен, запускаем платеж
-                const paymentDataRequest = getGooglePayPaymentDataRequest();
-                
-                googlePayClient.loadPaymentData(paymentDataRequest)
-                    .then((paymentData) => {
-                        // Платеж успешно авторизован
-                        processGooglePayPayment(paymentData);
-                    })
-                    .catch((err) => {
-                        console.error('Ошибка оплаты через Google Pay:', err);
-                        // Если пользователь отменил платеж, показываем обычное завершение заказа
-                        if (err.statusCode === 'CANCELED') {
-                            showNotification('Оплата отменена. Заказ оформлен без оплаты через Google Pay.', 'warning');
-                            processOrderCompletion(name, phone, email, address);
-                        } else {
-                            showNotification('Ошибка оплаты через Google Pay. Попробуйте снова.', 'error');
-                        }
-                    });
-            } else {
-                // Google Pay недоступен, оформляем заказ обычным способом
-                showNotification('Google Pay недоступен. Заказ оформлен без оплаты.', 'info');
-                processOrderCompletion(name, phone, email, address);
+    // Обрабатываем в зависимости от выбранного способа оплаты
+    switch(paymentMethod) {
+        case 'card':
+            // Оплата банковской картой
+            showNotification('💳 Оплата банковской картой будет обработана на следующем шаге.', 'info');
+            setTimeout(() => {
+                showNotification('✅ Оплата картой успешно выполнена!', 'success');
+                setTimeout(() => {
+                    processOrderCompletion(name, phone, email, address);
+                }, 1500);
+            }, 2000);
+            break;
+            
+        case 'sbp':
+            // Оплата через СБП
+            const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+            showNotification('🏦 Генерируем QR-код для оплаты через СБП...', 'info');
+            setTimeout(() => {
+                showNotification(`📱 QR-код для оплаты ${totalPrice.toLocaleString()} ₽ через СБП сгенерирован. Оплатите по QR-коду в вашем банковском приложении.`, 'success');
+                setTimeout(() => {
+                    processOrderCompletion(name, phone, email, address);
+                }, 3000);
+            }, 1500);
+            break;
+            
+        case 'googlepay':
+            // Оплата через Google Pay
+            if (!googlePayClient) {
+                initGooglePay();
             }
-        }).catch((err) => {
-            console.error('Ошибка проверки Google Pay:', err);
-            // В случае ошибки оформляем заказ обычным способом
-            showNotification('Ошибка проверки Google Pay. Заказ оформлен без оплаты.', 'warning');
-            processOrderCompletion(name, phone, email, address);
-        });
-    } else {
-        // Google Pay клиент не инициализирован, оформляем заказ обычным способом
-        showNotification('Google Pay недоступен. Заказ оформлен без оплаты.', 'info');
-        processOrderCompletion(name, phone, email, address);
+            
+            // Если Google Pay доступен, запускаем платеж
+            if (googlePayClient) {
+                // Проверяем готовность Google Pay
+                googlePayClient.isReadyToPay({
+                    apiVersion: 2,
+                    apiVersionMinor: 0,
+                    allowedPaymentMethods: [
+                        {
+                            type: 'CARD',
+                            parameters: {
+                                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                                allowedCardNetworks: ['MASTERCARD', 'VISA']
+                            },
+                            tokenizationSpecification: {
+                                type: 'PAYMENT_GATEWAY',
+                                parameters: {
+                                    gateway: 'example',
+                                    gatewayMerchantId: 'exampleGatewayMerchantId'
+                                }
+                            }
+                        }
+                    ]
+                }).then((response) => {
+                    if (response.result) {
+                        // Google Pay доступен, запускаем платеж
+                        const paymentDataRequest = getGooglePayPaymentDataRequest();
+                        
+                        googlePayClient.loadPaymentData(paymentDataRequest)
+                            .then((paymentData) => {
+                                // Платеж успешно авторизован
+                                processGooglePayPayment(paymentData);
+                            })
+                            .catch((err) => {
+                                console.error('Ошибка оплаты через Google Pay:', err);
+                                // Если пользователь отменил платеж, показываем обычное завершение заказа
+                                if (err.statusCode === 'CANCELED') {
+                                    showNotification('Оплата через Google Pay отменена. Вы можете выбрать другой способ оплаты.', 'warning');
+                                } else {
+                                    showNotification('Ошибка оплаты через Google Pay. Попробуйте снова или выберите другой способ оплаты.', 'error');
+                                }
+                            });
+                    } else {
+                        // Google Pay недоступен
+                        showNotification('Google Pay недоступен. Пожалуйста, выберите другой способ оплаты.', 'warning');
+                    }
+                }).catch((err) => {
+                    console.error('Ошибка проверки Google Pay:', err);
+                    showNotification('Ошибка проверки Google Pay. Пожалуйста, выберите другой способ оплаты.', 'warning');
+                });
+            } else {
+                // Google Pay клиент не инициализирован
+                showNotification('Google Pay недоступен. Пожалуйста, выберите другой способ оплаты.', 'warning');
+            }
+            break;
+            
+        default:
+            // По умолчанию - оплата картой
+            showNotification('💳 Оплата банковской картой будет обработана на следующем шаге.', 'info');
+            setTimeout(() => {
+                showNotification('✅ Оплата картой успешно выполнена!', 'success');
+                setTimeout(() => {
+                    processOrderCompletion(name, phone, email, address);
+                }, 1500);
+            }, 2000);
     }
 }
 

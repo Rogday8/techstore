@@ -1267,26 +1267,64 @@ model-viewer {
     margin-top: 1rem;
 }
 
-/* Google Pay Button Styles */
-#googlePayButton {
+/* Payment Methods Styles */
+.payment-methods-section {
+    margin: 1.5rem 0;
+    padding: 0;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     width: 100%;
-    min-height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 50px;
 }
 
-#googlePayButton button {
+.payment-methods {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
     width: 100%;
-    min-height: 48px;
-    border-radius: 4px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 50px;
 }
 
-#googlePayButton p {
-    text-align: center;
-    color: var(--text-secondary);
+.payment-btn {
+    padding: 14px 20px;
+    border: 1px solid var(--border-color, #e5e5e5);
+    background: var(--text-inverse, #ffffff) !important;
+    color: var(--text-primary, #1a1a1a) !important;
     font-size: 0.9rem;
-    padding: 0.5rem 0;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 0;
+    outline: none;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 48px;
+    min-width: 100px;
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.payment-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.payment-btn.active {
+    background: var(--accent, #007aff) !important;
+    color: var(--text-inverse, #ffffff) !important;
+    border-color: var(--accent, #007aff) !important;
+}
+
+.payment-btn:active {
+    transform: scale(0.98);
 }
 
 .checkout-content h2 {
@@ -2081,6 +2119,18 @@ model-viewer {
     
     .cart-item-info p {
         font-size: 1rem;
+    }
+    
+    /* Payment Methods Mobile */
+    .payment-methods {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .payment-btn {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        width: 100%;
     }
     
     /* About & Contact Mobile */

@@ -202,10 +202,18 @@
                 <input type="email" id="customerEmail" placeholder="Email" required>
                 <textarea id="customerAddress" placeholder="Адрес доставки" required></textarea>
                 
-                <div style="margin: 1.5rem 0; padding: 1rem; background: #f8f8f8; border-radius: 0;">
-                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 400;">Способ оплаты</h3>
-                    <div id="googlePayButton" style="margin-bottom: 1rem;"></div>
-                    <p style="font-size: 0.9rem; color: #666; text-align: center; margin-top: 1rem;">или</p>
+                <div class="payment-methods-section">
+                    <div class="payment-methods">
+                        <button type="button" class="payment-btn active" data-method="card" onclick="selectPaymentMethod('card')">
+                            Банковская карта
+                        </button>
+                        <button type="button" class="payment-btn" data-method="sbp" onclick="selectPaymentMethod('sbp')">
+                            СБП
+                        </button>
+                        <button type="button" class="payment-btn" data-method="googlepay" onclick="selectPaymentMethod('googlepay')">
+                            Google Pay
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn-primary btn-full">Подтвердить заказ</button>
