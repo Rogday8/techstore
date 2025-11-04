@@ -41,12 +41,14 @@ body {
     top: 0;
     z-index: 1000;
     transition: all 0.3s;
+    overflow: visible;
 }
 
 .header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: visible;
 }
 
 .logo {
@@ -60,6 +62,8 @@ body {
     gap: 0.5rem;
     cursor: pointer;
     transition: transform 0.3s ease;
+    overflow: visible;
+    flex-shrink: 0;
 }
 
 .logo:hover {
@@ -145,12 +149,24 @@ body {
     opacity: 1;
 }
 
+.header .container > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow: visible;
+    flex-shrink: 0;
+    padding-right: 0.5rem;
+}
+
 .cart-icon {
     position: relative;
     cursor: pointer;
     font-size: 0.85rem;
     padding: 0.4rem;
+    margin-right: 0.5rem;
     transition: all 0.3s;
+    overflow: visible;
+    flex-shrink: 0;
 }
 
 .cart-icon:hover {
@@ -172,6 +188,8 @@ body {
     font-size: 0.7rem;
     font-weight: 500;
     font-family: 'Inter', sans-serif;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Hero Section */
@@ -1883,28 +1901,33 @@ model-viewer {
     }
     
     .header > .container > div:last-child {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        flex-shrink: 0;
-        gap: 0;
-    }
-    
-    .cart-icon {
-        font-size: 0.85rem;
-        padding: 0.5rem;
-        text-align: center;
-        flex-shrink: 0;
-        margin: 0;
-    }
-    
-    .cart-count {
-        width: 18px;
-        height: 18px;
-        font-size: 0.65rem;
-        top: -3px;
-        right: -3px;
-    }
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          flex-shrink: 0;
+          gap: 0;
+          overflow: visible;
+          padding-right: 0.5rem;
+      }
+      
+      .cart-icon {
+          font-size: 0.85rem;
+          padding: 0.5rem;
+          text-align: center;
+          flex-shrink: 0;
+          margin: 0;
+          overflow: visible;
+      }
+      
+      .cart-count {
+          width: 18px;
+          height: 18px;
+          font-size: 0.65rem;
+          top: -3px;
+          right: -3px;
+          z-index: 10;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
     
     /* Hero Mobile */
     .hero {
@@ -2414,35 +2437,39 @@ model-viewer {
     }
 }
     
-    .header .container {
-        padding: 0 10px;
-        gap: 0.3rem;
-    }
-    
-    .logo {
-        font-size: 0.95rem;
-        gap: 0.3rem;
-        min-width: 0;
-        overflow: hidden;
-    }
-    
-    .logo-text {
-        font-size: 0.85rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .apple-logo {
-        width: 28px;
-        height: 28px;
-        flex-shrink: 0;
-    }
-    
-    .cart-icon {
-        font-size: 0.8rem;
-        padding: 0.3rem;
-    }
+         .header .container {
+          padding: 0 10px;
+          gap: 0.3rem;
+          overflow: visible;
+      }
+      
+      .logo {
+          font-size: 0.95rem;
+          gap: 0.3rem;
+          min-width: 0;
+          overflow: visible;
+          flex-shrink: 0;
+      }
+      
+      .logo-text {
+          font-size: 0.85rem;
+          white-space: nowrap;
+          overflow: visible;
+          text-overflow: clip;
+      }
+      
+      .apple-logo {
+          width: 28px;
+          height: 28px;
+          flex-shrink: 0;
+      }
+      
+      .cart-icon {
+          font-size: 0.8rem;
+          padding: 0.3rem;
+          overflow: visible;
+          margin-right: 0.3rem;
+      }
     
     .logo-accent {
         padding: 0.08rem 0.35rem;
