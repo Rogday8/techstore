@@ -1143,14 +1143,27 @@ function openTradeIn(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
     
-    const tradeInValue = Math.round(product.price * 0.6); // Примерно 60% от цены
+    // Минимальная стоимость устройства для Trade-in: 30% от цены товара
+    const minTradeInValue = Math.round(product.price * 0.3);
+    // Расчетная стоимость устройства: 60% от цены (но не менее минимума)
+    const calculatedTradeInValue = Math.round(product.price * 0.6);
+    const tradeInValue = Math.max(calculatedTradeInValue, minTradeInValue);
     const difference = product.price - tradeInValue;
+    
+    // Сохраняем минимальное значение для валидации
+    window.minTradeInValue = minTradeInValue;
     
     // Заполняем информацию о продукте
     document.getElementById('tradeinProductName').textContent = product.name;
     document.getElementById('tradeinProductPrice').textContent = `${product.price.toLocaleString()} ₽`;
     document.getElementById('tradeinDevicePrice').textContent = `${tradeInValue.toLocaleString()} ₽`;
     document.getElementById('tradeinDifference').textContent = `${difference.toLocaleString()} ₽`;
+    
+    // Обновляем информацию о минимальном значении
+    const minValueElement = document.getElementById('tradeinMinValue');
+    if (minValueElement) {
+        minValueElement.textContent = `${minTradeInValue.toLocaleString()} ₽`;
+    }
     
     // Сохраняем ID продукта для отправки формы
     window.currentTradeInProductId = productId;
@@ -1173,9 +1186,12 @@ function closeTradeInModal() {
     if (form) {
         form.reset();
     }
-    // Очищаем сохранённый ID продукта
+    // Очищаем сохранённый ID продукта и минимальное значение
     if (window.currentTradeInProductId) {
         delete window.currentTradeInProductId;
+    }
+    if (window.minTradeInValue) {
+        delete window.minTradeInValue;
     }
 }
 
@@ -1191,6 +1207,17 @@ function submitTradeIn(event) {
     const product = products.find(p => p.id === window.currentTradeInProductId);
     if (!product) {
         showNotification('Ошибка: товар не найден. Пожалуйста, попробуйте ещё раз.', 'error');
+        return;
+    }
+    
+    // Проверка минимальной стоимости устройства (30% от стоимости товара)
+    const minTradeInValue = window.minTradeInValue || Math.round(product.price * 0.3);
+    const calculatedTradeInValue = Math.round(product.price * 0.6);
+    const tradeInValue = Math.max(calculatedTradeInValue, minTradeInValue);
+    
+    // Валидация: стоимость устройства должна быть не менее 30% от стоимости товара
+    if (tradeInValue < minTradeInValue) {
+        showNotification(`Ошибка: стоимость вашего устройства должна быть не менее ${minTradeInValue.toLocaleString()} ₽ (30% от стоимости товара).`, 'error');
         return;
     }
     

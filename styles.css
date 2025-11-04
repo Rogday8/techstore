@@ -879,6 +879,26 @@ body {
     font-weight: 600;
 }
 
+.tradein-min-notice {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+}
+
+.tradein-notice-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 400;
+}
+
+.tradein-notice-text strong {
+    color: var(--accent);
+    font-weight: 600;
+}
+
 #tradeInForm {
     display: flex;
     flex-direction: column;
@@ -2446,12 +2466,22 @@ model-viewer {
         font-size: 1rem;
     }
     
-    .tradein-price-item-total .tradein-value {
-        font-size: 1.3rem;
-    }
-    
-    #tradeInForm input,
-    #tradeInForm textarea {
+          .tradein-price-item-total .tradein-value {
+          font-size: 1.3rem;
+      }
+      
+      .tradein-min-notice {
+          margin-top: 1rem;
+          padding: 0.8rem;
+      }
+      
+      .tradein-notice-text {
+          font-size: 0.85rem;
+          line-height: 1.5;
+      }
+      
+      #tradeInForm input,
+      #tradeInForm textarea {
         padding: 12px 16px;
         font-size: 0.9rem;
     }
