@@ -1267,6 +1267,28 @@ model-viewer {
     margin-top: 1rem;
 }
 
+/* Google Pay Button Styles */
+#googlePayButton {
+    width: 100%;
+    min-height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#googlePayButton button {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 4px !important;
+}
+
+#googlePayButton p {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+}
+
 .checkout-content h2 {
     font-family: 'Space Grotesk', sans-serif;
     margin-bottom: 2rem;
