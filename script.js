@@ -1144,17 +1144,82 @@ function openTradeIn(productId) {
     if (!product) return;
     
     const tradeInValue = Math.round(product.price * 0.6); // Примерно 60% от цены
-    const confirmation = confirm(
-        `💳 Trade-in для ${product.name}\n\n` +
-        `Оценочная стоимость вашего устройства: ${tradeInValue.toLocaleString()} ₽\n\n` +
-        `Вы можете обменять ваш старый смартфон на ${product.name} со скидкой!\n\n` +
-        `Остаток к доплате: ${(product.price - tradeInValue).toLocaleString()} ₽\n\n` +
-        `Оставить заявку на Trade-in?`
-    );
+    const difference = product.price - tradeInValue;
     
-    if (confirmation) {
-        showNotification(`✅ Заявка на Trade-in для ${product.name} отправлена! Мы свяжемся с вами в ближайшее время.`);
+    // Заполняем информацию о продукте
+    document.getElementById('tradeinProductName').textContent = product.name;
+    document.getElementById('tradeinProductPrice').textContent = `${product.price.toLocaleString()} ₽`;
+    document.getElementById('tradeinDevicePrice').textContent = `${tradeInValue.toLocaleString()} ₽`;
+    document.getElementById('tradeinDifference').textContent = `${difference.toLocaleString()} ₽`;
+    
+    // Сохраняем ID продукта для отправки формы
+    window.currentTradeInProductId = productId;
+    
+    // Открываем модальное окно
+    const modal = document.getElementById('tradeInModal');
+    if (modal) {
+        modal.style.display = 'block';
     }
+}
+
+// Закрытие модального окна Trade-in
+function closeTradeInModal() {
+    const modal = document.getElementById('tradeInModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    // Очищаем форму
+    const form = document.getElementById('tradeInForm');
+    if (form) {
+        form.reset();
+    }
+    // Очищаем сохранённый ID продукта
+    if (window.currentTradeInProductId) {
+        delete window.currentTradeInProductId;
+    }
+}
+
+// Отправка заявления на Trade-in
+function submitTradeIn(event) {
+    event.preventDefault();
+    
+    if (!window.currentTradeInProductId) {
+        showNotification('Ошибка: информация о товаре не найдена. Пожалуйста, попробуйте ещё раз.', 'error');
+        return;
+    }
+    
+    const product = products.find(p => p.id === window.currentTradeInProductId);
+    if (!product) {
+        showNotification('Ошибка: товар не найден. Пожалуйста, попробуйте ещё раз.', 'error');
+        return;
+    }
+    
+    // Получаем данные из формы
+    const name = document.getElementById('tradeinName').value;
+    const phone = document.getElementById('tradeinPhone').value;
+    const email = document.getElementById('tradeinEmail').value;
+    const device = document.getElementById('tradeinDevice').value;
+    const condition = document.getElementById('tradeinCondition').value;
+    const address = document.getElementById('tradeinAddress').value;
+    
+    // В реальном приложении здесь был бы запрос на сервер
+    // Для демонстрации просто показываем уведомление
+    console.log('Trade-in заявление:', {
+        productId: window.currentTradeInProductId,
+        productName: product.name,
+        name,
+        phone,
+        email,
+        device,
+        condition,
+        address
+    });
+    
+    // Закрываем модальное окно
+    closeTradeInModal();
+    
+    // Показываем уведомление об успехе
+    showNotification('✅ Заявление на Trade-in успешно отправлено! Мы свяжемся с вами в ближайшее время.', 'success');
 }
 
 // Выбор цвета товара
@@ -1353,7 +1418,7 @@ function openModal(productId) {
                     </div>
                 ` : ''}
                 ${product.has3D ? `<button class="btn-3d" onclick="view3D('${product.model3D}', ${productId})">👁️ Просмотр 3D модели</button>` : ''}
-                ${product.hasTradeIn ? `<button class="btn-trade-in" onclick="openTradeIn(${productId})">🔄 Trade-in</button>` : ''}
+                ${product.hasTradeIn ? `<button class="btn-trade-in" onclick="openTradeIn(${productId})">Trade-in</button>` : ''}
                 <div class="modal-actions">
                     <button class="btn-add-to-cart" onclick="addToCart(${product.id}); closeModal();">
                         Добавить в корзину
@@ -1492,6 +1557,10 @@ window.onclick = function(event) {
     const sbpModal = document.getElementById('sbpPaymentModal');
     if (event.target === sbpModal) {
         closeSbpPaymentModal();
+    }
+    const tradeInModal = document.getElementById('tradeInModal');
+    if (event.target === tradeInModal) {
+        closeTradeInModal();
     }
 }
 

@@ -721,6 +721,10 @@ body {
     max-width: 600px;
 }
 
+.tradein-content {
+    max-width: 600px;
+}
+
 .about-modal-content {
     max-width: 1100px;
 }
@@ -807,6 +811,132 @@ body {
 }
 
 .sbp-actions .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Trade-in Modal Styles */
+.tradein-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.tradein-product-info {
+    padding: 1.5rem;
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+}
+
+.tradein-product-name {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.tradein-price-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tradein-price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tradein-price-item:last-child {
+    border-bottom: none;
+}
+
+.tradein-price-item-total {
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    border-top: 2px solid var(--accent);
+    border-bottom: none;
+}
+
+.tradein-label {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.tradein-value {
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.tradein-price-item-total .tradein-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+#tradeInForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#tradeInForm input,
+#tradeInForm textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    background: var(--text-inverse);
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+#tradeInForm input:focus,
+#tradeInForm textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+#tradeInForm input::placeholder,
+#tradeInForm textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+#tradeInForm textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.tradein-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.tradein-actions .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 14px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: none;
+    font-weight: 400;
+    border-radius: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.tradein-actions .btn-secondary:hover {
     border-color: var(--accent);
     color: var(--accent);
 }
@@ -1037,12 +1167,12 @@ body {
 
 .btn-trade-in {
     padding: 12px 24px;
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    color: var(--text-inverse);
-    border: none;
+    background: var(--text-inverse);
+    color: var(--accent);
+    border: 1px solid var(--accent);
     border-radius: 0;
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: 400;
     cursor: pointer;
     transition: all 0.3s;
     margin-bottom: 1rem;
@@ -1053,9 +1183,9 @@ body {
 }
 
 .btn-trade-in:hover {
-    background: linear-gradient(135deg, #45a049, #3d8b40);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    background: var(--accent);
+    color: var(--text-inverse);
+    border-color: var(--accent);
 }
 
 .btn-trade-in:active {
@@ -2279,6 +2409,56 @@ model-viewer {
     .sbp-payment-content {
         max-width: 100%;
         padding: 1.5rem;
+    }
+    
+    /* Trade-in Modal Mobile */
+    .tradein-content {
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+    
+    .tradein-body {
+        gap: 1.5rem;
+        padding: 0.5rem 0;
+    }
+    
+    .tradein-product-info {
+        padding: 1rem;
+    }
+    
+    .tradein-product-name {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .tradein-price-item {
+        padding: 0.6rem 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+    
+    .tradein-label {
+        font-size: 0.85rem;
+    }
+    
+    .tradein-value {
+        font-size: 1rem;
+    }
+    
+    .tradein-price-item-total .tradein-value {
+        font-size: 1.3rem;
+    }
+    
+    #tradeInForm input,
+    #tradeInForm textarea {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .tradein-actions .btn-secondary {
+        padding: 12px 16px;
+        font-size: 0.9rem;
     }
     
     .sbp-payment-body {
