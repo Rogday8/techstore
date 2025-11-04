@@ -1759,7 +1759,15 @@ function submitOrder(event) {
               localStorage.setItem('pendingOrder', JSON.stringify(orderData));
               
               // Перенаправляем на страницу оплаты картой
-              window.location.href = 'payment.html';
+              try {
+                  // Используем небольшой таймаут для гарантии сохранения в localStorage
+                  setTimeout(() => {
+                      window.location.href = 'payment.html';
+                  }, 100);
+              } catch (error) {
+                  console.error('Ошибка при перенаправлении на страницу оплаты:', error);
+                  alert('Ошибка при перенаправлении. Пожалуйста, обновите страницу и попробуйте снова.');
+              }
               break;
                           
           case 'sbp':
@@ -1852,7 +1860,15 @@ function submitOrder(event) {
               localStorage.setItem('pendingOrder', JSON.stringify(defaultOrderData));
               
               // Перенаправляем на страницу оплаты картой
-              window.location.href = 'payment.html';
+              try {
+                  // Используем небольшой таймаут для гарантии сохранения в localStorage
+                  setTimeout(() => {
+                      window.location.href = 'payment.html';
+                  }, 100);
+              } catch (error) {
+                  console.error('Ошибка при перенаправлении на страницу оплаты:', error);
+                  alert('Ошибка при перенаправлении. Пожалуйста, обновите страницу и попробуйте снова.');
+              }
       }
 }
 
