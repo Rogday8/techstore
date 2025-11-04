@@ -565,7 +565,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Инициализируем Google Pay при загрузке
     initGooglePay();
     
-    // Проверяем успешную оплату
+    // Защита изображений от скачивания
+    protectImages();
+    
+    // Проверяем параметр успешной оплаты
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('payment') === 'success') {
         // Очищаем данные о заказе
@@ -596,6 +599,95 @@ window.addEventListener('DOMContentLoaded', async () => {
         console.error('⚠️ Ошибка инициализации IndexedDB:', err);
     }
 });
+
+// Защита изображений от скачивания
+function protectImages() {
+    // Блокируем контекстное меню (правая кнопка мыши)
+    document.addEventListener('contextmenu', function(e) {
+        // Блокируем на всех изображениях и их родителях
+        if (e.target.tagName === 'IMG' || e.target.closest('img')) {
+            e.preventDefault();
+            showNotification('⚠️ Копирование изображений запрещено', 'error');
+            return false;
+        }
+    }, false);
+    
+    // Блокируем перетаскивание изображений
+    document.addEventListener('dragstart', function(e) {
+        if (e.target.tagName === 'IMG' || e.target.closest('img')) {
+            e.preventDefault();
+            return false;
+        }
+    }, false);
+    
+    // Блокируем выбор текста на изображениях
+    document.addEventListener('selectstart', function(e) {
+        if (e.target.tagName === 'IMG' || e.target.closest('img')) {
+            e.preventDefault();
+            return false;
+        }
+    }, false);
+    
+    // Блокируем сохранение изображений через Ctrl+S (только для изображений)
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+S или Cmd+S - только если фокус на изображении
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            const target = document.activeElement;
+            if (target && (target.tagName === 'IMG' || target.closest('img'))) {
+                e.preventDefault();
+                showNotification('⚠️ Сохранение изображений запрещено', 'error');
+                return false;
+            }
+        }
+    }, false);
+    
+    // Добавляем обработчики ко всем существующим изображениям
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        // Блокируем перетаскивание
+        img.setAttribute('draggable', 'false');
+        // Блокируем контекстное меню
+        img.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showNotification('⚠️ Копирование изображений запрещено', 'error');
+            return false;
+        });
+        // Добавляем CSS класс для стилизации
+        img.classList.add('protected-image');
+    });
+    
+    // Используем MutationObserver для защиты новых изображений, добавленных динамически
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element node
+                    if (node.tagName === 'IMG') {
+                        protectImage(node);
+                    }
+                    // Защищаем все изображения внутри добавленного элемента
+                    const newImages = node.querySelectorAll ? node.querySelectorAll('img') : [];
+                    newImages.forEach(protectImage);
+                }
+            });
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+}
+
+// Функция для защиты отдельного изображения
+function protectImage(img) {
+    img.setAttribute('draggable', 'false');
+    img.classList.add('protected-image');
+    img.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        showNotification('⚠️ Копирование изображений запрещено', 'error');
+        return false;
+    });
+}
 
 // Секретная комбинация клавиш для входа в админ-панель: Ctrl+Shift+A
 document.addEventListener('keydown', (e) => {
