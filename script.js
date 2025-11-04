@@ -565,6 +565,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Инициализируем Google Pay при загрузке
     initGooglePay();
     
+    // Проверяем успешную оплату
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('payment') === 'success') {
+        // Очищаем данные о заказе
+        const orderData = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+        if (orderData.paid) {
+            showNotification('✅ Заказ успешно оформлен! Мы свяжемся с вами в ближайшее время.', 'success');
+            // Очищаем pendingOrder
+            localStorage.removeItem('pendingOrder');
+            // Обновляем корзину (она уже должна быть очищена на странице оплаты)
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+            updateCartCount();
+            // Убираем параметр из URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+    
     // Проверяем авторизацию админа при загрузке страницы
     // Кнопка ADMIN будет скрыта по умолчанию в HTML
     initAdminMode();
@@ -1706,33 +1725,45 @@ function submitOrder(event) {
     const email = document.getElementById('customerEmail').value;
     const address = document.getElementById('customerAddress').value;
     
-          // Получаем выбранный способ оплаты
-      const selectedBtn = document.querySelector('.payment-btn.active');
-      const paymentMethod = selectedBtn?.dataset.method || 'card';
-    
-    // Проверяем, был ли уже использован Google Pay
-    if (window.googlePayUsed) {
-        // Платеж уже обработан через Google Pay
-        processOrderCompletion(name, phone, email, address);
-        return;
-    }
-    
-    // Обрабатываем в зависимости от выбранного способа оплаты
-    switch(paymentMethod) {
-        case 'card':
-            // Оплата банковской картой
-            showNotification('💳 Оплата банковской картой будет обработана на следующем шаге.', 'info');
-            setTimeout(() => {
-                showNotification('✅ Оплата картой успешно выполнена!', 'success');
-                setTimeout(() => {
-                    processOrderCompletion(name, phone, email, address);
-                }, 1500);
-            }, 2000);
-            break;
-            
-        case 'sbp':
-            // Оплата через СБП
-            const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+                // Получаем выбранный способ оплаты
+        const selectedBtn = document.querySelector('.payment-btn.active');
+        const paymentMethod = selectedBtn?.dataset.method || 'card';
+      
+      // Вычисляем общую сумму заказа
+      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+      
+      // Проверяем, был ли уже использован Google Pay
+      if (window.googlePayUsed) {
+          // Платеж уже обработан через Google Pay
+          processOrderCompletion(name, phone, email, address);
+          return;
+      }
+      
+      // Обрабатываем в зависимости от выбранного способа оплаты
+           switch(paymentMethod) {
+           case 'card':
+               // Сохраняем данные заказа для страницы оплаты
+              const orderData = {
+                  name: name,
+                  phone: phone,
+                  email: email,
+                  address: address,
+                  items: cart.map(item => ({
+                      id: item.id,
+                      name: item.name,
+                      price: item.price
+                  })),
+                  total: totalPrice,
+                  paymentMethod: 'card'
+              };
+              localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+              
+              // Перенаправляем на страницу оплаты картой
+              window.location.href = 'payment.html';
+              break;
+                          
+          case 'sbp':
+              // Оплата через СБП
             showNotification('🏦 Генерируем QR-код для оплаты через СБП...', 'info');
             setTimeout(() => {
                 showNotification(`📱 QR-код для оплаты ${totalPrice.toLocaleString()} ₽ через СБП сгенерирован. Оплатите по QR-коду в вашем банковском приложении.`, 'success');
@@ -1803,16 +1834,26 @@ function submitOrder(event) {
             }
             break;
             
-        default:
-            // По умолчанию - оплата картой
-            showNotification('💳 Оплата банковской картой будет обработана на следующем шаге.', 'info');
-            setTimeout(() => {
-                showNotification('✅ Оплата картой успешно выполнена!', 'success');
-                setTimeout(() => {
-                    processOrderCompletion(name, phone, email, address);
-                }, 1500);
-            }, 2000);
-    }
+                                     default:
+               // По умолчанию - оплата картой (перенаправление)
+               const defaultOrderData = {
+                   name: name,
+                   phone: phone,
+                   email: email,
+                   address: address,
+                   items: cart.map(item => ({
+                       id: item.id,
+                       name: item.name,
+                       price: item.price
+                   })),
+                   total: totalPrice,
+                   paymentMethod: 'card'
+               };
+              localStorage.setItem('pendingOrder', JSON.stringify(defaultOrderData));
+              
+              // Перенаправляем на страницу оплаты картой
+              window.location.href = 'payment.html';
+      }
 }
 
 // Функция для освобождения blob URLs
