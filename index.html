@@ -350,14 +350,6 @@
                             <span class="tradein-label">Стоимость товара:</span>
                             <span class="tradein-value" id="tradeinProductPrice"></span>
                         </div>
-                        <div class="tradein-price-item">
-                            <span class="tradein-label">Стоимость вашего устройства:</span>
-                            <span class="tradein-value" id="tradeinDevicePrice"></span>
-                        </div>
-                        <div class="tradein-price-item tradein-price-item-total">
-                            <span class="tradein-label">К доплате:</span>
-                            <span class="tradein-value" id="tradeinDifference"></span>
-                        </div>
                     </div>
                     <div class="tradein-min-notice">
                         <p class="tradein-notice-text">⚠️ Стоимость вашего устройства должна быть не менее <strong id="tradeinMinValue">0 ₽</strong> (30% от стоимости товара)</p>
@@ -368,8 +360,8 @@
                     <input type="tel" id="tradeinPhone" placeholder="Телефон" required>
                     <input type="email" id="tradeinEmail" placeholder="Email" required>
                     <input type="text" id="tradeinDevice" placeholder="Модель вашего устройства" required>
+                    <input type="number" id="tradeinDevicePrice" placeholder="Ориентировочная стоимость вашего устройства (₽)" required min="0" step="1000">
                     <textarea id="tradeinCondition" placeholder="Опишите состояние устройства" rows="4" required></textarea>
-                    <textarea id="tradeinAddress" placeholder="Адрес для передачи устройства" rows="3" required></textarea>
                     <div class="tradein-actions">
                         <button type="submit" class="btn-primary btn-full">Отправить заявление</button>
                         <button type="button" class="btn-secondary btn-full" onclick="closeTradeInModal()">Отмена</button>

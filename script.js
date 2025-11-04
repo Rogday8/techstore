@@ -1145,10 +1145,6 @@ function openTradeIn(productId) {
     
     // Минимальная стоимость устройства для Trade-in: 30% от цены товара
     const minTradeInValue = Math.round(product.price * 0.3);
-    // Расчетная стоимость устройства: 60% от цены (но не менее минимума)
-    const calculatedTradeInValue = Math.round(product.price * 0.6);
-    const tradeInValue = Math.max(calculatedTradeInValue, minTradeInValue);
-    const difference = product.price - tradeInValue;
     
     // Сохраняем минимальное значение для валидации
     window.minTradeInValue = minTradeInValue;
@@ -1156,8 +1152,6 @@ function openTradeIn(productId) {
     // Заполняем информацию о продукте
     document.getElementById('tradeinProductName').textContent = product.name;
     document.getElementById('tradeinProductPrice').textContent = `${product.price.toLocaleString()} ₽`;
-    document.getElementById('tradeinDevicePrice').textContent = `${tradeInValue.toLocaleString()} ₽`;
-    document.getElementById('tradeinDifference').textContent = `${difference.toLocaleString()} ₽`;
     
     // Обновляем информацию о минимальном значении
     const minValueElement = document.getElementById('tradeinMinValue');
@@ -1167,6 +1161,13 @@ function openTradeIn(productId) {
     
     // Сохраняем ID продукта для отправки формы
     window.currentTradeInProductId = productId;
+    
+    // Очищаем поле ввода стоимости устройства
+    const devicePriceInput = document.getElementById('tradeinDevicePrice');
+    if (devicePriceInput) {
+        devicePriceInput.value = '';
+        devicePriceInput.min = minTradeInValue;
+    }
     
     // Открываем модальное окно
     const modal = document.getElementById('tradeInModal');
@@ -1212,22 +1213,21 @@ function submitTradeIn(event) {
     
     // Проверка минимальной стоимости устройства (30% от стоимости товара)
     const minTradeInValue = window.minTradeInValue || Math.round(product.price * 0.3);
-    const calculatedTradeInValue = Math.round(product.price * 0.6);
-    const tradeInValue = Math.max(calculatedTradeInValue, minTradeInValue);
-    
-    // Валидация: стоимость устройства должна быть не менее 30% от стоимости товара
-    if (tradeInValue < minTradeInValue) {
-        showNotification(`Ошибка: стоимость вашего устройства должна быть не менее ${minTradeInValue.toLocaleString()} ₽ (30% от стоимости товара).`, 'error');
-        return;
-    }
     
     // Получаем данные из формы
     const name = document.getElementById('tradeinName').value;
     const phone = document.getElementById('tradeinPhone').value;
     const email = document.getElementById('tradeinEmail').value;
     const device = document.getElementById('tradeinDevice').value;
+    const devicePriceInput = document.getElementById('tradeinDevicePrice');
+    const tradeInValue = parseInt(devicePriceInput.value) || 0;
     const condition = document.getElementById('tradeinCondition').value;
-    const address = document.getElementById('tradeinAddress').value;
+    
+    // Валидация: стоимость устройства должна быть не менее 30% от стоимости товара
+    if (tradeInValue < minTradeInValue) {
+        showNotification(`Ошибка: стоимость вашего устройства должна быть не менее ${minTradeInValue.toLocaleString()} ₽ (30% от стоимости товара).`, 'error');
+        return;
+    }
     
     // В реальном приложении здесь был бы запрос на сервер
     // Для демонстрации просто показываем уведомление
@@ -1238,8 +1238,8 @@ function submitTradeIn(event) {
         phone,
         email,
         device,
-        condition,
-        address
+        devicePrice: tradeInValue,
+        condition
     });
     
     // Закрываем модальное окно
