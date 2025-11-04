@@ -1489,6 +1489,10 @@ window.onclick = function(event) {
     if (event.target === viewer3D) {
         close3DViewer();
     }
+    const sbpModal = document.getElementById('sbpPaymentModal');
+    if (event.target === sbpModal) {
+        closeSbpPaymentModal();
+    }
 }
 
 // Добавление в корзину
@@ -1714,6 +1718,84 @@ function closeContactModal() {
     document.getElementById('contactModal').style.display = 'none';
 }
 
+// Открытие модального окна СБП оплаты
+function openSbpPaymentModal(amount) {
+    const modal = document.getElementById('sbpPaymentModal');
+    const amountElement = document.getElementById('sbpAmount');
+    const qrCanvas = document.getElementById('sbpQrCode');
+    
+    if (!modal || !amountElement || !qrCanvas) {
+        console.error('SBP Payment Modal elements not found');
+        return;
+    }
+    
+    // Устанавливаем сумму
+    amountElement.textContent = `${amount.toLocaleString()} ₽`;
+    
+    // Генерируем QR-код
+    // Создаем строку для QR-кода (в реальной системе это должен быть URL от платежного провайдера)
+    const qrData = `ST00012|Name=Apple Favorite|PersonalAcc=12345678901234567890|BankName=Example Bank|BIC=044525225|CorrespAcc=30101810145250000001|Sum=${amount * 100}|Purpose=Оплата заказа`;
+    
+    // Генерируем QR-код
+    if (typeof QRCode !== 'undefined') {
+        QRCode.toCanvas(qrCanvas, qrData, {
+            width: 300,
+            margin: 2,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            }
+        }, function (error) {
+            if (error) {
+                console.error('Ошибка генерации QR-кода:', error);
+                showNotification('Ошибка генерации QR-кода. Пожалуйста, попробуйте позже.', 'error');
+            }
+        });
+    } else {
+        console.error('QRCode library not loaded');
+        showNotification('Ошибка загрузки библиотеки QR-кода. Пожалуйста, обновите страницу.', 'error');
+    }
+    
+    // Показываем модальное окно
+    modal.style.display = 'block';
+}
+
+// Закрытие модального окна СБП оплаты
+function closeSbpPaymentModal() {
+    const modal = document.getElementById('sbpPaymentModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    
+    // Очищаем данные о заказе при отмене
+    if (window.pendingSbpOrder) {
+        delete window.pendingSbpOrder;
+    }
+}
+
+// Подтверждение оплаты через СБП
+function confirmSbpPayment() {
+    if (!window.pendingSbpOrder) {
+        showNotification('Данные заказа не найдены. Пожалуйста, оформите заказ заново.', 'error');
+        closeSbpPaymentModal();
+        return;
+    }
+    
+    const { name, phone, email, address } = window.pendingSbpOrder;
+    
+    // Закрываем модальное окно СБП
+    closeSbpPaymentModal();
+    
+    // Показываем уведомление об успешной оплате
+    showNotification('✅ Оплата принята! Заказ успешно оформлен.', 'success');
+    
+    // Завершаем оформление заказа
+    processOrderCompletion(name, phone, email, address);
+    
+    // Очищаем данные о заказе
+    delete window.pendingSbpOrder;
+}
+
 
 // Отправка заказа
 function submitOrder(event) {
@@ -1771,15 +1853,22 @@ function submitOrder(event) {
               break;
                           
           case 'sbp':
-              // Оплата через СБП
-            showNotification('🏦 Генерируем QR-код для оплаты через СБП...', 'info');
-            setTimeout(() => {
-                showNotification(`📱 QR-код для оплаты ${totalPrice.toLocaleString()} ₽ через СБП сгенерирован. Оплатите по QR-коду в вашем банковском приложении.`, 'success');
-                setTimeout(() => {
-                    processOrderCompletion(name, phone, email, address);
-                }, 3000);
-            }, 1500);
-            break;
+              // Оплата через СБП - открываем модальное окно с QR-кодом
+              // Сохраняем данные заказа для подтверждения оплаты
+              window.pendingSbpOrder = {
+                  name: name,
+                  phone: phone,
+                  email: email,
+                  address: address,
+                  total: totalPrice
+              };
+              
+              // Закрываем модальное окно оформления заказа
+              closeCheckoutModal();
+              
+              // Открываем модальное окно СБП
+              openSbpPaymentModal(totalPrice);
+              break;
             
         case 'googlepay':
             // Оплата через Google Pay

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -312,9 +313,35 @@
         </div>
     </div>
 
+    <!-- SBP Payment Modal -->
+    <div id="sbpPaymentModal" class="modal">
+        <div class="modal-content sbp-payment-content">
+            <span class="close" onclick="closeSbpPaymentModal()">&times;</span>
+            <h2>Оплата через СБП</h2>
+            <div class="sbp-payment-body">
+                <p class="sbp-instruction">Отсканируйте QR-код в приложении вашего банка для оплаты</p>
+                <div class="sbp-qr-container">
+                    <canvas id="sbpQrCode"></canvas>
+                </div>
+                <div class="sbp-payment-info">
+                    <div class="sbp-amount">
+                        <span class="sbp-label">Сумма к оплате:</span>
+                        <span class="sbp-value" id="sbpAmount">0 ₽</span>
+                    </div>
+                </div>
+                <div class="sbp-actions">
+                    <button class="btn-primary btn-full" onclick="confirmSbpPayment()">Я оплатил</button>
+                    <button class="btn-secondary btn-full" onclick="closeSbpPaymentModal()">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Three.js библиотеки (для 3D функций) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <script src="script.js"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </body>
 </html>
