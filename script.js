@@ -2556,37 +2556,60 @@ function processOrderCompletion(name, phone, email, address) {
 
 // ==================== СЛАЙДЕРЫ ====================
 
-// Слайдер преимуществ
-let currentAdvantageIndex = 0;
-const totalAdvantages = 6;
+// Главный слайдер контента (преимущества, услуги, работы)
+let currentMainSlideIndex = 0;
+const totalMainSlides = 3;
 
-function slideAdvantages(direction) {
-    const track = document.getElementById('advantagesTrack');
+function slideMainContent(direction) {
+    const track = document.getElementById('mainContentTrack');
     if (!track) return;
     
-    currentAdvantageIndex += direction;
+    currentMainSlideIndex += direction;
     
-    if (currentAdvantageIndex < 0) {
-        currentAdvantageIndex = totalAdvantages - 1;
-    } else if (currentAdvantageIndex >= totalAdvantages) {
-        currentAdvantageIndex = 0;
+    if (currentMainSlideIndex < 0) {
+        currentMainSlideIndex = totalMainSlides - 1;
+    } else if (currentMainSlideIndex >= totalMainSlides) {
+        currentMainSlideIndex = 0;
     }
     
-    track.style.transform = `translateX(-${currentAdvantageIndex * 100}%)`;
+    track.style.transform = `translateX(-${currentMainSlideIndex * 100}%)`;
+    updateMainSliderDots();
 }
 
-// Автопрокрутка слайдера преимуществ
-let advantagesAutoSlideInterval;
-
-function startAdvantagesAutoSlide() {
-    advantagesAutoSlideInterval = setInterval(() => {
-        slideAdvantages(1);
-    }, 5000); // Меняем каждые 5 секунд
+function goToMainSlide(index) {
+    currentMainSlideIndex = index;
+    const track = document.getElementById('mainContentTrack');
+    if (track) {
+        track.style.transform = `translateX(-${currentMainSlideIndex * 100}%)`;
+        updateMainSliderDots();
+    }
 }
 
-function stopAdvantagesAutoSlide() {
-    if (advantagesAutoSlideInterval) {
-        clearInterval(advantagesAutoSlideInterval);
+function updateMainSliderDots() {
+    const dotsContainer = document.getElementById('mainSliderDots');
+    if (!dotsContainer) return;
+    
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalMainSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `main-slider-dot ${i === currentMainSlideIndex ? 'active' : ''}`;
+        dot.onclick = () => goToMainSlide(i);
+        dotsContainer.appendChild(dot);
+    }
+}
+
+// Автопрокрутка главного слайдера
+let mainSliderAutoSlideInterval;
+
+function startMainSliderAutoSlide() {
+    mainSliderAutoSlideInterval = setInterval(() => {
+        slideMainContent(1);
+    }, 8000); // Меняем каждые 8 секунд
+}
+
+function stopMainSliderAutoSlide() {
+    if (mainSliderAutoSlideInterval) {
+        clearInterval(mainSliderAutoSlideInterval);
     }
 }
 
@@ -2664,56 +2687,55 @@ function stopWorksAutoSlide() {
 
 // Инициализация слайдеров
 function initSliders() {
+    // Инициализируем точки для главного слайдера
+    updateMainSliderDots();
+    
     // Инициализируем точки для слайдера работ
     updateWorksDots();
     
-    // Запускаем автопрокрутку
-    startAdvantagesAutoSlide();
+    // Запускаем автопрокрутку главного слайдера
+    startMainSliderAutoSlide();
     startWorksAutoSlide();
     
     // Останавливаем автопрокрутку при наведении
-    const advantagesSlider = document.querySelector('.advantages-slider');
-    const worksSlider = document.querySelector('.works-slider');
+    const mainSlider = document.querySelector('.main-content-slider');
+    const worksGallery = document.querySelector('.works-gallery');
     
-    if (advantagesSlider) {
-        advantagesSlider.addEventListener('mouseenter', stopAdvantagesAutoSlide);
-        advantagesSlider.addEventListener('mouseleave', startAdvantagesAutoSlide);
+    if (mainSlider) {
+        mainSlider.addEventListener('mouseenter', stopMainSliderAutoSlide);
+        mainSlider.addEventListener('mouseleave', startMainSliderAutoSlide);
     }
     
-    if (worksSlider) {
-        worksSlider.addEventListener('mouseenter', stopWorksAutoSlide);
-        worksSlider.addEventListener('mouseleave', startWorksAutoSlide);
+    if (worksGallery) {
+        worksGallery.addEventListener('mouseenter', stopWorksAutoSlide);
+        worksGallery.addEventListener('mouseleave', startWorksAutoSlide);
     }
     
     // Добавляем поддержку свайпов для мобильных устройств
-    const advantagesTrack = document.getElementById('advantagesTrack');
+    const mainContentTrack = document.getElementById('mainContentTrack');
     const worksTrack = document.getElementById('worksTrack');
     
-    if (advantagesTrack) {
+    if (mainContentTrack) {
         let touchStartX = 0;
         let touchEndX = 0;
         
-        advantagesTrack.addEventListener('touchstart', (e) => {
+        mainContentTrack.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
         });
         
-        advantagesTrack.addEventListener('touchend', (e) => {
+        mainContentTrack.addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipe('advantages');
-        });
-        
-        function handleSwipe(type) {
             const swipeThreshold = 50;
             const diff = touchStartX - touchEndX;
             
             if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0) {
-                    slideAdvantages(1); // Свайп влево - следующий
+                    slideMainContent(1); // Свайп влево - следующий
                 } else {
-                    slideAdvantages(-1); // Свайп вправо - предыдущий
+                    slideMainContent(-1); // Свайп вправо - предыдущий
                 }
             }
-        }
+        });
     }
     
     if (worksTrack) {
@@ -2726,10 +2748,6 @@ function initSliders() {
         
         worksTrack.addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipe('works');
-        });
-        
-        function handleSwipe(type) {
             const swipeThreshold = 50;
             const diff = touchStartX - touchEndX;
             
@@ -2740,7 +2758,7 @@ function initSliders() {
                     slideWorks(-1); // Свайп вправо - предыдущий
                 }
             }
-        }
+        });
     }
 }
 
