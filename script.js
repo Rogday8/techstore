@@ -2637,15 +2637,19 @@ function initWorksCarousels() {
     
     if (!carousel1 || !carousel2) return;
     
+    // Перемешиваем изображения в случайном порядке
+    const shuffledImages = [...workImages].sort(() => Math.random() - 0.5);
+    
     // Разделяем изображения на две группы
-    const half = Math.ceil(workImages.length / 2);
-    const images1 = workImages.slice(0, half);
-    const images2 = workImages.slice(half);
+    const half = Math.ceil(shuffledImages.length / 2);
+    const images1 = shuffledImages.slice(0, half);
+    const images2 = shuffledImages.slice(half);
     
     // Функция для создания дублированных изображений (для бесконечной прокрутки)
     function createCarouselImages(images, container) {
-        // Добавляем изображения дважды для бесконечной прокрутки
-        [...images, ...images].forEach(src => {
+        // Добавляем изображения трижды для плавной бесконечной прокрутки
+        // Это нужно для того, чтобы переход был незаметным
+        [...images, ...images, ...images].forEach(src => {
             const img = document.createElement('img');
             img.src = src;
             img.alt = 'Наша работа';
@@ -2657,9 +2661,83 @@ function initWorksCarousels() {
     createCarouselImages(images1, carousel1);
     createCarouselImages(images2, carousel2);
     
-    // Добавляем drag функциональность
-    setupCarouselDrag(carousel1);
-    setupCarouselDrag(carousel2);
+    // Сначала настраиваем плавную бесконечную прокрутку
+    setupInfiniteScroll(carousel1, images1.length);
+    setupInfiniteScroll(carousel2, images2.length);
+    
+    // Затем добавляем drag функциональность (после инициализации анимации)
+    setTimeout(() => {
+        setupCarouselDrag(carousel1);
+        setupCarouselDrag(carousel2);
+    }, 100);
+}
+
+// Настройка плавной бесконечной прокрутки
+function setupInfiniteScroll(carousel, imageCount) {
+    const container = carousel.parentElement;
+    let animationFrame = null;
+    let isPaused = false;
+    let isDragging = false;
+    let currentPosition = 0;
+    const speed = 0.3; // пикселей за кадр (можно настроить скорость)
+    const imageWidth = 300 + 24; // ширина изображения + gap (1.5rem = 24px)
+    const setWidth = imageWidth * imageCount; // ширина одного набора изображений
+    
+    // Сохраняем ссылку на функцию анимации для управления из drag
+    window.carouselAnimations = window.carouselAnimations || {};
+    const carouselId = carousel.id;
+    
+    function animate() {
+        if (isPaused || isDragging) {
+            animationFrame = requestAnimationFrame(animate);
+            return;
+        }
+        
+        // Двигаем карусель
+        currentPosition -= speed;
+        
+        // Когда прошли один полный набор, незаметно сбрасываем позицию
+        // Так как у нас 3 копии изображений, переход будет незаметен
+        if (Math.abs(currentPosition) >= setWidth) {
+            currentPosition = currentPosition + setWidth; // Сбрасываем на начало следующего набора
+        }
+        
+        carousel.style.transform = `translateX(${currentPosition}px)`;
+        
+        animationFrame = requestAnimationFrame(animate);
+    }
+    
+    // Сохраняем функции управления
+    window.carouselAnimations[carouselId] = {
+        pause: () => { isPaused = true; },
+        resume: () => { 
+            isPaused = false; 
+            if (!animationFrame) {
+                animationFrame = requestAnimationFrame(animate);
+            }
+        },
+        setDragging: (value) => { isDragging = value; },
+        setPosition: (pos) => { currentPosition = pos; },
+        getPosition: () => currentPosition
+    };
+    
+    // Останавливаем при наведении
+    container.addEventListener('mouseenter', () => {
+        isPaused = true;
+    });
+    
+    // Возобновляем при уходе мыши
+    container.addEventListener('mouseleave', () => {
+        if (!isDragging) {
+            isPaused = false;
+            if (!animationFrame) {
+                animationFrame = requestAnimationFrame(animate);
+            }
+        }
+    });
+    
+    // Запускаем анимацию
+    animationFrame = requestAnimationFrame(animate);
 }
 
 // Настройка drag/swipe для каруселей
@@ -2668,13 +2746,16 @@ function setupCarouselDrag(carousel) {
     let startX;
     let startTranslate = 0;
     let currentTranslate = 0;
-    let isDragging = false;
-    let animationOffset = 0;
     
     const container = carousel.parentElement;
+    const carouselId = carousel.id;
+    const carouselControl = window.carouselAnimations?.[carouselId];
     
     // Получаем текущее смещение из анимации
     function getAnimationOffset() {
+        if (carouselControl) {
+            return carouselControl.getPosition();
+        }
         const computedStyle = window.getComputedStyle(carousel);
         const matrix = computedStyle.transform;
         if (matrix === 'none') return 0;
@@ -2685,12 +2766,16 @@ function setupCarouselDrag(carousel) {
     // Mouse events
     container.addEventListener('mousedown', (e) => {
         isDown = true;
-        isDragging = true;
         startX = e.pageX;
-        animationOffset = getAnimationOffset();
-        startTranslate = animationOffset;
-        currentTranslate = animationOffset;
-        carousel.style.animationPlayState = 'paused';
+        startTranslate = getAnimationOffset();
+        currentTranslate = startTranslate;
+        
+        // Останавливаем автоматическую анимацию
+        if (carouselControl) {
+            carouselControl.setDragging(true);
+            carouselControl.pause();
+        }
+        
         carousel.style.transition = 'none';
         container.style.cursor = 'grabbing';
         e.preventDefault();
@@ -2699,10 +2784,12 @@ function setupCarouselDrag(carousel) {
     container.addEventListener('mouseleave', () => {
         if (isDown) {
             isDown = false;
-            isDragging = false;
-            carousel.style.animationPlayState = 'running';
+            if (carouselControl) {
+                carouselControl.setPosition(currentTranslate);
+                carouselControl.setDragging(false);
+                carouselControl.resume();
+            }
             carousel.style.transition = '';
-            carousel.style.transform = '';
             container.style.cursor = 'grab';
         }
     });
@@ -2710,10 +2797,12 @@ function setupCarouselDrag(carousel) {
     container.addEventListener('mouseup', () => {
         if (isDown) {
             isDown = false;
-            isDragging = false;
-            carousel.style.animationPlayState = 'running';
+            if (carouselControl) {
+                carouselControl.setPosition(currentTranslate);
+                carouselControl.setDragging(false);
+                carouselControl.resume();
+            }
             carousel.style.transition = '';
-            carousel.style.transform = '';
             container.style.cursor = 'grab';
         }
     });
@@ -2731,17 +2820,21 @@ function setupCarouselDrag(carousel) {
     let touchStartTranslate = 0;
     
     container.addEventListener('touchstart', (e) => {
-        isDragging = true;
         touchStartX = e.touches[0].clientX;
-        animationOffset = getAnimationOffset();
-        touchStartTranslate = animationOffset;
-        carousel.style.animationPlayState = 'paused';
+        touchStartTranslate = getAnimationOffset();
+        currentTranslate = touchStartTranslate;
+        
+        // Останавливаем автоматическую анимацию
+        if (carouselControl) {
+            carouselControl.setDragging(true);
+            carouselControl.pause();
+        }
+        
         carousel.style.transition = 'none';
         e.preventDefault();
     });
     
     container.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
         const touchX = e.touches[0].clientX;
         const diff = touchX - touchStartX;
         currentTranslate = touchStartTranslate + diff * 1.5;
@@ -2750,10 +2843,12 @@ function setupCarouselDrag(carousel) {
     });
     
     container.addEventListener('touchend', () => {
-        isDragging = false;
-        carousel.style.animationPlayState = 'running';
+        if (carouselControl) {
+            carouselControl.setPosition(currentTranslate);
+            carouselControl.setDragging(false);
+            carouselControl.resume();
+        }
         carousel.style.transition = '';
-        carousel.style.transform = '';
     });
 }
 
