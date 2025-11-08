@@ -397,86 +397,75 @@ body {
     background: var(--bg-light);
 }
 
-.works-gallery {
-    position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-    overflow: hidden;
-}
-
-.works-track {
+.works-carousels {
     display: flex;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    gap: 0;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.work-image {
-    min-width: 100%;
-    flex-shrink: 0;
-    max-height: 600px;
+.works-carousel-container {
+    position: relative;
+    overflow: hidden;
     width: 100%;
+    cursor: grab;
+    user-select: none;
+}
+
+.works-carousel-container:active {
+    cursor: grabbing;
+}
+
+.works-carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    will-change: transform;
+}
+
+.works-carousel-track img {
+    flex-shrink: 0;
+    width: 300px;
+    height: 400px;
     object-fit: contain;
-    background: var(--bg-light);
-    border-radius: 4px;
+    background: var(--text-inverse);
+    border-radius: 8px;
     border: 1px solid var(--border-color);
     box-sizing: border-box;
+    pointer-events: none;
 }
 
-.works-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid var(--border-color);
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: var(--accent);
-    transition: all 0.3s;
-    z-index: 10;
-    border-radius: 0;
+/* Первая карусель движется влево */
+#worksCarousel1 {
+    animation: scrollLeft 40s linear infinite;
 }
 
-.works-nav:hover {
-    background: var(--accent);
-    color: var(--text-inverse);
-    border-color: var(--accent);
+/* Вторая карусель движется вправо */
+#worksCarousel2 {
+    animation: scrollRight 40s linear infinite;
 }
 
-.works-nav-prev {
-    left: 20px;
+@keyframes scrollLeft {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
-.works-nav-next {
-    right: 20px;
+@keyframes scrollRight {
+    0% {
+        transform: translateX(-50%);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
-.works-dots {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-}
-
-.works-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--border-color);
-    cursor: pointer;
-    transition: all 0.3s;
-    border: none;
-    padding: 0;
-}
-
-.works-dot.active {
-    background: var(--accent);
-    width: 30px;
-    border-radius: 6px;
+/* Пауза при наведении */
+.works-carousel-container:hover .works-carousel-track {
+    animation-play-state: paused;
 }
 
 /* Main Slider Navigation */
@@ -575,24 +564,22 @@ body {
         padding: 1.5rem;
     }
     
-    .work-image {
-        max-height: 400px;
+    .works-carousel-track img {
+        width: 250px;
+        height: 300px;
     }
     
-    .main-slider-nav,
-    .works-nav {
+    .main-slider-nav {
         width: 40px;
         height: 40px;
         font-size: 1.2rem;
     }
     
-    .main-slider-nav-prev,
-    .works-nav-prev {
+    .main-slider-nav-prev {
         left: 10px;
     }
     
-    .main-slider-nav-next,
-    .works-nav-next {
+    .main-slider-nav-next {
         right: 10px;
     }
 }

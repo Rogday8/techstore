@@ -2613,8 +2613,7 @@ function stopMainSliderAutoSlide() {
     }
 }
 
-// Слайдер работ
-let currentWorkIndex = 0;
+// Карусели работ
 const workImages = [
     'images/raboti/2trp21a25uyo0c44o0440g8kw048g4.png',
     'images/raboti/4v32kjykgyec4ok0oogc0g84s4gwks.png',
@@ -2630,59 +2629,132 @@ const workImages = [
     'images/raboti/q91uwlszpz4w0s0g0w4wocggoc40g0.png',
     'images/raboti/r7t34xni5lw4kwgsoog40g44kw4kck.png'
 ];
-const totalWorks = workImages.length;
 
-function slideWorks(direction) {
-    const track = document.getElementById('worksTrack');
-    if (!track) return;
+// Инициализация каруселей работ
+function initWorksCarousels() {
+    const carousel1 = document.getElementById('worksCarousel1');
+    const carousel2 = document.getElementById('worksCarousel2');
     
-    currentWorkIndex += direction;
+    if (!carousel1 || !carousel2) return;
     
-    if (currentWorkIndex < 0) {
-        currentWorkIndex = totalWorks - 1;
-    } else if (currentWorkIndex >= totalWorks) {
-        currentWorkIndex = 0;
+    // Разделяем изображения на две группы
+    const half = Math.ceil(workImages.length / 2);
+    const images1 = workImages.slice(0, half);
+    const images2 = workImages.slice(half);
+    
+    // Функция для создания дублированных изображений (для бесконечной прокрутки)
+    function createCarouselImages(images, container) {
+        // Добавляем изображения дважды для бесконечной прокрутки
+        [...images, ...images].forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Наша работа';
+            img.className = 'work-image';
+            container.appendChild(img);
+        });
     }
     
-    track.style.transform = `translateX(-${currentWorkIndex * 100}%)`;
-    updateWorksDots();
-}
-
-function goToWork(index) {
-    currentWorkIndex = index;
-    const track = document.getElementById('worksTrack');
-    if (track) {
-        track.style.transform = `translateX(-${currentWorkIndex * 100}%)`;
-        updateWorksDots();
-    }
-}
-
-function updateWorksDots() {
-    const dotsContainer = document.getElementById('worksDots');
-    if (!dotsContainer) return;
+    createCarouselImages(images1, carousel1);
+    createCarouselImages(images2, carousel2);
     
-    dotsContainer.innerHTML = '';
-    for (let i = 0; i < totalWorks; i++) {
-        const dot = document.createElement('button');
-        dot.className = `works-dot ${i === currentWorkIndex ? 'active' : ''}`;
-        dot.onclick = () => goToWork(i);
-        dotsContainer.appendChild(dot);
-    }
+    // Добавляем drag функциональность
+    setupCarouselDrag(carousel1);
+    setupCarouselDrag(carousel2);
 }
 
-// Автопрокрутка слайдера работ
-let worksAutoSlideInterval;
-
-function startWorksAutoSlide() {
-    worksAutoSlideInterval = setInterval(() => {
-        slideWorks(1);
-    }, 4000); // Меняем каждые 4 секунды
-}
-
-function stopWorksAutoSlide() {
-    if (worksAutoSlideInterval) {
-        clearInterval(worksAutoSlideInterval);
+// Настройка drag/swipe для каруселей
+function setupCarouselDrag(carousel) {
+    let isDown = false;
+    let startX;
+    let startTranslate = 0;
+    let currentTranslate = 0;
+    let isDragging = false;
+    let animationOffset = 0;
+    
+    const container = carousel.parentElement;
+    
+    // Получаем текущее смещение из анимации
+    function getAnimationOffset() {
+        const computedStyle = window.getComputedStyle(carousel);
+        const matrix = computedStyle.transform;
+        if (matrix === 'none') return 0;
+        const values = matrix.split('(')[1].split(')')[0].split(',');
+        return parseFloat(values[4]) || 0;
     }
+    
+    // Mouse events
+    container.addEventListener('mousedown', (e) => {
+        isDown = true;
+        isDragging = true;
+        startX = e.pageX;
+        animationOffset = getAnimationOffset();
+        startTranslate = animationOffset;
+        currentTranslate = animationOffset;
+        carousel.style.animationPlayState = 'paused';
+        carousel.style.transition = 'none';
+        container.style.cursor = 'grabbing';
+        e.preventDefault();
+    });
+    
+    container.addEventListener('mouseleave', () => {
+        if (isDown) {
+            isDown = false;
+            isDragging = false;
+            carousel.style.animationPlayState = 'running';
+            carousel.style.transition = '';
+            carousel.style.transform = '';
+            container.style.cursor = 'grab';
+        }
+    });
+    
+    container.addEventListener('mouseup', () => {
+        if (isDown) {
+            isDown = false;
+            isDragging = false;
+            carousel.style.animationPlayState = 'running';
+            carousel.style.transition = '';
+            carousel.style.transform = '';
+            container.style.cursor = 'grab';
+        }
+    });
+    
+    container.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const diff = e.pageX - startX;
+        currentTranslate = startTranslate + diff * 1.5;
+        carousel.style.transform = `translateX(${currentTranslate}px)`;
+    });
+    
+    // Touch events
+    let touchStartX = 0;
+    let touchStartTranslate = 0;
+    
+    container.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        touchStartX = e.touches[0].clientX;
+        animationOffset = getAnimationOffset();
+        touchStartTranslate = animationOffset;
+        carousel.style.animationPlayState = 'paused';
+        carousel.style.transition = 'none';
+        e.preventDefault();
+    });
+    
+    container.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const touchX = e.touches[0].clientX;
+        const diff = touchX - touchStartX;
+        currentTranslate = touchStartTranslate + diff * 1.5;
+        carousel.style.transform = `translateX(${currentTranslate}px)`;
+        e.preventDefault();
+    });
+    
+    container.addEventListener('touchend', () => {
+        isDragging = false;
+        carousel.style.animationPlayState = 'running';
+        carousel.style.transition = '';
+        carousel.style.transform = '';
+    });
 }
 
 // Инициализация слайдеров
@@ -2690,30 +2762,22 @@ function initSliders() {
     // Инициализируем точки для главного слайдера
     updateMainSliderDots();
     
-    // Инициализируем точки для слайдера работ
-    updateWorksDots();
+    // Инициализируем карусели работ
+    initWorksCarousels();
     
     // Запускаем автопрокрутку главного слайдера
     startMainSliderAutoSlide();
-    startWorksAutoSlide();
     
     // Останавливаем автопрокрутку при наведении
     const mainSlider = document.querySelector('.main-content-slider');
-    const worksGallery = document.querySelector('.works-gallery');
     
     if (mainSlider) {
         mainSlider.addEventListener('mouseenter', stopMainSliderAutoSlide);
         mainSlider.addEventListener('mouseleave', startMainSliderAutoSlide);
     }
     
-    if (worksGallery) {
-        worksGallery.addEventListener('mouseenter', stopWorksAutoSlide);
-        worksGallery.addEventListener('mouseleave', startWorksAutoSlide);
-    }
-    
-    // Добавляем поддержку свайпов для мобильных устройств
+    // Добавляем поддержку свайпов для главного слайдера
     const mainContentTrack = document.getElementById('mainContentTrack');
-    const worksTrack = document.getElementById('worksTrack');
     
     if (mainContentTrack) {
         let touchStartX = 0;
@@ -2733,29 +2797,6 @@ function initSliders() {
                     slideMainContent(1); // Свайп влево - следующий
                 } else {
                     slideMainContent(-1); // Свайп вправо - предыдущий
-                }
-            }
-        });
-    }
-    
-    if (worksTrack) {
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        worksTrack.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-        
-        worksTrack.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            const swipeThreshold = 50;
-            const diff = touchStartX - touchEndX;
-            
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    slideWorks(1); // Свайп влево - следующий
-                } else {
-                    slideWorks(-1); // Свайп вправо - предыдущий
                 }
             }
         });
