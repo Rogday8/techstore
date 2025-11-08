@@ -2662,8 +2662,9 @@ function initWorksCarousels() {
     createCarouselImages(images2, carousel2);
     
     // Сначала настраиваем плавную бесконечную прокрутку
-    setupInfiniteScroll(carousel1, images1.length);
-    setupInfiniteScroll(carousel2, images2.length);
+    // Первая карусель движется влево, вторая - вправо
+    setupInfiniteScroll(carousel1, images1.length, -1); // -1 = влево
+    setupInfiniteScroll(carousel2, images2.length, 1);  // 1 = вправо
     
     // Затем добавляем drag функциональность (после инициализации анимации)
     setTimeout(() => {
@@ -2673,7 +2674,8 @@ function initWorksCarousels() {
 }
 
 // Настройка плавной бесконечной прокрутки
-function setupInfiniteScroll(carousel, imageCount) {
+// direction: -1 = влево, 1 = вправо
+function setupInfiniteScroll(carousel, imageCount, direction = -1) {
     const container = carousel.parentElement;
     let animationFrame = null;
     let isPaused = false;
@@ -2682,6 +2684,7 @@ function setupInfiniteScroll(carousel, imageCount) {
     const speed = 0.3; // пикселей за кадр (можно настроить скорость)
     const imageWidth = 300 + 24; // ширина изображения + gap (1.5rem = 24px)
     const setWidth = imageWidth * imageCount; // ширина одного набора изображений
+    const moveSpeed = speed * direction; // скорость с учетом направления
     
     // Сохраняем ссылку на функцию анимации для управления из drag
     window.carouselAnimations = window.carouselAnimations || {};
@@ -2693,13 +2696,21 @@ function setupInfiniteScroll(carousel, imageCount) {
             return;
         }
         
-        // Двигаем карусель
-        currentPosition -= speed;
+        // Двигаем карусель в нужном направлении
+        currentPosition += moveSpeed;
         
         // Когда прошли один полный набор, незаметно сбрасываем позицию
         // Так как у нас 3 копии изображений, переход будет незаметен
-        if (Math.abs(currentPosition) >= setWidth) {
-            currentPosition = currentPosition + setWidth; // Сбрасываем на начало следующего набора
+        if (direction === -1) {
+            // Движение влево (отрицательное значение)
+            if (currentPosition <= -setWidth) {
+                currentPosition = currentPosition + setWidth; // Сбрасываем на начало следующего набора
+            }
+        } else {
+            // Движение вправо (положительное значение)
+            if (currentPosition >= setWidth) {
+                currentPosition = currentPosition - setWidth; // Сбрасываем на начало следующего набора
+            }
         }
         
         carousel.style.transform = `translateX(${currentPosition}px)`;
