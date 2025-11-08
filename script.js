@@ -2701,11 +2701,13 @@ function setupInfiniteScroll(carousel, imageCount, direction = -1) {
     let animationFrame = null;
     let isPaused = false;
     let isDragging = false;
-    let currentPosition = 0;
     const speed = 0.3; // пикселей за кадр (можно настроить скорость)
     const imageWidth = 300 + 24; // ширина изображения + gap (1.5rem = 24px)
     const setWidth = imageWidth * imageCount; // ширина одного набора изображений
     const moveSpeed = speed * direction; // скорость с учетом направления
+    
+    // Для движения вправо начинаем с отрицательной позиции, чтобы изображения были видны
+    let currentPosition = direction === 1 ? -setWidth : 0;
     
     // Сохраняем ссылку на функцию анимации для управления из drag
     window.carouselAnimations = window.carouselAnimations || {};
@@ -2721,7 +2723,7 @@ function setupInfiniteScroll(carousel, imageCount, direction = -1) {
         currentPosition += moveSpeed;
         
         // Когда прошли один полный набор, незаметно сбрасываем позицию
-        // Так как у нас 3 копии изображений, переход будет незаметен
+        // Так как у нас 5 копий изображений, переход будет незаметен
         if (direction === -1) {
             // Движение влево (отрицательное значение)
             if (currentPosition <= -setWidth) {
@@ -2729,7 +2731,8 @@ function setupInfiniteScroll(carousel, imageCount, direction = -1) {
             }
         } else {
             // Движение вправо (положительное значение)
-            if (currentPosition >= setWidth) {
+            // Для движения вправо нужно проверять, когда позиция становится положительной
+            if (currentPosition >= 0) {
                 currentPosition = currentPosition - setWidth; // Сбрасываем на начало следующего набора
             }
         }
