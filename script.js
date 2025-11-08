@@ -595,6 +595,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
         console.error('⚠️ Ошибка инициализации IndexedDB:', err);
     }
+    
+    // Инициализируем слайдеры
+    initSliders();
 });
 
 
@@ -2549,5 +2552,195 @@ function processOrderCompletion(name, phone, email, address) {
     
     // Очистка формы
     document.getElementById('checkoutForm').reset();
+}
+
+// ==================== СЛАЙДЕРЫ ====================
+
+// Слайдер преимуществ
+let currentAdvantageIndex = 0;
+const totalAdvantages = 6;
+
+function slideAdvantages(direction) {
+    const track = document.getElementById('advantagesTrack');
+    if (!track) return;
+    
+    currentAdvantageIndex += direction;
+    
+    if (currentAdvantageIndex < 0) {
+        currentAdvantageIndex = totalAdvantages - 1;
+    } else if (currentAdvantageIndex >= totalAdvantages) {
+        currentAdvantageIndex = 0;
+    }
+    
+    track.style.transform = `translateX(-${currentAdvantageIndex * 100}%)`;
+}
+
+// Автопрокрутка слайдера преимуществ
+let advantagesAutoSlideInterval;
+
+function startAdvantagesAutoSlide() {
+    advantagesAutoSlideInterval = setInterval(() => {
+        slideAdvantages(1);
+    }, 5000); // Меняем каждые 5 секунд
+}
+
+function stopAdvantagesAutoSlide() {
+    if (advantagesAutoSlideInterval) {
+        clearInterval(advantagesAutoSlideInterval);
+    }
+}
+
+// Слайдер работ
+let currentWorkIndex = 0;
+const workImages = [
+    'images/raboti/2trp21a25uyo0c44o0440g8kw048g4.png',
+    'images/raboti/4v32kjykgyec4ok0oogc0g84s4gwks.png',
+    'images/raboti/6m54sw4x78wswoog0wg4k4cgg08ggw.png',
+    'images/raboti/6nth0bill4sgs4gg0wwos404ccwo00.png',
+    'images/raboti/7e4e5907a4863633669a2714f7d67a234e25a3d7.png',
+    'images/raboti/885x04qfnbswososc4s4sw88wws048.png',
+    'images/raboti/9k6hggv0qcws04s00ckkk4ow8kg48g.png',
+    'images/raboti/b6a3xyntz20ww0ow4kgoc88kkkwwc0.png',
+    'images/raboti/ed34d69c8a1a40d3e84b89b8ff850868bd445144.png',
+    'images/raboti/i2angvhnpmo0ow4wowwggkk0skgg8w.png',
+    'images/raboti/k57pvp0plk0k4gws0wwg0kk84gco00.png',
+    'images/raboti/q91uwlszpz4w0s0g0w4wocggoc40g0.png',
+    'images/raboti/r7t34xni5lw4kwgsoog40g44kw4kck.png'
+];
+const totalWorks = workImages.length;
+
+function slideWorks(direction) {
+    const track = document.getElementById('worksTrack');
+    if (!track) return;
+    
+    currentWorkIndex += direction;
+    
+    if (currentWorkIndex < 0) {
+        currentWorkIndex = totalWorks - 1;
+    } else if (currentWorkIndex >= totalWorks) {
+        currentWorkIndex = 0;
+    }
+    
+    track.style.transform = `translateX(-${currentWorkIndex * 100}%)`;
+    updateWorksDots();
+}
+
+function goToWork(index) {
+    currentWorkIndex = index;
+    const track = document.getElementById('worksTrack');
+    if (track) {
+        track.style.transform = `translateX(-${currentWorkIndex * 100}%)`;
+        updateWorksDots();
+    }
+}
+
+function updateWorksDots() {
+    const dotsContainer = document.getElementById('worksDots');
+    if (!dotsContainer) return;
+    
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalWorks; i++) {
+        const dot = document.createElement('button');
+        dot.className = `works-dot ${i === currentWorkIndex ? 'active' : ''}`;
+        dot.onclick = () => goToWork(i);
+        dotsContainer.appendChild(dot);
+    }
+}
+
+// Автопрокрутка слайдера работ
+let worksAutoSlideInterval;
+
+function startWorksAutoSlide() {
+    worksAutoSlideInterval = setInterval(() => {
+        slideWorks(1);
+    }, 4000); // Меняем каждые 4 секунды
+}
+
+function stopWorksAutoSlide() {
+    if (worksAutoSlideInterval) {
+        clearInterval(worksAutoSlideInterval);
+    }
+}
+
+// Инициализация слайдеров
+function initSliders() {
+    // Инициализируем точки для слайдера работ
+    updateWorksDots();
+    
+    // Запускаем автопрокрутку
+    startAdvantagesAutoSlide();
+    startWorksAutoSlide();
+    
+    // Останавливаем автопрокрутку при наведении
+    const advantagesSlider = document.querySelector('.advantages-slider');
+    const worksSlider = document.querySelector('.works-slider');
+    
+    if (advantagesSlider) {
+        advantagesSlider.addEventListener('mouseenter', stopAdvantagesAutoSlide);
+        advantagesSlider.addEventListener('mouseleave', startAdvantagesAutoSlide);
+    }
+    
+    if (worksSlider) {
+        worksSlider.addEventListener('mouseenter', stopWorksAutoSlide);
+        worksSlider.addEventListener('mouseleave', startWorksAutoSlide);
+    }
+    
+    // Добавляем поддержку свайпов для мобильных устройств
+    const advantagesTrack = document.getElementById('advantagesTrack');
+    const worksTrack = document.getElementById('worksTrack');
+    
+    if (advantagesTrack) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        advantagesTrack.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        advantagesTrack.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe('advantages');
+        });
+        
+        function handleSwipe(type) {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    slideAdvantages(1); // Свайп влево - следующий
+                } else {
+                    slideAdvantages(-1); // Свайп вправо - предыдущий
+                }
+            }
+        }
+    }
+    
+    if (worksTrack) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        worksTrack.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        worksTrack.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe('works');
+        });
+        
+        function handleSwipe(type) {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    slideWorks(1); // Свайп влево - следующий
+                } else {
+                    slideWorks(-1); // Свайп вправо - предыдущий
+                }
+            }
+        }
+    }
 }
 

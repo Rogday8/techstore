@@ -247,6 +247,284 @@ body {
     border-color: var(--text-inverse);
 }
 
+/* Advantages Slider Section */
+.advantages-section {
+    background: var(--bg-light);
+    padding: 80px 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.advantages-section h2 {
+    text-align: center;
+    font-size: 3rem;
+    font-family: 'Space Grotesk', sans-serif;
+    margin-bottom: 4rem;
+    color: var(--accent);
+    font-weight: 300;
+    letter-spacing: -1px;
+}
+
+.advantages-slider {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.advantages-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 2rem;
+}
+
+.advantage-item {
+    min-width: 100%;
+    padding: 2rem;
+    background: var(--text-inverse);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.advantage-item:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.advantage-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.advantage-item h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.advantage-item p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--text-inverse);
+    border: 1px solid var(--border-color);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--accent);
+    transition: all 0.3s;
+    z-index: 10;
+    border-radius: 0;
+}
+
+.slider-nav:hover {
+    background: var(--accent);
+    color: var(--text-inverse);
+    border-color: var(--accent);
+}
+
+.slider-nav-prev {
+    left: 20px;
+}
+
+.slider-nav-next {
+    right: 20px;
+}
+
+/* Repair Services Section */
+.repair-services-section {
+    background: var(--bg-dark);
+    color: var(--text-inverse);
+    padding: 80px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.repair-services-section h2 {
+    text-align: center;
+    font-size: 3rem;
+    font-family: 'Space Grotesk', sans-serif;
+    margin-bottom: 4rem;
+    color: var(--text-inverse);
+    font-weight: 300;
+    letter-spacing: -1px;
+}
+
+.repair-services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.repair-service-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.repair-service-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-5px);
+}
+
+.repair-service-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.repair-service-item h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--text-inverse);
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.repair-service-price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-inverse);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.repair-service-desc {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Our Works Slider Section */
+.our-works-section {
+    background: var(--bg-light);
+    padding: 80px 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.our-works-section h2 {
+    text-align: center;
+    font-size: 3rem;
+    font-family: 'Space Grotesk', sans-serif;
+    margin-bottom: 4rem;
+    color: var(--accent);
+    font-weight: 300;
+    letter-spacing: -1px;
+}
+
+.works-slider {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.works-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 0;
+}
+
+.work-image {
+    min-width: 100%;
+    flex-shrink: 0;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+}
+
+.works-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.works-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    padding: 0;
+}
+
+.works-dot.active {
+    background: var(--accent);
+    width: 30px;
+    border-radius: 6px;
+}
+
+/* Адаптивность для новых секций */
+@media (max-width: 768px) {
+    .advantages-section h2,
+    .repair-services-section h2,
+    .our-works-section h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .advantage-item {
+        padding: 1.5rem;
+    }
+    
+    .advantage-icon {
+        font-size: 2rem;
+    }
+    
+    .advantage-item h3 {
+        font-size: 1.2rem;
+    }
+    
+    .repair-services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .repair-service-item {
+        padding: 1.5rem;
+    }
+    
+    .work-image {
+        height: 300px;
+    }
+    
+    .slider-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .slider-nav-prev {
+        left: 10px;
+    }
+    
+    .slider-nav-next {
+        right: 10px;
+    }
+}
+
 /* Products Section */
 .products {
     background: var(--bg-light);
