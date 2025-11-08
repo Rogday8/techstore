@@ -430,9 +430,10 @@ body {
     object-fit: contain;
     background: var(--text-inverse);
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border: none;
     box-sizing: border-box;
     pointer-events: none;
+    outline: none;
 }
 
 /* Main Slider Navigation */

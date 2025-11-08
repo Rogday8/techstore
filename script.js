@@ -2645,17 +2645,38 @@ function initWorksCarousels() {
     const images1 = shuffledImages.slice(0, half);
     const images2 = shuffledImages.slice(half);
     
+    // Предзагрузка всех изображений
+    function preloadImages(imageArray) {
+        imageArray.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+    }
+    
+    // Предзагружаем все изображения
+    preloadImages(workImages);
+    
     // Функция для создания дублированных изображений (для бесконечной прокрутки)
     function createCarouselImages(images, container) {
-        // Добавляем изображения трижды для плавной бесконечной прокрутки
-        // Это нужно для того, чтобы переход был незаметным
-        [...images, ...images, ...images].forEach(src => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = 'Наша работа';
-            img.className = 'work-image';
-            container.appendChild(img);
-        });
+        // Добавляем изображения 5 раз для гарантированной бесконечной прокрутки
+        // Это нужно для того, чтобы переход был незаметным и всегда были изображения
+        const copies = 5;
+        for (let i = 0; i < copies; i++) {
+            images.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = 'Наша работа';
+                img.className = 'work-image';
+                // Предзагрузка изображений для предотвращения задержек
+                img.loading = 'eager';
+                img.decoding = 'async';
+                // Обработка ошибок загрузки
+                img.onerror = function() {
+                    this.style.display = 'none';
+                };
+                container.appendChild(img);
+            });
+        }
     }
     
     createCarouselImages(images1, carousel1);
