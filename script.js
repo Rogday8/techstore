@@ -2613,6 +2613,110 @@ function stopMainSliderAutoSlide() {
     }
 }
 
+// Функции для работы с услугами ремонта
+const repairServices = {
+    'battery': {
+        title: 'Замена аккумулятора',
+        price: 'от 1500 ₽'
+    },
+    'glass': {
+        title: 'Замена заднего стекла и корпуса',
+        price: 'от 2500 ₽'
+    },
+    'polish': {
+        title: 'Полировка стекла',
+        price: 'iPhone, Apple Watch от 2000 ₽'
+    },
+    'screen': {
+        title: 'Переклейка стекла',
+        price: 'от 2500 ₽'
+    },
+    'protection': {
+        title: 'Защитные стёкла и чехлы',
+        price: 'от 300 ₽'
+    },
+    'other': {
+        title: 'Другие виды услуг',
+        price: 'от 500 ₽'
+    }
+};
+
+function openRepairService(serviceId) {
+    const service = repairServices[serviceId];
+    if (!service) return;
+    
+    // Скрываем главный слайдер и показываем секцию оформления
+    document.querySelector('.main-content-slider-section').style.display = 'none';
+    document.querySelector('#products').style.display = 'none';
+    document.querySelector('#repairServiceOrder').style.display = 'block';
+    
+    // Обновляем заголовок
+    document.getElementById('repairServiceTitle').textContent = service.title;
+    
+    // Загружаем фотографии работ
+    loadRepairWorksGallery();
+    
+    // Прокручиваем к секции
+    document.getElementById('repairServiceOrder').scrollIntoView({ behavior: 'smooth' });
+}
+
+function closeRepairService() {
+    document.querySelector('.main-content-slider-section').style.display = 'block';
+    document.querySelector('#products').style.display = 'block';
+    document.querySelector('#repairServiceOrder').style.display = 'none';
+    
+    // Прокручиваем к началу
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function loadRepairWorksGallery() {
+    const gallery = document.getElementById('repairWorksGallery');
+    if (!gallery) return;
+    
+    gallery.innerHTML = '';
+    workImages.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Пример работы';
+        img.onclick = () => {
+            // Можно добавить модальное окно для просмотра
+            window.open(src, '_blank');
+        };
+        gallery.appendChild(img);
+    });
+}
+
+function submitRepairService(event) {
+    event.preventDefault();
+    
+    const formData = {
+        service: document.getElementById('repairServiceTitle').textContent,
+        name: document.getElementById('repairName').value,
+        phone: document.getElementById('repairPhone').value,
+        device: document.getElementById('repairDevice').value,
+        description: document.getElementById('repairDescription').value,
+        dateTime: document.getElementById('repairDateTime').value
+    };
+    
+    // Сохраняем в localStorage (можно отправить на сервер)
+    const repairs = JSON.parse(localStorage.getItem('repairOrders') || '[]');
+    repairs.push({
+        ...formData,
+        date: new Date().toISOString()
+    });
+    localStorage.setItem('repairOrders', JSON.stringify(repairs));
+    
+    showNotification('✅ Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.', 'success');
+    
+    // Очищаем форму
+    document.getElementById('repairServiceForm').reset();
+    
+    // Закрываем секцию
+    setTimeout(() => {
+        closeRepairService();
+    }, 2000);
+}
+
 // Карусели работ
 const workImages = [
     'images/raboti/2trp21a25uyo0c44o0440g8kw048g4.png',
