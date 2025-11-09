@@ -15,7 +15,7 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: var(--text-primary);
     line-height: 1.6;
     background: var(--bg-light);
@@ -61,7 +61,7 @@ html {
 .logo {
     font-size: 1.2rem;
     font-weight: 700;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     color: var(--accent);
     letter-spacing: -0.5px;
     display: flex;
@@ -194,7 +194,7 @@ html {
     justify-content: center;
     font-size: 0.7rem;
     font-weight: 500;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     z-index: 10;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -217,7 +217,7 @@ html {
 .hero h1 {
     font-size: 4.5rem;
     font-weight: 300;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 1.5rem;
     animation: fadeInDown 1s ease-out;
     letter-spacing: -2px;
@@ -293,7 +293,7 @@ html {
 .main-content-slide h2 {
     text-align: center;
     font-size: 3rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 4rem;
     color: var(--accent);
     font-weight: 300;
@@ -490,7 +490,7 @@ html {
     font-weight: 500;
     margin-bottom: 1rem;
     color: var(--accent);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     letter-spacing: -0.5px;
     transition: color 0.3s;
 }
@@ -699,7 +699,7 @@ html {
     font-weight: 500;
     margin-bottom: 1rem;
     color: var(--text-inverse);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     letter-spacing: -0.5px;
     transition: color 0.3s;
 }
@@ -740,7 +740,7 @@ html {
     cursor: pointer;
     transition: all 0.3s;
     margin-bottom: 2rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .back-btn:hover {
@@ -751,7 +751,7 @@ html {
 
 .repair-service-order-section h2 {
     font-size: 3rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 3rem;
     color: var(--accent);
     font-weight: 300;
@@ -782,7 +782,7 @@ html {
     color: var(--text-primary);
     font-size: 0.9rem;
     font-weight: 500;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .form-group input,
@@ -791,7 +791,7 @@ html {
     padding: 0.9rem;
     border: 1px solid var(--border-color);
     font-size: 1rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     transition: all 0.3s;
     box-sizing: border-box;
 }
@@ -818,7 +818,7 @@ html {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -837,7 +837,7 @@ html {
 
 .repair-works-gallery h3 {
     font-size: 1.8rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 2rem;
     color: var(--accent);
     font-weight: 300;
@@ -1368,7 +1368,7 @@ html {
 .products h2 {
     text-align: center;
     font-size: 3rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 4rem;
     color: var(--accent);
     font-weight: 300;
@@ -1725,7 +1725,7 @@ html {
 
 .product-info h3 {
     font-size: 1.3rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 0.5rem;
     color: var(--accent);
     font-weight: 400;
@@ -1943,7 +1943,7 @@ html {
     font-weight: 500;
     color: var(--accent);
     margin-bottom: 1.5rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .tradein-price-info {
@@ -2021,7 +2021,7 @@ html {
     border: 1px solid var(--border-color);
     border-radius: 0;
     font-size: 1rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: var(--text-primary);
     background: var(--text-inverse);
     transition: all 0.3s;
@@ -2062,7 +2062,7 @@ html {
     text-transform: none;
     font-weight: 400;
     border-radius: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 .tradein-actions .btn-secondary:hover {
@@ -2223,7 +2223,7 @@ html {
 
 .modal-details h2 {
     font-size: 2.5rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 1rem;
     color: var(--accent);
     font-weight: 300;
@@ -2308,7 +2308,7 @@ html {
     width: 100%;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 .btn-trade-in:hover {
@@ -2358,7 +2358,7 @@ html {
 }
 
 .modal-specs h3 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 1.5rem;
     font-size: 1.3rem;
     color: var(--accent);
@@ -2467,7 +2467,7 @@ model-viewer {
 
 .cart-header h3 {
     font-size: 1.8rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     color: var(--accent);
     font-weight: 300;
 }
@@ -2606,7 +2606,7 @@ model-viewer {
     border-radius: 0;
     font-size: 1rem;
     transition: all 0.3s;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: var(--text-inverse);
 }
 
@@ -2619,7 +2619,7 @@ model-viewer {
 #checkoutForm textarea {
     resize: vertical;
     min-height: 120px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 #checkoutForm .btn-full {
@@ -2654,7 +2654,7 @@ model-viewer {
     color: var(--text-primary, #1a1a1a) !important;
     font-size: 0.9rem;
     font-weight: 400;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     transition: all 0.2s ease;
     text-transform: uppercase;
@@ -2687,7 +2687,7 @@ model-viewer {
 }
 
 .checkout-content h2 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 2rem;
     font-size: 2rem;
     font-weight: 300;
@@ -2703,7 +2703,7 @@ model-viewer {
 .about h2 {
     text-align: center;
     font-size: 3rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 3rem;
     color: var(--accent);
     font-weight: 300;
@@ -2750,7 +2750,7 @@ model-viewer {
 }
 
 .about-card h3 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.3rem;
     color: var(--accent);
     margin-bottom: 1rem;
@@ -2773,7 +2773,7 @@ model-viewer {
 .contacts h2 {
     text-align: center;
     font-size: 3rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 3rem;
     color: var(--accent);
     font-weight: 300;
@@ -2812,7 +2812,7 @@ model-viewer {
 }
 
 .contact-card h3 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.1rem;
     color: var(--accent);
     margin-bottom: 0.5rem;
@@ -2871,7 +2871,7 @@ model-viewer {
 }
 
 .info-box h4 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.3rem;
     margin-bottom: 1rem;
     font-weight: 400;
