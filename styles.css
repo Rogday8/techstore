@@ -177,16 +177,53 @@ html {
 .cart-icon {
     position: relative;
     cursor: pointer;
-    font-size: 0.85rem;
-    padding: 0.4rem;
+    padding: 0.5rem;
     margin-right: 0.5rem;
     transition: all 0.3s;
     overflow: visible;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
 }
 
 .cart-icon:hover {
     opacity: 0.7;
+}
+
+.cart-icon-symbol {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: block;
+}
+
+.cart-icon-symbol::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 16px;
+    border: 2px solid #000;
+    border-radius: 2px 2px 0 0;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cart-icon-symbol::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border: 2px solid #000;
+    border-bottom: none;
+    border-radius: 50% 50% 0 0;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
 }
 
 .cart-count {
