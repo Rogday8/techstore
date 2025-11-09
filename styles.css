@@ -80,8 +80,8 @@ html {
 .apple-logo,
 .apple-logo-fallback {
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
+    width: 96px;
+    height: 96px;
     transition: transform 0.3s ease;
     object-fit: contain;
 }
