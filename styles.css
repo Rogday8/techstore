@@ -194,36 +194,10 @@ html {
 }
 
 .cart-icon-symbol {
-    width: 24px;
-    height: 24px;
-    position: relative;
+    font-size: 1.5rem;
     display: block;
-}
-
-.cart-icon-symbol::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 16px;
-    border: 2px solid #000;
-    border-radius: 2px 2px 0 0;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.cart-icon-symbol::after {
-    content: '';
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    border: 2px solid #000;
-    border-bottom: none;
-    border-radius: 50% 50% 0 0;
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-sizing: border-box;
+    line-height: 1;
+    filter: grayscale(100%) brightness(0);
 }
 
 .cart-count {
