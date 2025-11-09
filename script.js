@@ -2688,7 +2688,7 @@ let totalMainSlides = 3;
 // Определяем количество слайдов в зависимости от размера экрана
 function updateTotalMainSlides() {
     const isMobile = window.innerWidth <= 768;
-    totalMainSlides = isMobile ? 2 : 3; // На мобильных скрыт слайд "Наши работы"
+    totalMainSlides = isMobile ? 0 : 3; // На мобильных весь слайдер скрыт
     
     // Если текущий индекс больше доступных слайдов, сбрасываем его
     if (currentMainSlideIndex >= totalMainSlides) {

@@ -1038,9 +1038,7 @@ html {
 /* Адаптивность для новых секций */
 @media (max-width: 768px) {
     .main-content-slider-section {
-        padding: 20px 0;
-        min-height: auto;
-        overflow: hidden;
+        display: none !important;
     }
     
     .main-content-slider {
