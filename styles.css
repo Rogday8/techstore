@@ -1058,6 +1058,10 @@ html {
         display: block;
     }
     
+    .our-works-slide {
+        display: none !important;
+    }
+    
     .our-works-slide .container {
         padding: 0;
         width: 100%;
@@ -3654,6 +3658,10 @@ model-viewer {
     
     .main-content-slide .container {
         padding: 0 10px;
+    }
+    
+    .our-works-slide {
+        display: none !important;
     }
     
     .our-works-slide .container {

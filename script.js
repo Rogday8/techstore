@@ -598,6 +598,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     // Инициализируем слайдеры
     initSliders();
+    
+    // Обновляем количество слайдов после инициализации
+    updateTotalMainSlides();
 });
 
 
@@ -2558,7 +2561,26 @@ function processOrderCompletion(name, phone, email, address) {
 
 // Главный слайдер контента (преимущества, услуги, работы)
 let currentMainSlideIndex = 0;
-const totalMainSlides = 3;
+let totalMainSlides = 3;
+
+// Определяем количество слайдов в зависимости от размера экрана
+function updateTotalMainSlides() {
+    const isMobile = window.innerWidth <= 768;
+    totalMainSlides = isMobile ? 2 : 3; // На мобильных скрыт слайд "Наши работы"
+    
+    // Если текущий индекс больше доступных слайдов, сбрасываем его
+    if (currentMainSlideIndex >= totalMainSlides) {
+        currentMainSlideIndex = totalMainSlides - 1;
+        const track = document.getElementById('mainContentTrack');
+        if (track) {
+            track.style.transform = `translateX(-${currentMainSlideIndex * 100}%)`;
+            updateMainSliderDots();
+        }
+    }
+}
+
+// Обновляем при загрузке и изменении размера окна
+window.addEventListener('resize', updateTotalMainSlides);
 
 function slideMainContent(direction) {
     const track = document.getElementById('mainContentTrack');
