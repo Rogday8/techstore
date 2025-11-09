@@ -248,6 +248,47 @@
         </div>
     </section>
 
+    <!-- Repair Service Order Section -->
+    <section id="repairServiceOrder" class="repair-service-order-section" style="display: none;">
+        <div class="container">
+            <button class="back-btn" onclick="closeRepairService()">← Назад к услугам</button>
+            <h2 id="repairServiceTitle">Оформление услуги</h2>
+            <div class="repair-order-content">
+                <div class="repair-order-form-wrapper">
+                    <form id="repairServiceForm" class="repair-service-form" onsubmit="submitRepairService(event)">
+                        <div class="form-group">
+                            <label>Ваше имя</label>
+                            <input type="text" id="repairName" placeholder="Введите ваше имя" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон</label>
+                            <input type="tel" id="repairPhone" placeholder="+7 (___) ___-__-__" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Модель устройства</label>
+                            <input type="text" id="repairDevice" placeholder="Например: iPhone 15 Pro Max" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Описание проблемы</label>
+                            <textarea id="repairDescription" placeholder="Опишите проблему или что нужно сделать" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Желаемая дата и время</label>
+                            <input type="datetime-local" id="repairDateTime" required>
+                        </div>
+                        <button type="submit" class="btn-submit-repair">Отправить заявку</button>
+                    </form>
+                </div>
+                <div class="repair-works-gallery">
+                    <h3>Примеры наших работ</h3>
+                    <div class="works-gallery-grid" id="repairWorksGallery">
+                        <!-- Фотографии работ будут добавлены через JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Products Section -->
     <section id="products" class="products">
         <div class="container">
