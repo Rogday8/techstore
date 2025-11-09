@@ -907,8 +907,7 @@ function renderProducts() {
         filteredProducts = products.filter(p => p.category === currentCategory);
     }
     
-    // Фильтруем товары по цене - используем реальный минимум и максимум
-    // Фильтрация по цене
+    // Фильтруем товары по цене
     filteredProducts = filteredProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
     
     const grid = document.getElementById('productsGrid');
