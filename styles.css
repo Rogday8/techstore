@@ -3310,6 +3310,15 @@ model-viewer {
         padding: 80px 15px;
     }
     
+    .hero-carousel-item h3 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-carousel-item p {
+        font-size: 0.95rem;
+        max-width: 90%;
+    }
+    
     .hero h1 {
         font-size: 2rem;
         line-height: 1.2;
