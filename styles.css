@@ -913,14 +913,19 @@ html {
     margin: 0 auto;
     width: 100%;
     overflow: hidden;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .works-carousel-container {
     position: relative;
     overflow: hidden;
     width: 100%;
+    max-width: 100%;
     cursor: grab;
     user-select: none;
+    margin: 0;
+    padding: 0;
 }
 
 .works-carousel-container:active {
@@ -931,6 +936,7 @@ html {
     display: flex;
     gap: 1.5rem;
     will-change: transform;
+    width: auto;
 }
 
 .works-carousel-track img {
@@ -1194,26 +1200,33 @@ html {
     }
     
     .works-carousels {
-        gap: 1.5rem;
-        padding: 0 10px;
+        gap: 1.2rem;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
     }
     
     .works-carousel-container {
         margin: 0;
         padding: 0;
         width: 100%;
+        max-width: 100%;
         overflow: hidden;
+        position: relative;
     }
     
     .works-carousel-track {
-        gap: 1rem;
+        gap: 0.8rem;
         width: auto;
+        display: flex;
     }
     
     .works-carousel-track img {
-        width: 260px;
-        height: 320px;
-        min-width: 260px;
+        width: 280px;
+        height: 350px;
+        min-width: 280px;
+        max-width: 280px;
     }
     
     .main-slider-nav {
@@ -3705,23 +3718,31 @@ model-viewer {
     }
     
     .works-carousels {
-        padding: 0 5px;
+        padding: 0;
+        gap: 1rem;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
     }
     
     .works-carousel-container {
         margin: 0;
         padding: 0;
         width: 100%;
+        max-width: 100%;
+        overflow: hidden;
     }
     
     .works-carousel-track {
-        gap: 0.8rem;
+        gap: 0.6rem;
+        display: flex;
     }
     
     .works-carousel-track img {
-        width: 220px;
-        height: 280px;
-        min-width: 220px;
+        width: 250px;
+        height: 300px;
+        min-width: 250px;
+        max-width: 250px;
     }
     
     .main-slider-nav {
