@@ -973,7 +973,7 @@ function renderProducts() {
                 <div class="product-info" onclick="openModal(${product.id})">
                     <h3>${product.name}</h3>
                     <p>${product.description.substring(0, 80)}...</p>
-                    <div class="product-price">${product.price.toLocaleString()} ₽</div>
+                    <div class="product-price">${product.hasMemory && product.memoryOptions ? `от ${product.price.toLocaleString()} ₽` : `${product.price.toLocaleString()} ₽`}</div>
                 </div>
             </div>
         `;
