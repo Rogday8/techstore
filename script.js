@@ -1840,7 +1840,7 @@ function renderCart() {
     
     cartItems.innerHTML = cart.map((item, index) => `
         <div class="cart-item">
-            <img src="${item.image || item.image || 'images/default.jpg'}" alt="${item.name}">
+            <img src="${item.image || 'images/default.jpg'}" alt="${item.name}">
             <div class="cart-item-info">
                 <h4>${item.name}${item.memory ? ` (${item.memory})` : ''}</h4>
                 <p>${item.price.toLocaleString()} ₽</p>
