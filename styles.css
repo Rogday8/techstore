@@ -1375,6 +1375,50 @@ html {
     letter-spacing: -1px;
 }
 
+.search-container {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.product-search-input {
+    width: 100%;
+    padding: 14px 50px 14px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-primary);
+    background: var(--text-inverse);
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.product-search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(26, 26, 26, 0.1);
+}
+
+.product-search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 .categories-filter {
     display: flex;
     justify-content: center;

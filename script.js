@@ -530,6 +530,9 @@ let currentCategory = 'all';
 let minPrice = 0;
 let maxPrice = 500000;
 
+// Поиск по названию
+let searchQuery = '';
+
 // Инициализация
 window.addEventListener('DOMContentLoaded', async () => {
     // Вычисляем максимальную цену для фильтра
@@ -903,6 +906,11 @@ function renderProducts() {
         filteredProducts = products.filter(p => p.category === currentCategory);
     }
     
+    // Фильтруем товары по поисковому запросу
+    if (searchQuery.trim()) {
+        filteredProducts = filteredProducts.filter(p => matchesSearch(p, searchQuery));
+    }
+    
     // Фильтруем товары по цене - используем реальный минимум и максимум
     const actualMin = Math.min(minPrice, maxPrice);
     const actualMax = Math.max(minPrice, maxPrice);
@@ -1049,6 +1057,89 @@ function updatePriceRangeInfo() {
         const actualMin = Math.min(minPrice, maxPrice);
         const actualMax = Math.max(minPrice, maxPrice);
         priceRangeInfo.textContent = `Диапазон: от ${actualMin.toLocaleString()} ₽ до ${actualMax.toLocaleString()} ₽`;
+    }
+}
+
+// Функция для проверки совпадения товара с поисковым запросом (с учетом опечаток)
+function matchesSearch(product, query) {
+    const productName = product.name.toLowerCase();
+    const searchLower = query.toLowerCase().trim();
+    
+    // Точное совпадение или подстрока
+    if (productName.includes(searchLower)) {
+        return true;
+    }
+    
+    // Поиск по словам (если запрос состоит из нескольких слов)
+    const searchWords = searchLower.split(/\s+/);
+    const productWords = productName.split(/\s+/);
+    
+    // Проверяем, есть ли хотя бы одно слово из запроса в названии
+    for (const searchWord of searchWords) {
+        if (searchWord.length < 2) continue; // Пропускаем слишком короткие слова
+        
+        let found = false;
+        for (const productWord of productWords) {
+            // Точное совпадение слова
+            if (productWord.includes(searchWord)) {
+                found = true;
+                break;
+            }
+            
+            // Проверка похожести (fuzzy matching)
+            if (isSimilar(productWord, searchWord)) {
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Функция для проверки похожести строк (простой алгоритм)
+function isSimilar(str1, str2) {
+    // Если строки слишком разные по длине, они не похожи
+    if (Math.abs(str1.length - str2.length) > 2) {
+        return false;
+    }
+    
+    // Вычисляем процент совпадения символов
+    let matches = 0;
+    const minLength = Math.min(str1.length, str2.length);
+    const maxLength = Math.max(str1.length, str2.length);
+    
+    // Проверяем совпадение символов в одинаковых позициях
+    for (let i = 0; i < minLength; i++) {
+        if (str1[i] === str2[i]) {
+            matches++;
+        }
+    }
+    
+    // Проверяем наличие всех символов из запроса в строке
+    let allCharsFound = true;
+    for (const char of str2) {
+        if (!str1.includes(char)) {
+            allCharsFound = false;
+            break;
+        }
+    }
+    
+    // Если процент совпадения > 60% или все символы найдены, считаем похожими
+    const similarity = matches / maxLength;
+    return similarity > 0.6 || (allCharsFound && similarity > 0.4);
+}
+
+// Обработчик поиска
+function handleSearch() {
+    const searchInput = document.getElementById('productSearch');
+    if (searchInput) {
+        searchQuery = searchInput.value;
+        renderProducts();
     }
 }
 

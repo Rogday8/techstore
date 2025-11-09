@@ -293,6 +293,12 @@
     <section id="products" class="products">
         <div class="container">
             <h2>Наш каталог</h2>
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <input type="text" id="productSearch" class="product-search-input" placeholder="Поиск товаров..." oninput="handleSearch()">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
             <div class="categories-filter">
                 <button class="filter-btn active" onclick="filterProducts('all')">Все товары</button>
                 <button class="filter-btn" onclick="filterProducts('Смартфоны')">Смартфоны</button>
