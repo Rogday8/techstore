@@ -1433,8 +1433,9 @@ function openModal(productId) {
         }
     }
     
-    // Определяем начальную цену с учетом выбранной памяти
+    // Определяем начальную цену и характеристики с учетом выбранной памяти
     let initialPrice = product.price;
+    let initialSpecs = product.specs;
     if (product.hasMemory && product.memoryOptions) {
         const selectedMemory = currentProductMemory[productId] || Object.keys(product.memoryOptions)[0];
         const memoryOption = product.memoryOptions[selectedMemory];
@@ -1442,6 +1443,16 @@ function openModal(productId) {
         if (!currentProductMemory[productId]) {
             currentProductMemory[productId] = selectedMemory;
         }
+        // Обновляем характеристики для начального отображения
+        initialSpecs = product.specs.map(spec => {
+            if (spec.includes('Оперативная память:')) {
+                return `Оперативная память: ${memoryOption.ram}`;
+            }
+            if (spec.includes('Накопитель:')) {
+                return `Накопитель: ${memoryOption.storage}`;
+            }
+            return spec;
+        });
     }
     
     content.innerHTML = `
