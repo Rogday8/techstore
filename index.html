@@ -305,7 +305,18 @@
             <div class="price-filter">
                 <div class="price-filter-header">
                     <span>Фильтр по цене:</span>
-                    <span id="priceRange" class="price-range-display">от 0 ₽ - до 500 000 ₽</span>
+                    <div class="price-inputs">
+                        <div class="price-input-group">
+                            <label>от</label>
+                            <input type="number" id="priceInputMin" class="price-input" min="0" step="1000" value="0">
+                            <span>₽</span>
+                        </div>
+                        <div class="price-input-group">
+                            <label>до</label>
+                            <input type="number" id="priceInputMax" class="price-input" min="0" step="1000" value="500000">
+                            <span>₽</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="price-slider-container">
                     <div class="dual-range-slider" id="dualRangeSlider">

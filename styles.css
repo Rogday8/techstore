@@ -1426,6 +1426,49 @@ html {
     margin-bottom: 1rem;
     font-size: 0.95rem;
     color: var(--text-secondary);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.price-inputs {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.price-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-input-group label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.price-input {
+    width: 120px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-primary);
+    background: var(--text-inverse);
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.price-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.price-input-group span {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
 }
 
 .price-range-display {
@@ -1474,8 +1517,10 @@ html {
     border-radius: 3px;
     left: 0%;
     width: 100%;
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: none;
     z-index: 1;
+    top: 0;
+    transform: translateX(0);
 }
 
 .price-slider {
