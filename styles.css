@@ -1051,11 +1051,21 @@ html {
     }
     
     .main-content-slide .container {
-        padding: 0 15px;
+        padding: 0 10px;
         max-width: 100%;
         width: 100%;
         box-sizing: border-box;
         display: block;
+    }
+    
+    .our-works-slide .container {
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .our-works-slide h2 {
+        padding: 0 10px;
     }
     
     .main-content-slide h2 {
@@ -3644,6 +3654,15 @@ model-viewer {
     
     .main-content-slide .container {
         padding: 0 10px;
+    }
+    
+    .our-works-slide .container {
+        padding: 0;
+    }
+    
+    .our-works-slide h2 {
+        padding: 0 10px;
+        margin-bottom: 1rem;
     }
     
     .main-content-slide h2 {
