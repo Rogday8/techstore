@@ -511,12 +511,7 @@ html {
 
 /* Repair Services Slide */
 .repair-services-slide {
-    background: var(--bg-dark);
-    color: var(--text-inverse);
-}
-
-.repair-services-slide h2 {
-    color: var(--text-inverse);
+    background: var(--bg-light);
 }
 
 .repair-services-grid {
@@ -531,7 +526,7 @@ html {
 }
 
 .repair-service-item {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--text-inverse);
     border: none;
     padding: 3rem 2rem;
     text-align: center;
@@ -548,7 +543,7 @@ html {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
     transform: translateX(-100%);
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -558,9 +553,8 @@ html {
 }
 
 .repair-service-item:hover {
-    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
 }
 
 .repair-service-icon-wrapper {
@@ -577,7 +571,7 @@ html {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+    background: linear-gradient(135deg, var(--accent), rgba(0, 0, 0, 0.1));
     border-radius: 50%;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -585,7 +579,7 @@ html {
 }
 
 .repair-service-item:hover .icon-bg {
-    opacity: 1;
+    opacity: 0.1;
     transform: scale(1.2);
 }
 
@@ -595,7 +589,7 @@ html {
     height: 50px;
     z-index: 2;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+    background: linear-gradient(135deg, var(--accent), #000);
 }
 
 .repair-service-item:hover .repair-service-icon {
@@ -698,30 +692,32 @@ html {
     font-size: 1.4rem;
     font-weight: 500;
     margin-bottom: 1rem;
-    color: var(--text-inverse);
+    color: var(--accent);
     font-family: 'Montserrat', sans-serif;
     letter-spacing: -0.5px;
     transition: color 0.3s;
 }
 
 .repair-service-item:hover h3 {
-    color: rgba(255, 255, 255, 1);
+    color: #000;
 }
 
 .repair-service-price {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--text-inverse);
+    color: var(--accent);
     margin-bottom: 0.5rem;
     display: block;
 }
 
 .repair-service-desc {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     font-size: 0.95rem;
     line-height: 1.7;
     max-width: 280px;
     margin: 0 auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Repair Service Order Section */
