@@ -1508,24 +1508,19 @@ html {
     top: 50%;
     transform: translateY(-50%);
     cursor: default;
-    --range-start: 0%;
-    --range-end: 100%;
-}
-
-.price-slider-track::before {
-    content: '';
-    position: absolute;
-    left: var(--range-start);
-    width: calc(var(--range-end) - var(--range-start));
-    height: 100%;
-    background: var(--accent);
-    border-radius: 3px;
-    z-index: 1;
-    pointer-events: none;
 }
 
 .price-slider-range {
-    display: none;
+    position: absolute;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    left: 0%;
+    width: 100%;
+    z-index: 1;
+    top: 0;
+    pointer-events: none;
+    transition: none;
 }
 
 .price-slider {

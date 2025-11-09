@@ -908,8 +908,10 @@ function renderProducts() {
         filteredProducts = products.filter(p => p.category === currentCategory);
     }
     
-    // Фильтруем товары по цене
-    filteredProducts = filteredProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
+    // Фильтруем товары по цене - используем реальный минимум и максимум
+    const actualMin = Math.min(minPrice, maxPrice);
+    const actualMax = Math.max(minPrice, maxPrice);
+    filteredProducts = filteredProducts.filter(p => p.price >= actualMin && p.price <= actualMax);
     
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = filteredProducts.map(product => {
@@ -1028,20 +1030,15 @@ function setupDualSlider() {
     
     if (!sliderMin || !sliderMax) return;
     
-    // Функция для обновления минимального значения
+    // Функция для обновления минимального значения - точки двигаются независимо
     function updateMinValue(value) {
         const minVal = parseInt(value);
-        const maxVal = parseInt(sliderMax.value);
         const maxRange = parseInt(sliderMax.max);
         
-        // Ограничиваем значение в допустимых пределах
+        // Ограничиваем значение только в допустимых пределах диапазона
         let newMinVal = Math.max(0, Math.min(minVal, maxRange));
         
-        // Если минимальное значение больше максимального, ограничиваем его
-        if (newMinVal > maxVal) {
-            newMinVal = maxVal;
-        }
-        
+        // Точки двигаются независимо - нет ограничений на пересечение
         sliderMin.value = newMinVal;
         if (inputMin) inputMin.value = newMinVal;
         minPrice = newMinVal;
@@ -1050,20 +1047,15 @@ function setupDualSlider() {
         debouncePriceFilter();
     }
     
-    // Функция для обновления максимального значения
+    // Функция для обновления максимального значения - точки двигаются независимо
     function updateMaxValue(value) {
         const maxVal = parseInt(value);
-        const minVal = parseInt(sliderMin.value);
         const maxRange = parseInt(sliderMax.max);
         
-        // Ограничиваем значение в допустимых пределах
+        // Ограничиваем значение только в допустимых пределах диапазона
         let newMaxVal = Math.max(0, Math.min(maxVal, maxRange));
         
-        // Если максимальное значение меньше минимального, ограничиваем его
-        if (newMaxVal < minVal) {
-            newMaxVal = minVal;
-        }
-        
+        // Точки двигаются независимо - нет ограничений на пересечение
         sliderMax.value = newMaxVal;
         if (inputMax) inputMax.value = newMaxVal;
         maxPrice = newMaxVal;
@@ -1115,26 +1107,29 @@ function setupDualSlider() {
     }
 }
 
-// Обновление визуального индикатора диапазона
+// Обновление визуального индикатора диапазона - на одном слое
 function updateSliderRange() {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
-    const track = document.querySelector('.price-slider-track');
+    const range = document.getElementById('priceSliderRange');
     
-    if (!sliderMin || !sliderMax || !track) return;
+    if (!sliderMin || !sliderMax || !range) return;
     
     const minValue = parseInt(sliderMin.value);
     const maxValue = parseInt(sliderMax.value);
     const maxRange = parseInt(sliderMax.max);
     
     // Вычисляем проценты для позиций thumb
-    const leftPercent = (minValue / maxRange) * 100;
-    const rightPercent = (maxValue / maxRange) * 100;
+    const minPercent = (minValue / maxRange) * 100;
+    const maxPercent = (maxValue / maxRange) * 100;
     
-    // Устанавливаем CSS переменные напрямую
-    // Полоска будет точно следовать за позициями thumb
-    track.style.setProperty('--range-start', `${leftPercent}%`);
-    track.style.setProperty('--range-end', `${rightPercent}%`);
+    // Определяем реальный минимум и максимум (точки могут быть в любом порядке)
+    const actualMin = Math.min(minPercent, maxPercent);
+    const actualMax = Math.max(minPercent, maxPercent);
+    
+    // Устанавливаем позицию и ширину полоски напрямую на одном элементе
+    range.style.left = `${actualMin}%`;
+    range.style.width = `${actualMax - actualMin}%`;
 }
 
 // Обновление отображения цены
@@ -1156,6 +1151,9 @@ function updatePriceDisplay() {
     // Обновляем input поля
     if (inputMin) inputMin.value = minVal;
     if (inputMax) inputMax.value = maxVal;
+    
+    // Обновляем визуальный индикатор
+    updateSliderRange();
 }
 
 // Открытие окна Trade-in
