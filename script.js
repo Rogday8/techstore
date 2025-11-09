@@ -2566,16 +2566,21 @@ let totalMainSlides = 3;
 // Определяем количество слайдов в зависимости от размера экрана
 function updateTotalMainSlides() {
     const isMobile = window.innerWidth <= 768;
+    const oldTotal = totalMainSlides;
     totalMainSlides = isMobile ? 2 : 3; // На мобильных скрыт слайд "Наши работы"
     
     // Если текущий индекс больше доступных слайдов, сбрасываем его
     if (currentMainSlideIndex >= totalMainSlides) {
         currentMainSlideIndex = totalMainSlides - 1;
-        const track = document.getElementById('mainContentTrack');
-        if (track) {
-            track.style.transform = `translateX(-${currentMainSlideIndex * 100}%)`;
-            updateMainSliderDots();
-        }
+    }
+    
+    // Обновляем точки навигации
+    updateMainSliderDots();
+    
+    // Обновляем позицию слайдера
+    const track = document.getElementById('mainContentTrack');
+    if (track) {
+        track.style.transform = `translateX(-${currentMainSlideIndex * 100}%)`;
     }
 }
 
