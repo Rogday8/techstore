@@ -3739,6 +3739,10 @@ model-viewer {
 }
 
 @media (max-width: 480px) {
+    .main-content-slider-section {
+        display: none !important;
+    }
+    
     .container {
         padding: 0 10px;
         width: 100%;
