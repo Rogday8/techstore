@@ -1433,6 +1433,17 @@ function openModal(productId) {
         }
     }
     
+    // Определяем начальную цену с учетом выбранной памяти
+    let initialPrice = product.price;
+    if (product.hasMemory && product.memoryOptions) {
+        const selectedMemory = currentProductMemory[productId] || Object.keys(product.memoryOptions)[0];
+        const memoryOption = product.memoryOptions[selectedMemory];
+        initialPrice = product.price + memoryOption.price;
+        if (!currentProductMemory[productId]) {
+            currentProductMemory[productId] = selectedMemory;
+        }
+    }
+    
     content.innerHTML = `
         <div class="modal-header">
             <div class="modal-image-container">
@@ -1450,7 +1461,7 @@ function openModal(productId) {
             </div>
             <div class="modal-details">
                 <h2>${product.name}</h2>
-                <div class="price" id="modal-price-${productId}">${product.price.toLocaleString()} ₽</div>
+                <div class="price" id="modal-price-${productId}">${initialPrice.toLocaleString()} ₽</div>
                 <p class="modal-description">${product.description}</p>
                 ${product.hasColors && product.colors ? `
                     <div class="modal-colors">
@@ -1649,8 +1660,10 @@ function selectMemory(productId, memoryKey) {
     // Обновляем активную кнопку памяти
     document.querySelectorAll(`.memory-btn[onclick*="selectMemory(${productId}"]`).forEach(btn => {
         btn.classList.remove('active');
+        if (btn.getAttribute('onclick').includes(`'${memoryKey}'`)) {
+            btn.classList.add('active');
+        }
     });
-    event.target.closest('.memory-btn').classList.add('active');
 }
 
 // Добавление в корзину
@@ -2038,8 +2051,8 @@ function submitOrder(event) {
               };
               
               // Закрываем модальное окно оформления заказа
-              closeCheckoutModal();
-              
+    closeCheckoutModal();
+    
               // Открываем модальное окно СБП
               openSbpPaymentModal(totalPrice);
               break;
