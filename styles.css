@@ -1385,8 +1385,8 @@ html {
 
 .filters-row {
     display: flex;
-    align-items: flex-start;
-    gap: 2rem;
+    align-items: stretch;
+    gap: 1.5rem;
     margin-bottom: 3rem;
     flex-wrap: wrap;
     justify-content: center;
@@ -1395,7 +1395,13 @@ html {
 .search-container {
     flex: 1;
     min-width: 300px;
-    max-width: 500px;
+    max-width: 450px;
+    background: var(--text-inverse);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .search-wrapper {
@@ -1465,11 +1471,14 @@ html {
 /* Price Filter */
 .price-filter {
     background: var(--text-inverse);
-    padding: 1.5rem 2rem;
+    padding: 1.5rem;
     border: 1px solid var(--border-color);
     flex: 1;
     min-width: 400px;
-    max-width: 600px;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .price-filter-content {
@@ -1480,11 +1489,10 @@ html {
 
 .price-filter-inputs {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 1rem;
 }
 
 .price-input-wrapper {
@@ -1501,7 +1509,7 @@ html {
 }
 
 .price-input-wrapper .price-input {
-    width: 140px;
+    width: 130px;
     padding: 12px 40px 12px 14px;
     border: 1px solid var(--border-color);
     border-radius: 0;
@@ -1530,26 +1538,27 @@ html {
 }
 
 .price-separator {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
     font-weight: 300;
-    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .price-filter-btn {
-    padding: 12px 28px;
+    padding: 12px 24px;
     background: var(--accent);
     color: var(--text-inverse);
     border: 1px solid var(--accent);
     border-radius: 0;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s;
-    margin-top: 1.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    height: fit-content;
+    white-space: nowrap;
 }
 
 .price-filter-btn:hover {
@@ -1566,10 +1575,11 @@ html {
     text-align: center;
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
+    margin-top: 0.5rem;
 }
 
 .price-range-info span {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
     font-weight: 400;
 }
