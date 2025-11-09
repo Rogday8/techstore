@@ -3185,9 +3185,16 @@ model-viewer {
         min-width: fit-content;
     }
     
-    .search-container {
+    .filters-row {
+        flex-direction: column;
+        gap: 1.5rem;
         margin-bottom: 2rem;
-        padding: 0 10px;
+    }
+    
+    .search-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: auto;
     }
     
     .product-search-input {
@@ -3202,7 +3209,9 @@ model-viewer {
     
     .price-filter {
         padding: 1rem 1.5rem;
-        margin-bottom: 1.5rem;
+        width: 100%;
+        max-width: 100%;
+        min-width: auto;
     }
     
     .price-filter-header {
