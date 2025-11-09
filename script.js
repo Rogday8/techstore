@@ -2840,19 +2840,25 @@ function initWorksCarousels() {
     createCarouselImages(images1, carousel1);
     createCarouselImages(images2, carousel2);
     
-    // Небольшая задержка перед инициализацией анимации
+    // Автопрокрутка каруселей отключена
+    // setTimeout(() => {
+    //     // Сначала настраиваем плавную бесконечную прокрутку
+    //     // Первая карусель движется влево, вторая - вправо
+    //     setupInfiniteScroll(carousel1, images1.length, -1); // -1 = влево
+    //     setupInfiniteScroll(carousel2, images2.length, 1);  // 1 = вправо
+    //     
+    //     // Затем добавляем drag функциональность (после инициализации анимации)
+    //     setTimeout(() => {
+    //         setupCarouselDrag(carousel1);
+    //         setupCarouselDrag(carousel2);
+    //     }, 100);
+    // }, 200);
+    
+    // Добавляем только drag функциональность без автопрокрутки
     setTimeout(() => {
-        // Сначала настраиваем плавную бесконечную прокрутку
-        // Первая карусель движется влево, вторая - вправо
-        setupInfiniteScroll(carousel1, images1.length, -1); // -1 = влево
-        setupInfiniteScroll(carousel2, images2.length, 1);  // 1 = вправо
-        
-        // Затем добавляем drag функциональность (после инициализации анимации)
-        setTimeout(() => {
-            setupCarouselDrag(carousel1);
-            setupCarouselDrag(carousel2);
-        }, 100);
-    }, 200);
+        setupCarouselDrag(carousel1);
+        setupCarouselDrag(carousel2);
+    }, 100);
 }
 
 // Настройка плавной бесконечной прокрутки
@@ -2947,16 +2953,16 @@ function setupCarouselDrag(carousel) {
     const carouselId = carousel.id;
     const carouselControl = window.carouselAnimations?.[carouselId];
     
-    // Получаем текущее смещение из анимации
+    // Получаем текущее смещение из transform или анимации
     function getAnimationOffset() {
-        if (carouselControl) {
-            return carouselControl.getPosition();
-        }
         const computedStyle = window.getComputedStyle(carousel);
         const matrix = computedStyle.transform;
-        if (matrix === 'none') return 0;
-        const values = matrix.split('(')[1].split(')')[0].split(',');
-        return parseFloat(values[4]) || 0;
+        if (matrix === 'none' || !matrix) return 0;
+        const values = matrix.split('(')[1]?.split(')')[0]?.split(',');
+        if (values && values.length >= 4) {
+            return parseFloat(values[4]) || 0;
+        }
+        return 0;
     }
     
     // Mouse events
@@ -3056,16 +3062,8 @@ function initSliders() {
     // Инициализируем карусели работ
     initWorksCarousels();
     
-    // Запускаем автопрокрутку главного слайдера
-    startMainSliderAutoSlide();
-    
-    // Останавливаем автопрокрутку при наведении
-    const mainSlider = document.querySelector('.main-content-slider');
-    
-    if (mainSlider) {
-        mainSlider.addEventListener('mouseenter', stopMainSliderAutoSlide);
-        mainSlider.addEventListener('mouseleave', startMainSliderAutoSlide);
-    }
+    // Автопрокрутка главного слайдера отключена
+    // startMainSliderAutoSlide();
     
     // Добавляем поддержку свайпов для главного слайдера
     const mainContentTrack = document.getElementById('mainContentTrack');

@@ -1018,7 +1018,7 @@ html {
 /* Адаптивность для новых секций */
 @media (max-width: 768px) {
     .main-content-slider-section {
-        padding: 30px 0;
+        padding: 20px 0;
         min-height: auto;
         overflow: hidden;
     }
@@ -1036,7 +1036,7 @@ html {
     }
     
     .main-content-slide {
-        padding: 25px 10px;
+        padding: 15px 10px;
         min-width: 100%;
         width: 100%;
         max-width: 100%;
@@ -1047,7 +1047,7 @@ html {
         overflow-y: auto;
         overflow-x: hidden;
         height: auto;
-        min-height: 400px;
+        min-height: auto;
     }
     
     .main-content-slide .container {
@@ -1074,7 +1074,7 @@ html {
     
     .main-content-slide h2 {
         font-size: 1.6rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         word-wrap: break-word;
         overflow-wrap: break-word;
         padding: 0;
@@ -3642,7 +3642,7 @@ model-viewer {
     }
     
     .main-content-slider-section {
-        padding: 20px 0;
+        padding: 15px 0;
     }
     
     .main-content-slider {
@@ -3650,10 +3650,11 @@ model-viewer {
     }
     
     .main-content-slide {
-        padding: 20px 10px;
+        padding: 15px 10px;
         min-width: 100%;
         width: 100%;
         max-width: 100%;
+        min-height: auto;
     }
     
     .main-content-slide .container {
@@ -3675,7 +3676,7 @@ model-viewer {
     
     .main-content-slide h2 {
         font-size: 1.4rem;
-        margin-bottom: 1.2rem;
+        margin-bottom: 1rem;
         line-height: 1.3;
     }
     
