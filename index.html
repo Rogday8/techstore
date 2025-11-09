@@ -309,9 +309,11 @@
                 </div>
                 <div class="price-slider-container">
                     <div class="dual-range-slider" id="dualRangeSlider">
-                        <div class="price-slider-track"></div>
-                        <input type="range" id="priceSliderMin" class="price-slider price-slider-min" min="0" max="500000" step="1000" value="0" oninput="updatePriceFilter('min', this.value)" onchange="updatePriceFilter('min', this.value)" title="Точка А">
-                        <input type="range" id="priceSliderMax" class="price-slider price-slider-max" min="0" max="500000" step="1000" value="500000" oninput="updatePriceFilter('max', this.value)" onchange="updatePriceFilter('max', this.value)" title="Точка Б">
+                        <div class="price-slider-track">
+                            <div class="price-slider-range" id="priceSliderRange"></div>
+                        </div>
+                        <input type="range" id="priceSliderMin" class="price-slider price-slider-min" min="0" max="500000" step="1000" value="0">
+                        <input type="range" id="priceSliderMax" class="price-slider price-slider-max" min="0" max="500000" step="1000" value="500000">
                     </div>
                 </div>
             </div>

@@ -1467,14 +1467,13 @@ html {
     cursor: default;
 }
 
-.price-slider-track::after {
-    content: '';
+.price-slider-range {
     position: absolute;
     height: 100%;
     background: var(--accent);
     border-radius: 3px;
-    left: calc(var(--track-left, 0%) - 12px);
-    width: calc(var(--track-right, 100%) - var(--track-left, 0%) + 24px);
+    left: 0%;
+    width: 100%;
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
 }

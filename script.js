@@ -548,14 +548,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Настраиваем обработчики для правильного взаимодействия ползунков
         setupDualSlider();
         
-        // Обновляем визуальный индикатор после небольшой задержки
-        setTimeout(() => {
-            updateTrackRange();
-        }, 100);
-    }
-    const priceDisplay = document.getElementById('priceRange');
-    if (priceDisplay) {
-        priceDisplay.textContent = `${minPrice.toLocaleString()} ₽ - ${maxPrice.toLocaleString()} ₽`;
+        // Обновляем визуальный индикатор
+        updatePriceDisplay();
     }
     
     renderProducts();
@@ -914,9 +908,8 @@ function renderProducts() {
     }
     
     // Фильтруем товары по цене - используем реальный минимум и максимум
-    const actualMin = Math.min(minPrice, maxPrice);
-    const actualMax = Math.max(minPrice, maxPrice);
-    filteredProducts = filteredProducts.filter(p => p.price >= actualMin && p.price <= actualMax);
+    // Фильтрация по цене
+    filteredProducts = filteredProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
     
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = filteredProducts.map(product => {
@@ -1026,124 +1019,120 @@ function debouncePriceFilter() {
     }, 150);
 }
 
-// Настройка двойного слайдера - обе точки работают полностью независимо
+// Настройка двойного слайдера
 function setupDualSlider() {
-    const sliderMin = document.getElementById('priceSliderMin');
-    const sliderMax = document.getElementById('priceSliderMax');
-    const container = document.getElementById('dualRangeSlider');
-    
-    if (!sliderMin || !sliderMax || !container) return;
-    
-    // Отключаем клики по контейнеру и треку
-    container.style.pointerEvents = 'none';
-    
-    // Убеждаемся, что слайдеры могут получать события
-    sliderMin.style.pointerEvents = 'auto';
-    sliderMax.style.pointerEvents = 'auto';
-    sliderMin.style.zIndex = '5';
-    sliderMax.style.zIndex = '6'; // Правая точка выше по умолчанию
-    
-    // Функция для обработки взаимодействия с левым слайдером - только управляем z-index
-    const handleMinInteraction = (e) => {
-        sliderMin.style.zIndex = '10';
-        sliderMax.style.zIndex = '6';
-    };
-    
-    // Функция для обработки взаимодействия с правым слайдером - только управляем z-index
-    const handleMaxInteraction = (e) => {
-        sliderMax.style.zIndex = '10';
-        sliderMin.style.zIndex = '5';
-    };
-    
-    // Обработчики для левого слайдера - только для z-index
-    sliderMin.addEventListener('mousedown', handleMinInteraction);
-    sliderMin.addEventListener('touchstart', handleMinInteraction);
-    
-    // Обработчики для правого слайдера - только для z-index
-    sliderMax.addEventListener('mousedown', handleMaxInteraction);
-    sliderMax.addEventListener('touchstart', handleMaxInteraction);
-    
-    // Добавляем явные обработчики input и change для гарантированной работы
-    sliderMin.addEventListener('input', function(e) {
-        updatePriceFilter('min', this.value);
-    });
-    sliderMin.addEventListener('change', function(e) {
-        updatePriceFilter('min', this.value);
-    });
-    
-    sliderMax.addEventListener('input', function(e) {
-        updatePriceFilter('max', this.value);
-    });
-    sliderMax.addEventListener('change', function(e) {
-        updatePriceFilter('max', this.value);
-    });
-    
-    // Возврат z-index после окончания перетаскивания
-    const resetZIndex = () => {
-        sliderMin.style.zIndex = '5';
-        sliderMax.style.zIndex = '6';
-    };
-    
-    document.addEventListener('mouseup', resetZIndex);
-    document.addEventListener('touchend', resetZIndex);
-    document.addEventListener('mouseleave', resetZIndex);
-}
-
-// Обновление визуального индикатора диапазона
-function updateTrackRange() {
-    const sliderMin = document.getElementById('priceSliderMin');
-    const sliderMax = document.getElementById('priceSliderMax');
-    const track = document.querySelector('.price-slider-track');
-    
-    if (!sliderMin || !sliderMax || !track) return;
-    
-    const minValue = parseInt(sliderMin.value);
-    const maxValue = parseInt(sliderMax.value);
-    const sliderMaxValue = parseInt(sliderMax.max);
-    
-    // Всегда используем меньшее значение для левого края, большее для правого
-    const actualMin = Math.min(minValue, maxValue);
-    const actualMax = Math.max(minValue, maxValue);
-    
-    const leftPercent = (actualMin / sliderMaxValue) * 100;
-    const rightPercent = (actualMax / sliderMaxValue) * 100;
-    
-    track.style.setProperty('--track-left', `${leftPercent}%`);
-    track.style.setProperty('--track-right', `${rightPercent}%`);
-}
-
-// Обновление фильтра по цене
-// Точка А (min) и Точка Б (max) работают независимо друг от друга
-function updatePriceFilter(type, value) {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
     
     if (!sliderMin || !sliderMax) return;
     
-    const newValue = parseInt(value);
+    // Обработчик для минимального слайдера
+    sliderMin.addEventListener('input', function() {
+        const minVal = parseInt(this.value);
+        const maxVal = parseInt(sliderMax.value);
+        
+        // Если минимальное значение больше максимального, ограничиваем его
+        if (minVal > maxVal) {
+            this.value = maxVal;
+            minPrice = maxVal;
+        } else {
+            minPrice = minVal;
+        }
+        
+        updatePriceDisplay();
+        updateSliderRange();
+        debouncePriceFilter();
+    });
     
-    // Точки работают независимо - нет ограничений
-    if (type === 'min') {
-        minPrice = newValue;
-    } else if (type === 'max') {
-        maxPrice = newValue;
-    }
+    // Обработчик для максимального слайдера
+    sliderMax.addEventListener('input', function() {
+        const minVal = parseInt(sliderMin.value);
+        const maxVal = parseInt(this.value);
+        
+        // Если максимальное значение меньше минимального, ограничиваем его
+        if (maxVal < minVal) {
+            this.value = minVal;
+            maxPrice = minVal;
+        } else {
+            maxPrice = maxVal;
+        }
+        
+        updatePriceDisplay();
+        updateSliderRange();
+        debouncePriceFilter();
+    });
     
-    // Обновляем визуальный индикатор
-    updateTrackRange();
+    // Обработчики для touch событий
+    sliderMin.addEventListener('touchmove', function() {
+        const minVal = parseInt(this.value);
+        const maxVal = parseInt(sliderMax.value);
+        
+        if (minVal > maxVal) {
+            this.value = maxVal;
+            minPrice = maxVal;
+        } else {
+            minPrice = minVal;
+        }
+        
+        updatePriceDisplay();
+        updateSliderRange();
+        debouncePriceFilter();
+    });
     
-    // Определяем реальный минимум и максимум для отображения
-    const actualMin = Math.min(minPrice, maxPrice);
-    const actualMax = Math.max(minPrice, maxPrice);
+    sliderMax.addEventListener('touchmove', function() {
+        const minVal = parseInt(sliderMin.value);
+        const maxVal = parseInt(this.value);
+        
+        if (maxVal < minVal) {
+            this.value = minVal;
+            maxPrice = minVal;
+        } else {
+            maxPrice = maxVal;
+        }
+        
+        updatePriceDisplay();
+        updateSliderRange();
+        debouncePriceFilter();
+    });
+}
+
+// Обновление визуального индикатора диапазона
+function updateSliderRange() {
+    const sliderMin = document.getElementById('priceSliderMin');
+    const sliderMax = document.getElementById('priceSliderMax');
+    const range = document.getElementById('priceSliderRange');
     
+    if (!sliderMin || !sliderMax || !range) return;
+    
+    const minValue = parseInt(sliderMin.value);
+    const maxValue = parseInt(sliderMax.value);
+    const maxRange = parseInt(sliderMax.max);
+    
+    // Вычисляем проценты
+    const leftPercent = (minValue / maxRange) * 100;
+    const rightPercent = (maxValue / maxRange) * 100;
+    
+    // Устанавливаем позицию и ширину активного диапазона
+    range.style.left = `${leftPercent}%`;
+    range.style.width = `${rightPercent - leftPercent}%`;
+}
+
+// Обновление отображения цены
+function updatePriceDisplay() {
+    const sliderMin = document.getElementById('priceSliderMin');
+    const sliderMax = document.getElementById('priceSliderMax');
     const priceDisplay = document.getElementById('priceRange');
-    if (priceDisplay) {
-        // Показываем диапазон от меньшего к большему
-        priceDisplay.textContent = `от ${actualMin.toLocaleString()} ₽ - до ${actualMax.toLocaleString()} ₽`;
-    }
     
-    // Используем debounce для плавной фильтрации
-    debouncePriceFilter();
+    if (!sliderMin || !sliderMax || !priceDisplay) return;
+    
+    const minVal = parseInt(sliderMin.value);
+    const maxVal = parseInt(sliderMax.value);
+    
+    // Используем актуальные значения из слайдеров
+    minPrice = minVal;
+    maxPrice = maxVal;
+    
+    priceDisplay.textContent = `от ${minVal.toLocaleString()} ₽ - до ${maxVal.toLocaleString()} ₽`;
 }
 
 // Открытие окна Trade-in
