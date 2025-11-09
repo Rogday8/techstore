@@ -550,6 +550,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         // Обновляем визуальный индикатор
         updatePriceDisplay();
+        updateSliderRange();
     }
     
     renderProducts();
