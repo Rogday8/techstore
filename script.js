@@ -1506,8 +1506,8 @@ function openModal(productId) {
         </div>
         <div class="modal-specs">
             <h3>Характеристики</h3>
-            <ul>
-                ${product.specs.map(spec => `<li>${spec}</li>`).join('')}
+            <ul id="modal-specs-${productId}">
+                ${initialSpecs.map(spec => `<li>${spec}</li>`).join('')}
             </ul>
         </div>
     `;
@@ -1657,6 +1657,9 @@ function selectMemory(productId, memoryKey) {
         priceElement.textContent = `${newPrice.toLocaleString()} ₽`;
     }
     
+    // Обновляем характеристики
+    updateProductSpecs(productId, memoryOption);
+    
     // Обновляем активную кнопку памяти
     document.querySelectorAll(`.memory-btn[onclick*="selectMemory(${productId}"]`).forEach(btn => {
         btn.classList.remove('active');
@@ -1664,6 +1667,31 @@ function selectMemory(productId, memoryKey) {
             btn.classList.add('active');
         }
     });
+}
+
+// Обновление характеристик товара при выборе памяти
+function updateProductSpecs(productId, memoryOption) {
+    const product = products.find(p => p.id === productId);
+    if (!product || !product.specs) return;
+    
+    const specsList = document.getElementById(`modal-specs-${productId}`);
+    if (!specsList) return;
+    
+    // Обновляем характеристики с учетом выбранной памяти
+    const updatedSpecs = product.specs.map(spec => {
+        // Обновляем оперативную память
+        if (spec.includes('Оперативная память:')) {
+            return `Оперативная память: ${memoryOption.ram}`;
+        }
+        // Обновляем накопитель
+        if (spec.includes('Накопитель:')) {
+            return `Накопитель: ${memoryOption.storage}`;
+        }
+        return spec;
+    });
+    
+    // Обновляем список характеристик
+    specsList.innerHTML = updatedSpecs.map(spec => `<li>${spec}</li>`).join('');
 }
 
 // Добавление в корзину
