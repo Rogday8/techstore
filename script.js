@@ -2708,6 +2708,58 @@ function updateTotalMainSlides() {
 // Обновляем при загрузке и изменении размера окна
 window.addEventListener('resize', updateTotalMainSlides);
 
+// Hero Carousel with interesting facts about Apple
+const heroCarouselFacts = [
+    {
+        title: 'Инновации',
+        text: 'Apple создает технологии, которые меняют мир. Каждое устройство — результат многолетних исследований и разработок.'
+    },
+    {
+        title: 'Качество',
+        text: 'Оригинальная продукция Apple проходит строжайший контроль качества. Мы предлагаем только сертифицированные устройства.'
+    },
+    {
+        title: 'Экосистема',
+        text: 'Все устройства Apple работают в единой экосистеме, обеспечивая бесшовную интеграцию и максимальное удобство.'
+    },
+    {
+        title: 'Безопасность',
+        text: 'Apple уделяет особое внимание защите данных пользователей. Ваша конфиденциальность — наш приоритет.'
+    },
+    {
+        title: 'Дизайн',
+        text: 'Каждое устройство Apple — произведение искусства. Минимализм, элегантность и функциональность в одном.'
+    },
+    {
+        title: 'Производительность',
+        text: 'Чипы Apple Silicon обеспечивают выдающуюся производительность при минимальном энергопотреблении.'
+    }
+];
+
+// Initialize Hero Carousel
+function initHeroCarousel() {
+    const carousel = document.getElementById('heroCarousel');
+    if (!carousel) return;
+
+    // Duplicate items for seamless loop
+    const allItems = [...heroCarouselFacts, ...heroCarouselFacts];
+    
+    allItems.forEach(item => {
+        const carouselItem = document.createElement('div');
+        carouselItem.className = 'hero-carousel-item';
+        carouselItem.innerHTML = `
+            <h3>${item.title}</h3>
+            <p>${item.text}</p>
+        `;
+        carousel.appendChild(carouselItem);
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initHeroCarousel();
+});
+
 function slideMainContent(direction) {
     const track = document.getElementById('mainContentTrack');
     if (!track) return;
