@@ -848,6 +848,33 @@ body {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
+    
+    .repair-service-order-section {
+        padding: 60px 15px;
+    }
+    
+    .repair-service-order-section h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .repair-service-form {
+        padding: 1.5rem;
+    }
+    
+    .repair-works-gallery {
+        padding: 1.5rem;
+    }
+    
+    .works-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.8rem;
+        max-height: 500px;
+    }
+    
+    .works-gallery-grid img {
+        height: 120px;
+    }
 }
 
 /* Our Works Slide */
@@ -959,8 +986,17 @@ body {
 
 /* Адаптивность для новых секций */
 @media (max-width: 768px) {
+    .main-content-slider-section {
+        padding: 60px 0;
+        min-height: auto;
+    }
+    
+    .main-content-slide {
+        padding: 30px 15px;
+    }
+    
     .main-content-slide h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         margin-bottom: 2rem;
     }
     
@@ -970,15 +1006,26 @@ body {
     }
     
     .advantage-item {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .advantage-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 1.5rem;
     }
     
     .advantage-icon {
-        font-size: 2rem;
+        width: 45px;
+        height: 45px;
     }
     
     .advantage-item h3 {
         font-size: 1.2rem;
+    }
+    
+    .advantage-item p {
+        font-size: 0.9rem;
     }
     
     .repair-services-grid {
@@ -987,7 +1034,39 @@ body {
     }
     
     .repair-service-item {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .repair-service-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .repair-service-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .repair-service-item h3 {
+        font-size: 1.2rem;
+    }
+    
+    .repair-service-price {
+        font-size: 1.3rem;
+    }
+    
+    .repair-service-desc {
+        font-size: 0.9rem;
+    max-width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
+    
+    .works-carousels {
+        gap: 1.5rem;
     }
     
     .works-carousel-track img {
@@ -1007,6 +1086,68 @@ body {
     
     .main-slider-nav-next {
         right: 10px;
+    }
+    
+    .main-slider-dots {
+        bottom: 10px;
+    }
+    
+    /* Repair Service Order Mobile */
+    .repair-service-order-section {
+        padding: 40px 10px;
+    }
+    
+    .repair-service-order-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .back-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .repair-order-content {
+        gap: 1.5rem;
+    }
+    
+    .repair-service-form {
+        padding: 1.5rem 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        padding: 0.8rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn-submit-repair {
+        padding: 0.9rem;
+        font-size: 0.9rem;
+    }
+    
+    .repair-works-gallery {
+        padding: 1.5rem 1rem;
+    }
+    
+    .repair-works-gallery h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .works-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 0.6rem;
+        max-height: 400px;
+    }
+    
+    .works-gallery-grid img {
+        height: 100px;
     }
 }
 
@@ -3288,6 +3429,93 @@ model-viewer {
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .main-content-slide {
+        padding: 20px 10px;
+    }
+    
+    .main-content-slide h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .advantage-item,
+    .repair-service-item {
+        padding: 1.5rem 1rem;
+    }
+    
+    .advantage-icon-wrapper,
+    .repair-service-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1rem;
+    }
+    
+    .advantage-icon,
+    .repair-service-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .advantage-item h3,
+    .repair-service-item h3 {
+        font-size: 1.1rem;
+    }
+    
+    .advantage-item p,
+    .repair-service-desc {
+        font-size: 0.85rem;
+    }
+    
+    .repair-service-price {
+        font-size: 1.2rem;
+    }
+    
+    .works-carousel-track img {
+        width: 200px;
+        height: 250px;
+    }
+    
+    .main-slider-nav {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .main-slider-nav-prev {
+        left: 5px;
+    }
+    
+    .main-slider-nav-next {
+        right: 5px;
+    }
+    
+    .repair-service-order-section {
+        padding: 30px 10px;
+    }
+    
+    .repair-service-order-section h2 {
+        font-size: 1.3rem;
+    }
+    
+    .repair-service-form,
+    .repair-works-gallery {
+        padding: 1rem;
+    }
+    
+    .works-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.5rem;
+        max-height: 350px;
+    }
+    
+    .works-gallery-grid img {
+        height: 80px;
+    }
+    
     .hero {
         padding: 60px 10px;
     }
