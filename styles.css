@@ -1003,26 +1003,36 @@ html {
 /* Адаптивность для новых секций */
 @media (max-width: 768px) {
     .main-content-slider-section {
-        padding: 60px 0;
+        padding: 40px 0;
         min-height: auto;
     }
     
     .main-content-slide {
         padding: 30px 15px;
+        min-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .main-content-slide h2 {
         font-size: 1.8rem;
         margin-bottom: 2rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
     
     .advantages-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        padding: 0;
+        width: 100%;
     }
     
     .advantage-item {
         padding: 2rem 1.5rem;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
     }
     
     .advantage-icon-wrapper {
@@ -1066,10 +1076,15 @@ html {
     .repair-services-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        padding: 0;
+        width: 100%;
     }
     
     .repair-service-item {
         padding: 2rem 1.5rem;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
     }
     
     .repair-service-icon-wrapper {
@@ -1176,10 +1191,19 @@ html {
     
     .repair-order-content {
         gap: 1.5rem;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .repair-service-form {
         padding: 1.5rem 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .repair-works-gallery {
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .form-group {
@@ -1190,6 +1214,9 @@ html {
     .form-group textarea {
         padding: 0.8rem;
         font-size: 0.95rem;
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
     }
     
     .btn-submit-repair {
@@ -3522,6 +3549,9 @@ model-viewer {
     .advantage-item,
     .repair-service-item {
         padding: 1.5rem 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
     }
     
     .advantage-icon-wrapper,
@@ -3621,6 +3651,15 @@ model-viewer {
     .repair-service-form,
     .repair-works-gallery {
         padding: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
     
     .works-gallery-grid {
