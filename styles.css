@@ -1375,9 +1375,27 @@ html {
     letter-spacing: -1px;
 }
 
+.categories-filter {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.filters-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 .search-container {
-    max-width: 600px;
-    margin: 0 auto 3rem;
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
 }
 
 .search-wrapper {
@@ -1419,14 +1437,6 @@ html {
     opacity: 0.5;
 }
 
-.categories-filter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 3rem;
-}
-
 .filter-btn {
     padding: 12px 28px;
     border: 1px solid var(--border-color);
@@ -1456,20 +1466,16 @@ html {
 .price-filter {
     background: var(--text-inverse);
     padding: 1.5rem 2rem;
-    margin-bottom: 2rem;
     border: 1px solid var(--border-color);
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
+    flex: 1;
+    min-width: 400px;
+    max-width: 600px;
 }
 
-.price-filter-content h3 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--accent);
-    margin-bottom: 1.5rem;
-    text-align: center;
+.price-filter-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .price-filter-inputs {
