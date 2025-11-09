@@ -1508,20 +1508,24 @@ html {
     top: 50%;
     transform: translateY(-50%);
     cursor: default;
-    --range-left: 0%;
-    --range-right: 100%;
+    --range-start: 0%;
+    --range-end: 100%;
 }
 
-.price-slider-range {
+.price-slider-track::before {
+    content: '';
     position: absolute;
+    left: var(--range-start);
+    width: calc(var(--range-end) - var(--range-start));
     height: 100%;
     background: var(--accent);
     border-radius: 3px;
-    left: var(--range-left);
-    width: calc(var(--range-right) - var(--range-left));
     z-index: 1;
-    top: 0;
     pointer-events: none;
+}
+
+.price-slider-range {
+    display: none;
 }
 
 .price-slider {

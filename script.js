@@ -1131,28 +1131,10 @@ function updateSliderRange() {
     const leftPercent = (minValue / maxRange) * 100;
     const rightPercent = (maxValue / maxRange) * 100;
     
-    // Размер thumb = 24px, радиус = 12px
-    // Вычисляем точную позицию с учетом центра thumb
-    const trackWidth = track.offsetWidth;
-    const thumbSize = 24; // размер thumb в пикселях
-    const thumbRadius = thumbSize / 2;
-    
-    // Вычисляем смещение в пикселях для центра thumb
-    const leftOffset = (leftPercent / 100) * trackWidth;
-    const rightOffset = (rightPercent / 100) * trackWidth;
-    
-    // Позиция полоски начинается от центра левого thumb и заканчивается в центре правого thumb
-    const rangeLeft = leftOffset - thumbRadius;
-    const rangeRight = rightOffset - thumbRadius;
-    const rangeWidth = rightOffset - leftOffset;
-    
-    // Конвертируем обратно в проценты для CSS
-    const rangeLeftPercent = (rangeLeft / trackWidth) * 100;
-    const rangeWidthPercent = (rangeWidth / trackWidth) * 100;
-    
-    // Устанавливаем CSS переменные для точного позиционирования
-    track.style.setProperty('--range-left', `${rangeLeftPercent}%`);
-    track.style.setProperty('--range-right', `${rangeLeftPercent + rangeWidthPercent}%`);
+    // Устанавливаем CSS переменные напрямую
+    // Полоска будет точно следовать за позициями thumb
+    track.style.setProperty('--range-start', `${leftPercent}%`);
+    track.style.setProperty('--range-end', `${rightPercent}%`);
 }
 
 // Обновление отображения цены
