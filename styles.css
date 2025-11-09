@@ -4177,6 +4177,33 @@ model-viewer {
         width: 44px;
         height: 44px;
     }
+    
+    .modal-memory {
+        margin-bottom: 1.2rem;
+    }
+    
+    .modal-memory label {
+        font-size: 0.85rem;
+        margin-bottom: 0.7rem;
+    }
+    
+    .memory-options {
+        gap: 0.6rem;
+    }
+    
+    .memory-btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        min-width: 85px;
+    }
+    
+    .memory-label {
+        font-size: 0.9rem;
+    }
+    
+    .memory-price {
+        font-size: 0.75rem;
+    }
 }
 
 /* Landscape Mobile */
