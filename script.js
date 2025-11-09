@@ -75,6 +75,12 @@ const products = [
             "Камера: 48 Мп основной + 12 Мп широкоугольная + 12 Мп телефото",
             "Корпус: Титан, защита IP68"
         ],
+        hasMemory: true,
+        memoryOptions: {
+            "256 GB": { price: 0, ram: "8 GB", storage: "256 GB" },
+            "512 GB": { price: 20000, ram: "8 GB", storage: "512 GB" },
+            "1 TB": { price: 40000, ram: "8 GB", storage: "1 TB" }
+        },
         has3D: true,
         model3D: "models/iphone 15 pro max black/apple_iphone_15_pro_max_black.glb",
         hasTradeIn: true
@@ -126,6 +132,12 @@ const products = [
             "Камера: 200 Мп основной + 12 Мп широкоугольная + 50 Мп телефото",
             "Дополнительно: S Pen в комплекте"
         ],
+        hasMemory: true,
+        memoryOptions: {
+            "256 GB": { price: 0, ram: "12 GB", storage: "256 GB" },
+            "512 GB": { price: 15000, ram: "12 GB", storage: "512 GB" },
+            "1 TB": { price: 30000, ram: "12 GB", storage: "1 TB" }
+        },
         has3D: true,
         model3D: "models/samsung_s24_ultra.glb",
         hasTradeIn: true
@@ -898,6 +910,9 @@ const currentImageIndex = {};
 // Хранилище выбранных цветов для каждого товара
 const currentProductColor = {};
 
+// Хранилище выбранной памяти для каждого товара
+const currentProductMemory = {};
+
 // Рендер товаров
 function renderProducts() {
     // Фильтруем товары по категории
@@ -1435,7 +1450,7 @@ function openModal(productId) {
             </div>
             <div class="modal-details">
                 <h2>${product.name}</h2>
-                <div class="price">${product.price.toLocaleString()} ₽</div>
+                <div class="price" id="modal-price-${productId}">${product.price.toLocaleString()} ₽</div>
                 <p class="modal-description">${product.description}</p>
                 ${product.hasColors && product.colors ? `
                     <div class="modal-colors">
@@ -1447,6 +1462,26 @@ function openModal(productId) {
                                     onclick="selectColor(${productId}, '${color}');"
                                     title="${color}"></button>
                         `}).join('')}
+                    </div>
+                ` : ''}
+                ${product.hasMemory && product.memoryOptions ? `
+                    <div class="modal-memory">
+                        <label>Память:</label>
+                        <div class="memory-options">
+                            ${Object.keys(product.memoryOptions).map(memoryKey => {
+                                const memoryOption = product.memoryOptions[memoryKey];
+                                const defaultMemory = Object.keys(product.memoryOptions)[0];
+                                const isActive = (currentProductMemory[productId] || defaultMemory) === memoryKey;
+                                const optionPrice = product.price + memoryOption.price;
+                                return `
+                                <button class="memory-btn ${isActive ? 'active' : ''}" 
+                                        onclick="selectMemory(${productId}, '${memoryKey}');"
+                                        data-price="${optionPrice}">
+                                    <span class="memory-label">${memoryKey}</span>
+                                    <span class="memory-price">${memoryOption.price > 0 ? `+${memoryOption.price.toLocaleString()} ₽` : ''}</span>
+                                </button>
+                            `}).join('')}
+                        </div>
                     </div>
                 ` : ''}
                 ${product.has3D ? `<button class="btn-3d" onclick="view3D('${product.model3D}', ${productId})">👁️ Просмотр 3D модели</button>` : ''}
@@ -1596,16 +1631,54 @@ window.onclick = function(event) {
     }
 }
 
+// Выбор памяти
+function selectMemory(productId, memoryKey) {
+    const product = products.find(p => p.id === productId);
+    if (!product || !product.hasMemory || !product.memoryOptions) return;
+    
+    currentProductMemory[productId] = memoryKey;
+    const memoryOption = product.memoryOptions[memoryKey];
+    const newPrice = product.price + memoryOption.price;
+    
+    // Обновляем цену в модальном окне
+    const priceElement = document.getElementById(`modal-price-${productId}`);
+    if (priceElement) {
+        priceElement.textContent = `${newPrice.toLocaleString()} ₽`;
+    }
+    
+    // Обновляем активную кнопку памяти
+    document.querySelectorAll(`.memory-btn[onclick*="selectMemory(${productId}"]`).forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.closest('.memory-btn').classList.add('active');
+}
+
 // Добавление в корзину
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
-    cart.push(product);
+    if (!product) return;
+    
+    const selectedColor = currentProductColor[productId] || (product.hasColors && product.colors ? Object.keys(product.colors)[0] : null);
+    const selectedMemory = currentProductMemory[productId] || (product.hasMemory && product.memoryOptions ? Object.keys(product.memoryOptions)[0] : null);
+    const memoryOption = product.hasMemory && product.memoryOptions && selectedMemory ? product.memoryOptions[selectedMemory] : null;
+    const finalPrice = memoryOption ? product.price + memoryOption.price : product.price;
+    
+    cart.push({
+        id: Date.now(),
+        productId: product.id,
+        name: product.name,
+        price: finalPrice,
+        image: product.hasColors && product.colors && selectedColor ? product.colors[selectedColor].image : product.image,
+        color: selectedColor || null,
+        memory: selectedMemory || null,
+        memoryDetails: memoryOption ? { ram: memoryOption.ram, storage: memoryOption.storage } : null
+    });
+    
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     renderCart();
-    
-    // Показываем уведомление
-    showNotification(`${product.name} добавлен в корзину!`);
+    const memoryText = selectedMemory ? ` (${selectedMemory})` : '';
+    showNotification(`${product.name}${memoryText} добавлен в корзину`);
 }
 
 // Удаление товара из корзины
@@ -1754,9 +1827,9 @@ function renderCart() {
     
     cartItems.innerHTML = cart.map((item, index) => `
         <div class="cart-item">
-            <img src="${item.image}" alt="${item.name}">
+            <img src="${item.image || item.image || 'images/default.jpg'}" alt="${item.name}">
             <div class="cart-item-info">
-                <h4>${item.name}</h4>
+                <h4>${item.name}${item.memory ? ` (${item.memory})` : ''}</h4>
                 <p>${item.price.toLocaleString()} ₽</p>
             </div>
             <button class="cart-item-remove" onclick="removeFromCart(${index})" title="Удалить">✕</button>
