@@ -231,58 +231,7 @@ html {
 
 .hero .container {
     position: relative;
-    z-index: 2;
-}
-
-/* Hero Carousel */
-.hero-carousel-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    opacity: 0.12;
-    overflow: hidden;
-}
-
-.hero-carousel-track {
-    display: flex;
-    flex-direction: row;
-    width: auto;
-    height: 100%;
-    animation: heroCarouselScroll 40s linear infinite;
-    will-change: transform;
-}
-
-.hero-carousel-item {
-    flex-shrink: 0;
-    width: 400px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
-.hero-carousel-item img {
-    width: 100%;
-    height: auto;
-    max-height: 80%;
-    object-fit: contain;
-    filter: grayscale(100%) brightness(0.3);
-    opacity: 0.6;
-    transition: opacity 0.3s;
-}
-
-@keyframes heroCarouselScroll {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
+    z-index: 1;
 }
 
 .hero h1 {
@@ -3301,14 +3250,6 @@ model-viewer {
         padding: 80px 15px;
     }
     
-    .hero-carousel-item {
-        width: 300px;
-    }
-    
-    .hero-carousel-item img {
-        max-height: 70%;
-    }
-    
     .hero h1 {
         font-size: 2rem;
         line-height: 1.2;
@@ -3986,14 +3927,6 @@ model-viewer {
     
     .hero {
         padding: 60px 10px;
-    }
-    
-    .hero-carousel-item {
-        width: 250px;
-    }
-    
-    .hero-carousel-item img {
-        max-height: 60%;
     }
     
     .hero h1 {

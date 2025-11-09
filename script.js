@@ -2708,49 +2708,6 @@ function updateTotalMainSlides() {
 // Обновляем при загрузке и изменении размера окна
 window.addEventListener('resize', updateTotalMainSlides);
 
-// Hero Carousel with product images
-const heroCarouselImages = [
-    'images/15 pro max/15 pro max black/top1.webp',
-    'images/AirPods Pro 2/top1.webp',
-    'images/Apple Watch Series 9/top1.webp',
-    'images/Iphone 14/Iphone 14 black/top1.webp',
-    'images/15 pro max/15 pro max blue/1e3d6dc283feae1a340a1d1fbdb7a9411a9ba77beb798b5b19d40762feaa2944.jpg.webp',
-    'images/15 pro max/15 pro max grey/top1.webp',
-    'images/15 pro max/15 pro max white/top1.webp',
-    'images/Iphone 14/Iphone 14 white/top1.webp'
-];
-
-// Initialize Hero Carousel
-function initHeroCarousel() {
-    const carousel = document.getElementById('heroCarousel');
-    if (!carousel) return;
-
-    // Duplicate images for seamless loop
-    const allImages = [...heroCarouselImages, ...heroCarouselImages];
-    
-    allImages.forEach(imageSrc => {
-        const carouselItem = document.createElement('div');
-        carouselItem.className = 'hero-carousel-item';
-        
-        const img = document.createElement('img');
-        img.src = imageSrc;
-        img.alt = 'Apple Product';
-        img.loading = 'lazy';
-        
-        img.onerror = function() {
-            this.style.display = 'none';
-        };
-        
-        carouselItem.appendChild(img);
-        carousel.appendChild(carouselItem);
-    });
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    initHeroCarousel();
-});
-
 function slideMainContent(direction) {
     const track = document.getElementById('mainContentTrack');
     if (!track) return;
