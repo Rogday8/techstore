@@ -959,13 +959,13 @@ html {
     transform: translateY(-50%);
     background: var(--text-inverse);
     border: 1px solid var(--border-color);
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: var(--accent);
     transition: all 0.3s;
     z-index: 20;
@@ -979,11 +979,11 @@ html {
 }
 
 .main-slider-nav-prev {
-    left: 20px;
+    left: 15px;
 }
 
 .main-slider-nav-next {
-    right: 20px;
+    right: 15px;
 }
 
 .main-slider-dots {
@@ -999,8 +999,8 @@ html {
 }
 
 .main-slider-dot {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.3);
     cursor: pointer;
@@ -1011,8 +1011,8 @@ html {
 
 .main-slider-dot.active {
     background: var(--accent);
-    width: 35px;
-    border-radius: 7px;
+    width: 28px;
+    border-radius: 6px;
 }
 
 /* Адаптивность для новых секций */
