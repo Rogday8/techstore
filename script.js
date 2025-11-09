@@ -1506,7 +1506,7 @@ function openModal(productId) {
                         </div>
                     </div>
                 ` : ''}
-                ${product.has3D ? `<button class="btn-3d" onclick="view3D('${product.model3D}', ${productId})">👁️ Просмотр 3D модели</button>` : ''}
+                ${product.has3D ? `<button class="btn-3d" onclick="view3D('${product.model3D}', ${productId})">Просмотр 3D модели</button>` : ''}
                 ${product.hasTradeIn ? `<button class="btn-trade-in" onclick="openTradeIn(${productId})">Trade-in</button>` : ''}
                 <div class="modal-actions">
                     <button class="btn-add-to-cart" onclick="addToCart(${product.id}); closeModal();">
