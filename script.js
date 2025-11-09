@@ -1119,29 +1119,40 @@ function setupDualSlider() {
 function updateSliderRange() {
     const sliderMin = document.getElementById('priceSliderMin');
     const sliderMax = document.getElementById('priceSliderMax');
-    const range = document.getElementById('priceSliderRange');
+    const track = document.querySelector('.price-slider-track');
     
-    if (!sliderMin || !sliderMax || !range) return;
+    if (!sliderMin || !sliderMax || !track) return;
     
     const minValue = parseInt(sliderMin.value);
     const maxValue = parseInt(sliderMax.value);
     const maxRange = parseInt(sliderMax.max);
     
-    // Вычисляем проценты
+    // Вычисляем проценты для позиций thumb
     const leftPercent = (minValue / maxRange) * 100;
     const rightPercent = (maxValue / maxRange) * 100;
     
-    // Размер thumb = 24px, половина = 12px
-    // Вычисляем позицию с учетом центра thumb
-    const thumbRadius = 12; // половина размера thumb (24px / 2)
-    const trackWidth = range.parentElement.offsetWidth;
-    const thumbOffsetPercent = (thumbRadius / trackWidth) * 100;
+    // Размер thumb = 24px, радиус = 12px
+    // Вычисляем точную позицию с учетом центра thumb
+    const trackWidth = track.offsetWidth;
+    const thumbSize = 24; // размер thumb в пикселях
+    const thumbRadius = thumbSize / 2;
     
-    // Устанавливаем позицию и ширину активного диапазона
-    // Полоска начинается от центра левого thumb и заканчивается в центре правого thumb
-    range.style.left = `${leftPercent}%`;
-    range.style.width = `${rightPercent - leftPercent}%`;
-    range.style.transform = 'translateX(0)'; // Убираем смещение, чтобы полоска точно прилегала
+    // Вычисляем смещение в пикселях для центра thumb
+    const leftOffset = (leftPercent / 100) * trackWidth;
+    const rightOffset = (rightPercent / 100) * trackWidth;
+    
+    // Позиция полоски начинается от центра левого thumb и заканчивается в центре правого thumb
+    const rangeLeft = leftOffset - thumbRadius;
+    const rangeRight = rightOffset - thumbRadius;
+    const rangeWidth = rightOffset - leftOffset;
+    
+    // Конвертируем обратно в проценты для CSS
+    const rangeLeftPercent = (rangeLeft / trackWidth) * 100;
+    const rangeWidthPercent = (rangeWidth / trackWidth) * 100;
+    
+    // Устанавливаем CSS переменные для точного позиционирования
+    track.style.setProperty('--range-left', `${rangeLeftPercent}%`);
+    track.style.setProperty('--range-right', `${rangeLeftPercent + rangeWidthPercent}%`);
 }
 
 // Обновление отображения цены
