@@ -2572,8 +2572,12 @@ function slideMainContent(direction) {
         currentMainSlideIndex = 0;
     }
     
-    track.style.transform = `translateX(-${currentMainSlideIndex * 100}%)`;
-    updateMainSliderDots();
+    // Используем requestAnimationFrame для плавной анимации
+    requestAnimationFrame(() => {
+        track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        track.style.transform = `translateX(-${currentMainSlideIndex * 100}%)`;
+        updateMainSliderDots();
+    });
 }
 
 function goToMainSlide(index) {
