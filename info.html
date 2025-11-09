@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>О нас - Apple Favorite</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/logo/apple-logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Info Page Specific Styles */
+        .info-page {
+            background: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .info-header {
+            background: #000000;
+            color: #ffffff;
+            padding: 2rem 0;
+            border-bottom: 2px solid #000000;
+        }
+        
+        .info-header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .info-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #ffffff;
+        }
+        
+        .info-header .logo img {
+            width: 48px;
+            height: 48px;
+        }
+        
+        .info-header .logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .info-header .back-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ffffff;
+            transition: all 0.3s;
+        }
+        
+        .info-header .back-link:hover {
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .info-section {
+            padding: 4rem 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .info-section:last-child {
+            border-bottom: none;
+        }
+        
+        .info-section h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 2rem;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+        }
+        
+        .info-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 1rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .info-section p {
+            font-size: 1rem;
+            color: #333333;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        
+        .about-lead {
+            font-size: 1.2rem;
+            color: #000000;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            font-weight: 400;
+        }
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .about-card {
+            background: #ffffff;
+            border: 1px solid #000000;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .about-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .about-card .about-icon {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #000000;
+            margin-bottom: 1rem;
+        }
+        
+        .about-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .about-card p {
+            color: #666666;
+            font-size: 0.95rem;
+        }
+        
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .contact-card {
+            background: #ffffff;
+            border: 1px solid #000000;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .contact-card .contact-icon {
+            font-size: 2rem;
+            font-weight: 300;
+            color: #000000;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-card p {
+            color: #333333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-card a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .contact-card a:hover {
+            text-decoration: underline;
+        }
+        
+        .map-container {
+            width: 100%;
+            height: 300px;
+            margin-top: 1rem;
+            border: 1px solid #000000;
+        }
+        
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .repair-services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .repair-service-card {
+            background: #ffffff;
+            border: 1px solid #000000;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .repair-service-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .repair-service-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .repair-service-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #000000;
+            margin-top: 1rem;
+        }
+        
+        .works-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .works-gallery-item {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #000000;
+            background: #ffffff;
+            aspect-ratio: 1;
+        }
+        
+        .works-gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .works-gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            .info-section {
+                padding: 2rem 0;
+            }
+            
+            .info-section h2 {
+                font-size: 2rem;
+            }
+            
+            .about-grid,
+            .contacts-grid,
+            .repair-services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .works-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="info-page">
+    <!-- Info Header -->
+    <header class="info-header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="images/logo/apple-logo.png" alt="Apple Logo" class="apple-logo">
+                <span class="logo-text">Apple <span style="font-weight: 300;">Favorite</span></span>
+            </a>
+            <a href="index.html" class="back-link">← На главную</a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section class="info-section">
+        <div class="container">
+            <h2>О компании</h2>
+            <p class="about-lead">
+                Apple Favorite — ваш надежный партнер в мире премиальной техники Apple с 2015 года. Мы предлагаем только оригинальную продукцию Apple с официальной гарантией и поддержкой.
+            </p>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">01</div>
+                    <h3>Качество</h3>
+                    <p>100% оригинальная продукция Apple, Samsung, Sony и других премиальных брендов с официальной гарантией</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">02</div>
+                    <h3>Доставка</h3>
+                    <p>Быстрая доставка по всей России в течение 1-3 дней. Бесплатная доставка при заказе от 10 000 ₽</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">03</div>
+                    <h3>Поддержка</h3>
+                    <p>Профессиональная консультация 24/7. Помогаем выбрать идеальное устройство под ваши задачи</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">04</div>
+                    <h3>Безопасность</h3>
+                    <p>Защищенные платежи и конфиденциальность данных. Мы заботимся о вашей безопасности</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">05</div>
+                    <h3>Бонусы</h3>
+                    <p>Программа лояльности с кэшбэком и специальными предложениями для постоянных клиентов</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">06</div>
+                    <h3>Сервис</h3>
+                    <p>Собственный сервисный центр с квалифицированными мастерами и оригинальными запчастями</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacts Section -->
+    <section id="contacts" class="info-section">
+        <div class="container">
+            <h2>Контакты</h2>
+            <div class="contacts-grid">
+                <div class="contact-card" style="grid-column: 1 / -1;">
+                    <div class="contact-icon">AD</div>
+                    <h3>Адрес</h3>
+                    <p>Москва, Измайловский бульвар, 67, корпус 1</p>
+                    <div class="map-container">
+                        <iframe src="https://yandex.ru/map-widget/v1/?text=Москва,+Измайловский+бульвар,+67,+корпус+1&lang=ru_RU&scroll=false&z=16" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="true"></iframe>
+                    </div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">PH</div>
+                    <h3>Телефоны</h3>
+                    <p><a href="tel:+79629487177">+7 (962) 948 71 77</a></p>
+                    <p><a href="tel:+79689450555">+7 (968) 945 05 55</a></p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">WS</div>
+                    <h3>Сайт</h3>
+                    <p><a href="https://apple-favorite.ru" target="_blank">apple-favorite.ru</a></p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">TM</div>
+                    <h3>Часы работы</h3>
+                    <p>с 11:00 до 20:00</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.3rem; opacity: 0.8;">Без выходных и перерывов</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">EM</div>
+                    <h3>E-mail</h3>
+                    <p><a href="mailto:apple-favorite@inbox.ru">apple-favorite@inbox.ru</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Repair Services Section -->
+    <section class="info-section">
+        <div class="container">
+            <h2>Услуги ремонта</h2>
+            <div class="repair-services-grid">
+                <div class="repair-service-card">
+                    <h3>Замена аккумулятора</h3>
+                    <p>Оригинальные аккумуляторы с гарантией</p>
+                    <div class="repair-service-price">от 1500 ₽</div>
+                </div>
+                <div class="repair-service-card">
+                    <h3>Замена заднего стекла и корпуса</h3>
+                    <p>Восстановление внешнего вида устройства</p>
+                    <div class="repair-service-price">от 2500 ₽</div>
+                </div>
+                <div class="repair-service-card">
+                    <h3>Полировка стекла</h3>
+                    <p>iPhone, Apple Watch</p>
+                    <div class="repair-service-price">от 2000 ₽</div>
+                </div>
+                <div class="repair-service-card">
+                    <h3>Переклейка стекла</h3>
+                    <p>Профессиональная замена дисплея</p>
+                    <div class="repair-service-price">от 2500 ₽</div>
+                </div>
+                <div class="repair-service-card">
+                    <h3>Защитные стёкла и чехлы</h3>
+                    <p>Оригинальная защита для вашего устройства</p>
+                    <div class="repair-service-price">от 300 ₽</div>
+                </div>
+                <div class="repair-service-card">
+                    <h3>Другие виды услуг</h3>
+                    <p>Широкий спектр ремонтных услуг</p>
+                    <div class="repair-service-price">от 500 ₽</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Works Gallery Section -->
+    <section class="info-section">
+        <div class="container">
+            <h2>Наши работы</h2>
+            <div class="works-gallery" id="worksGallery">
+                <!-- Images will be loaded by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Work images array
+        const workImages = [
+            'images/raboti/2trp21a25uyo0c44o0440g8kw048g4.png',
+            'images/raboti/4v32kjykgyec4ok0oogc0g84s4gwks.png',
+            'images/raboti/6m54sw4x78wswoog0wg4k4cgg08ggw.png',
+            'images/raboti/6nth0bill4sgs4gg0wwos404ccwo00.png',
+            'images/raboti/7e4e5907a4863633669a2714f7d67a234e25a3d7.png',
+            'images/raboti/885x04qfnbswososc4s4sw88wws048.png',
+            'images/raboti/9k6hggv0qcws04s00ckkk4ow8kg48g.png',
+            'images/raboti/b6a3xyntz20ww0ow4kgoc88kkkwwc0.png',
+            'images/raboti/ed34d69c8a1a40d3e84b89b8ff850868bd445144.png',
+            'images/raboti/i2angvhnpmo0ow4wowwggkk0skgg8w.png',
+            'images/raboti/k57pvp0plk0k4gws0wwg0kk84gco00.png',
+            'images/raboti/q91uwlszpz4w0s0g0w4wocggoc40g0.png',
+            'images/raboti/r7t34xni5lw4kwgsoog40g44kw4kck.png'
+        ];
+
+        // Load works gallery
+        function loadWorksGallery() {
+            const gallery = document.getElementById('worksGallery');
+            if (!gallery) return;
+
+            workImages.forEach(src => {
+                const item = document.createElement('div');
+                item.className = 'works-gallery-item';
+                
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = 'Пример работы';
+                img.loading = 'lazy';
+                
+                img.onerror = function() {
+                    this.style.display = 'none';
+                };
+                
+                item.appendChild(img);
+                gallery.appendChild(item);
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', loadWorksGallery);
+    </script>
+</body>
+</html>
+
