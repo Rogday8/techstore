@@ -532,25 +532,20 @@ let maxPrice = 500000;
 
 // Инициализация
 window.addEventListener('DOMContentLoaded', async () => {
-    // Вычисляем максимальную цену для слайдера
+    // Вычисляем максимальную цену для фильтра
     const maxProductPrice = Math.max(...products.map(p => p.price));
     const calculatedMaxPrice = Math.ceil(maxProductPrice / 10000) * 10000; // Округляем до 10000
     maxPrice = calculatedMaxPrice;
     
-    const priceSliderMin = document.getElementById('priceSliderMin');
-    const priceSliderMax = document.getElementById('priceSliderMax');
-    if (priceSliderMin && priceSliderMax) {
-        priceSliderMin.max = calculatedMaxPrice;
-        priceSliderMax.max = calculatedMaxPrice;
-        priceSliderMin.value = minPrice;
-        priceSliderMax.value = maxPrice;
-        
-        // Настраиваем обработчики для правильного взаимодействия ползунков
-        setupDualSlider();
-        
-        // Обновляем визуальный индикатор и input поля
-        updatePriceDisplay();
-        updateSliderRange();
+    // Инициализируем input поля
+    const priceInputMin = document.getElementById('priceInputMin');
+    const priceInputMax = document.getElementById('priceInputMax');
+    if (priceInputMin && priceInputMax) {
+        priceInputMin.max = calculatedMaxPrice;
+        priceInputMax.max = calculatedMaxPrice;
+        priceInputMin.value = minPrice;
+        priceInputMax.value = maxPrice;
+        updatePriceRangeInfo();
     }
     
     renderProducts();
@@ -1021,139 +1016,40 @@ function debouncePriceFilter() {
     }, 150);
 }
 
-// Настройка двойного слайдера
-function setupDualSlider() {
-    const sliderMin = document.getElementById('priceSliderMin');
-    const sliderMax = document.getElementById('priceSliderMax');
-    const inputMin = document.getElementById('priceInputMin');
-    const inputMax = document.getElementById('priceInputMax');
+// Применение ценового фильтра
+function applyPriceFilter() {
+    const priceInputMin = document.getElementById('priceInputMin');
+    const priceInputMax = document.getElementById('priceInputMax');
     
-    if (!sliderMin || !sliderMax) return;
+    if (!priceInputMin || !priceInputMax) return;
     
-    // Функция для обновления минимального значения - точки двигаются независимо
-    function updateMinValue(value) {
-        const minVal = parseInt(value);
-        const maxRange = parseInt(sliderMax.max);
-        
-        // Ограничиваем значение только в допустимых пределах диапазона
-        let newMinVal = Math.max(0, Math.min(minVal, maxRange));
-        
-        // Точки двигаются независимо - нет ограничений на пересечение
-        sliderMin.value = newMinVal;
-        if (inputMin) inputMin.value = newMinVal;
-        minPrice = newMinVal;
-        
-        updateSliderRange();
-        debouncePriceFilter();
-    }
+    const minVal = parseInt(priceInputMin.value) || 0;
+    const maxVal = parseInt(priceInputMax.value) || maxPrice;
+    const maxRange = parseInt(priceInputMax.max) || maxPrice;
     
-    // Функция для обновления максимального значения - точки двигаются независимо
-    function updateMaxValue(value) {
-        const maxVal = parseInt(value);
-        const maxRange = parseInt(sliderMax.max);
-        
-        // Ограничиваем значение только в допустимых пределах диапазона
-        let newMaxVal = Math.max(0, Math.min(maxVal, maxRange));
-        
-        // Точки двигаются независимо - нет ограничений на пересечение
-        sliderMax.value = newMaxVal;
-        if (inputMax) inputMax.value = newMaxVal;
-        maxPrice = newMaxVal;
-        
-        updateSliderRange();
-        debouncePriceFilter();
-    }
-    
-    // Обработчик для минимального слайдера
-    sliderMin.addEventListener('input', function() {
-        updateMinValue(this.value);
-    });
-    
-    // Обработчик для максимального слайдера
-    sliderMax.addEventListener('input', function() {
-        updateMaxValue(this.value);
-    });
-    
-    // Обработчики для touch событий
-    sliderMin.addEventListener('touchmove', function() {
-        updateMinValue(this.value);
-    });
-    
-    sliderMax.addEventListener('touchmove', function() {
-        updateMaxValue(this.value);
-    });
-    
-    // Обработчики для input полей
-    if (inputMin) {
-        inputMin.addEventListener('input', function() {
-            updateMinValue(this.value);
-        });
-        
-        inputMin.addEventListener('blur', function() {
-            const value = parseInt(this.value) || 0;
-            updateMinValue(value);
-        });
-    }
-    
-    if (inputMax) {
-        inputMax.addEventListener('input', function() {
-            updateMaxValue(this.value);
-        });
-        
-        inputMax.addEventListener('blur', function() {
-            const value = parseInt(this.value) || parseInt(sliderMax.max);
-            updateMaxValue(value);
-        });
-    }
-}
-
-// Обновление визуального индикатора диапазона - на одном слое
-function updateSliderRange() {
-    const sliderMin = document.getElementById('priceSliderMin');
-    const sliderMax = document.getElementById('priceSliderMax');
-    const range = document.getElementById('priceSliderRange');
-    
-    if (!sliderMin || !sliderMax || !range) return;
-    
-    const minValue = parseInt(sliderMin.value);
-    const maxValue = parseInt(sliderMax.value);
-    const maxRange = parseInt(sliderMax.max);
-    
-    // Вычисляем проценты для позиций thumb
-    const minPercent = (minValue / maxRange) * 100;
-    const maxPercent = (maxValue / maxRange) * 100;
-    
-    // Определяем реальный минимум и максимум (точки могут быть в любом порядке)
-    const actualMin = Math.min(minPercent, maxPercent);
-    const actualMax = Math.max(minPercent, maxPercent);
-    
-    // Устанавливаем позицию и ширину полоски напрямую на одном элементе
-    range.style.left = `${actualMin}%`;
-    range.style.width = `${actualMax - actualMin}%`;
-}
-
-// Обновление отображения цены
-function updatePriceDisplay() {
-    const sliderMin = document.getElementById('priceSliderMin');
-    const sliderMax = document.getElementById('priceSliderMax');
-    const inputMin = document.getElementById('priceInputMin');
-    const inputMax = document.getElementById('priceInputMax');
-    
-    if (!sliderMin || !sliderMax) return;
-    
-    const minVal = parseInt(sliderMin.value);
-    const maxVal = parseInt(sliderMax.value);
-    
-    // Используем актуальные значения из слайдеров
-    minPrice = minVal;
-    maxPrice = maxVal;
+    // Ограничиваем значения в допустимых пределах
+    minPrice = Math.max(0, Math.min(minVal, maxRange));
+    maxPrice = Math.max(0, Math.min(maxVal, maxRange));
     
     // Обновляем input поля
-    if (inputMin) inputMin.value = minVal;
-    if (inputMax) inputMax.value = maxVal;
+    priceInputMin.value = minPrice;
+    priceInputMax.value = maxPrice;
     
-    // Обновляем визуальный индикатор
-    updateSliderRange();
+    // Обновляем информацию о диапазоне
+    updatePriceRangeInfo();
+    
+    // Применяем фильтр
+    renderProducts();
+}
+
+// Обновление информации о диапазоне цен
+function updatePriceRangeInfo() {
+    const priceRangeInfo = document.getElementById('priceRangeInfo');
+    if (priceRangeInfo) {
+        const actualMin = Math.min(minPrice, maxPrice);
+        const actualMax = Math.max(minPrice, maxPrice);
+        priceRangeInfo.textContent = `Диапазон: от ${actualMin.toLocaleString()} ₽ до ${actualMax.toLocaleString()} ₽`;
+    }
 }
 
 // Открытие окна Trade-in

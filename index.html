@@ -303,28 +303,24 @@
                 <button class="filter-btn" onclick="filterProducts('Аксессуары')">Аксессуары</button>
             </div>
             <div class="price-filter">
-                <div class="price-filter-header">
-                    <span>Фильтр по цене:</span>
-                    <div class="price-inputs">
-                        <div class="price-input-group">
-                            <label>от</label>
-                            <input type="number" id="priceInputMin" class="price-input" min="0" step="1000" value="0">
-                            <span>₽</span>
+                <div class="price-filter-content">
+                    <h3>Фильтр по цене</h3>
+                    <div class="price-filter-inputs">
+                        <div class="price-input-wrapper">
+                            <label for="priceInputMin">От</label>
+                            <input type="number" id="priceInputMin" class="price-input" min="0" step="1000" value="0" placeholder="0">
+                            <span class="currency">₽</span>
                         </div>
-                        <div class="price-input-group">
-                            <label>до</label>
-                            <input type="number" id="priceInputMax" class="price-input" min="0" step="1000" value="500000">
-                            <span>₽</span>
+                        <div class="price-separator">—</div>
+                        <div class="price-input-wrapper">
+                            <label for="priceInputMax">До</label>
+                            <input type="number" id="priceInputMax" class="price-input" min="0" step="1000" value="500000" placeholder="500000">
+                            <span class="currency">₽</span>
                         </div>
+                        <button type="button" class="price-filter-btn" onclick="applyPriceFilter()">Применить</button>
                     </div>
-                </div>
-                <div class="price-slider-container">
-                    <div class="dual-range-slider" id="dualRangeSlider">
-                        <div class="price-slider-track">
-                            <div class="price-slider-range" id="priceSliderRange"></div>
-                        </div>
-                        <input type="range" id="priceSliderMin" class="price-slider price-slider-min" min="0" max="500000" step="1000" value="0">
-                        <input type="range" id="priceSliderMax" class="price-slider price-slider-max" min="0" max="500000" step="1000" value="500000">
+                    <div class="price-range-info">
+                        <span id="priceRangeInfo">Диапазон: от 0 ₽ до 500 000 ₽</span>
                     </div>
                 </div>
             </div>
