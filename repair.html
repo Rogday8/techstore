@@ -110,10 +110,23 @@
             padding: 2rem;
             text-align: center;
             transition: all 0.3s;
+            cursor: pointer;
         }
         
         .repair-service-card:hover {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-color: #333333;
+        }
+        
+        .repair-service-card.selected {
+            background: #000000;
+            color: #ffffff;
+        }
+        
+        .repair-service-card.selected h3,
+        .repair-service-card.selected p,
+        .repair-service-card.selected .repair-service-price {
+            color: #ffffff;
         }
         
         .repair-service-card h3 {
@@ -159,6 +172,113 @@
             transform: scale(1.05);
         }
         
+        /* Repair Form Section */
+        .repair-form-section {
+            background: #fafafa;
+            padding: 4rem 0;
+            border-top: 2px solid #000000;
+        }
+        
+        .repair-form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #000000;
+            padding: 3rem;
+        }
+        
+        .repair-form-container h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .repair-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #000000;
+            margin-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #000000;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            background: #ffffff;
+            color: #000000;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #333333;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .btn-submit-repair {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #000000;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 1rem;
+        }
+        
+        .btn-submit-repair:hover {
+            background: #333333;
+            border-color: #333333;
+        }
+        
+        .selected-service-info {
+            background: #f5f5f5;
+            border: 1px solid #000000;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .selected-service-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .selected-service-info p {
+            color: #666666;
+            font-size: 0.95rem;
+        }
+        
         @media (max-width: 768px) {
             .repair-section {
                 padding: 2rem 0;
@@ -175,6 +295,14 @@
             .works-gallery {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
                 gap: 1rem;
+            }
+            
+            .repair-form-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -196,36 +324,101 @@
         <div class="container">
             <h2>Услуги ремонта</h2>
             <div class="repair-services-grid">
-                <div class="repair-service-card">
+                <div class="repair-service-card" data-service="battery" onclick="selectRepairService('battery')">
                     <h3>Замена аккумулятора</h3>
                     <p>Оригинальные аккумуляторы с гарантией</p>
                     <div class="repair-service-price">от 1500 ₽</div>
                 </div>
-                <div class="repair-service-card">
+                <div class="repair-service-card" data-service="glass" onclick="selectRepairService('glass')">
                     <h3>Замена заднего стекла и корпуса</h3>
                     <p>Восстановление внешнего вида устройства</p>
                     <div class="repair-service-price">от 2500 ₽</div>
                 </div>
-                <div class="repair-service-card">
+                <div class="repair-service-card" data-service="polish" onclick="selectRepairService('polish')">
                     <h3>Полировка стекла</h3>
                     <p>iPhone, Apple Watch</p>
                     <div class="repair-service-price">от 2000 ₽</div>
                 </div>
-                <div class="repair-service-card">
+                <div class="repair-service-card" data-service="screen" onclick="selectRepairService('screen')">
                     <h3>Переклейка стекла</h3>
                     <p>Профессиональная замена дисплея</p>
                     <div class="repair-service-price">от 2500 ₽</div>
                 </div>
-                <div class="repair-service-card">
+                <div class="repair-service-card" data-service="protection" onclick="selectRepairService('protection')">
                     <h3>Защитные стёкла и чехлы</h3>
                     <p>Оригинальная защита для вашего устройства</p>
                     <div class="repair-service-price">от 300 ₽</div>
                 </div>
-                <div class="repair-service-card">
+                <div class="repair-service-card" data-service="other" onclick="selectRepairService('other')">
                     <h3>Другие виды услуг</h3>
                     <p>Широкий спектр ремонтных услуг</p>
                     <div class="repair-service-price">от 500 ₽</div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Repair Form Section -->
+    <section class="repair-form-section" id="repairFormSection" style="display: none;">
+        <div class="container">
+            <div class="repair-form-container">
+                <h2>Заявка на ремонт</h2>
+                <div class="selected-service-info" id="selectedServiceInfo">
+                    <!-- Selected service info will be shown here -->
+                </div>
+                <form id="repairForm" class="repair-form" onsubmit="submitRepairForm(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="repairName">Ваше имя *</label>
+                            <input type="text" id="repairName" name="name" placeholder="Введите ваше имя" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="repairPhone">Телефон *</label>
+                            <input type="tel" id="repairPhone" name="phone" placeholder="+7 (___) ___-__-__" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repairEmail">E-mail</label>
+                        <input type="email" id="repairEmail" name="email" placeholder="example@mail.ru">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="repairDevice">Модель устройства *</label>
+                            <input type="text" id="repairDevice" name="device" placeholder="Например: iPhone 15 Pro Max" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="repairSerial">Серийный номер (если известен)</label>
+                            <input type="text" id="repairSerial" name="serial" placeholder="Введите серийный номер">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repairDescription">Описание проблемы *</label>
+                        <textarea id="repairDescription" name="description" placeholder="Опишите подробно проблему или что нужно сделать" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="repairDateTime">Желаемая дата и время *</label>
+                            <input type="datetime-local" id="repairDateTime" name="dateTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="repairUrgency">Срочность</label>
+                            <select id="repairUrgency" name="urgency">
+                                <option value="normal">Обычная</option>
+                                <option value="urgent">Срочно</option>
+                                <option value="very-urgent">Очень срочно</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repairAddress">Адрес (если нужна доставка)</label>
+                        <input type="text" id="repairAddress" name="address" placeholder="Введите адрес доставки">
+                    </div>
+                    <div class="form-group">
+                        <label for="repairNotes">Дополнительные комментарии</label>
+                        <textarea id="repairNotes" name="notes" placeholder="Любая дополнительная информация"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit-repair">Отправить заявку</button>
+                </form>
             </div>
         </div>
     </section>
@@ -241,6 +434,122 @@
     </section>
 
     <script>
+        // Repair services data
+        const repairServices = {
+            'battery': {
+                title: 'Замена аккумулятора',
+                price: 'от 1500 ₽',
+                description: 'Оригинальные аккумуляторы с гарантией'
+            },
+            'glass': {
+                title: 'Замена заднего стекла и корпуса',
+                price: 'от 2500 ₽',
+                description: 'Восстановление внешнего вида устройства'
+            },
+            'polish': {
+                title: 'Полировка стекла',
+                price: 'iPhone, Apple Watch от 2000 ₽',
+                description: 'iPhone, Apple Watch'
+            },
+            'screen': {
+                title: 'Переклейка стекла',
+                price: 'от 2500 ₽',
+                description: 'Профессиональная замена дисплея'
+            },
+            'protection': {
+                title: 'Защитные стёкла и чехлы',
+                price: 'от 300 ₽',
+                description: 'Оригинальная защита для вашего устройства'
+            },
+            'other': {
+                title: 'Другие виды услуг',
+                price: 'от 500 ₽',
+                description: 'Широкий спектр ремонтных услуг'
+            }
+        };
+
+        let selectedService = null;
+
+        // Select repair service
+        function selectRepairService(serviceId) {
+            // Remove previous selection
+            document.querySelectorAll('.repair-service-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selection to clicked card
+            const card = document.querySelector(`[data-service="${serviceId}"]`);
+            if (card) {
+                card.classList.add('selected');
+                selectedService = serviceId;
+
+                // Show selected service info
+                const service = repairServices[serviceId];
+                const infoDiv = document.getElementById('selectedServiceInfo');
+                infoDiv.innerHTML = `
+                    <h3>${service.title}</h3>
+                    <p><strong>Цена:</strong> ${service.price}</p>
+                    <p>${service.description}</p>
+                `;
+
+                // Show form section
+                document.getElementById('repairFormSection').style.display = 'block';
+                
+                // Scroll to form
+                setTimeout(() => {
+                    document.getElementById('repairFormSection').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }, 100);
+            }
+        }
+
+        // Submit repair form
+        function submitRepairForm(event) {
+            event.preventDefault();
+            
+            if (!selectedService) {
+                alert('Пожалуйста, выберите услугу');
+                return;
+            }
+
+            const formData = {
+                service: repairServices[selectedService].title,
+                serviceId: selectedService,
+                name: document.getElementById('repairName').value,
+                phone: document.getElementById('repairPhone').value,
+                email: document.getElementById('repairEmail').value,
+                device: document.getElementById('repairDevice').value,
+                serial: document.getElementById('repairSerial').value,
+                description: document.getElementById('repairDescription').value,
+                dateTime: document.getElementById('repairDateTime').value,
+                urgency: document.getElementById('repairUrgency').value,
+                address: document.getElementById('repairAddress').value,
+                notes: document.getElementById('repairNotes').value,
+                date: new Date().toISOString()
+            };
+
+            // Save to localStorage
+            const repairs = JSON.parse(localStorage.getItem('repairOrders') || '[]');
+            repairs.push(formData);
+            localStorage.setItem('repairOrders', JSON.stringify(repairs));
+
+            // Show success message
+            alert('✅ Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
+            
+            // Reset form
+            document.getElementById('repairForm').reset();
+            
+            // Reset selection
+            document.querySelectorAll('.repair-service-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            selectedService = null;
+            document.getElementById('repairFormSection').style.display = 'none';
+            document.getElementById('selectedServiceInfo').innerHTML = '';
+        }
+
         // Work images array
         const workImages = [
             'images/raboti/2trp21a25uyo0c44o0440g8kw048g4.png',
