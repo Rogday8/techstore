@@ -827,8 +827,22 @@
             });
         }
 
+        // Get service from URL parameter and auto-select it
+        function checkUrlService() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serviceId = urlParams.get('service');
+            
+            if (serviceId && repairServices[serviceId]) {
+                // Auto-select the service
+                selectRepairService(serviceId);
+            }
+        }
+
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', loadWorksGallery);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWorksGallery();
+            checkUrlService();
+        });
     </script>
 </body>
 </html>
