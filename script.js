@@ -531,7 +531,7 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Админ режим
 // Секретный пароль для доступа к админ-панели (можно изменить)
-const ADMIN_PASSWORD = 'admin2024';
+const ADMIN_PASSWORD = 'admin2025';
 let isAdmin = localStorage.getItem('adminMode') === 'true';
 let isAdminAuthorized = localStorage.getItem('adminAuthorized') === 'true';
 
