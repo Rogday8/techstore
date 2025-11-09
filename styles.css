@@ -3998,6 +3998,14 @@ model-viewer {
         padding: 60px 10px;
     }
     
+    .hero-carousel-item h3 {
+        font-size: 1.5rem;
+    }
+    
+    .hero-carousel-item p {
+        font-size: 0.85rem;
+    }
+    
     .hero h1 {
         font-size: 1.7rem;
     }
