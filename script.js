@@ -2840,25 +2840,19 @@ function initWorksCarousels() {
     createCarouselImages(images1, carousel1);
     createCarouselImages(images2, carousel2);
     
-    // Автопрокрутка каруселей отключена
-    // setTimeout(() => {
-    //     // Сначала настраиваем плавную бесконечную прокрутку
-    //     // Первая карусель движется влево, вторая - вправо
-    //     setupInfiniteScroll(carousel1, images1.length, -1); // -1 = влево
-    //     setupInfiniteScroll(carousel2, images2.length, 1);  // 1 = вправо
-    //     
-    //     // Затем добавляем drag функциональность (после инициализации анимации)
-    //     setTimeout(() => {
-    //         setupCarouselDrag(carousel1);
-    //         setupCarouselDrag(carousel2);
-    //     }, 100);
-    // }, 200);
-    
-    // Добавляем только drag функциональность без автопрокрутки
+    // Настраиваем автопрокрутку каруселей
     setTimeout(() => {
-        setupCarouselDrag(carousel1);
-        setupCarouselDrag(carousel2);
-    }, 100);
+        // Сначала настраиваем плавную бесконечную прокрутку
+        // Первая карусель движется влево, вторая - вправо
+        setupInfiniteScroll(carousel1, images1.length, -1); // -1 = влево
+        setupInfiniteScroll(carousel2, images2.length, 1);  // 1 = вправо
+        
+        // Затем добавляем drag функциональность (после инициализации анимации)
+        setTimeout(() => {
+            setupCarouselDrag(carousel1);
+            setupCarouselDrag(carousel2);
+        }, 100);
+    }, 200);
 }
 
 // Настройка плавной бесконечной прокрутки
