@@ -2708,32 +2708,16 @@ function updateTotalMainSlides() {
 // Обновляем при загрузке и изменении размера окна
 window.addEventListener('resize', updateTotalMainSlides);
 
-// Hero Carousel with interesting facts about Apple
-const heroCarouselFacts = [
-    {
-        title: 'Инновации',
-        text: 'Apple создает технологии, которые меняют мир. Каждое устройство — результат многолетних исследований и разработок.'
-    },
-    {
-        title: 'Качество',
-        text: 'Оригинальная продукция Apple проходит строжайший контроль качества. Мы предлагаем только сертифицированные устройства.'
-    },
-    {
-        title: 'Экосистема',
-        text: 'Все устройства Apple работают в единой экосистеме, обеспечивая бесшовную интеграцию и максимальное удобство.'
-    },
-    {
-        title: 'Безопасность',
-        text: 'Apple уделяет особое внимание защите данных пользователей. Ваша конфиденциальность — наш приоритет.'
-    },
-    {
-        title: 'Дизайн',
-        text: 'Каждое устройство Apple — произведение искусства. Минимализм, элегантность и функциональность в одном.'
-    },
-    {
-        title: 'Производительность',
-        text: 'Чипы Apple Silicon обеспечивают выдающуюся производительность при минимальном энергопотреблении.'
-    }
+// Hero Carousel with product images
+const heroCarouselImages = [
+    'images/15 pro max/15 pro max black/top1.webp',
+    'images/AirPods Pro 2/top1.webp',
+    'images/Apple Watch Series 9/top1.webp',
+    'images/Iphone 14/Iphone 14 black/top1.webp',
+    'images/15 pro max/15 pro max blue/1e3d6dc283feae1a340a1d1fbdb7a9411a9ba77beb798b5b19d40762feaa2944.jpg.webp',
+    'images/15 pro max/15 pro max grey/top1.webp',
+    'images/15 pro max/15 pro max white/top1.webp',
+    'images/Iphone 14/Iphone 14 white/top1.webp'
 ];
 
 // Initialize Hero Carousel
@@ -2741,16 +2725,23 @@ function initHeroCarousel() {
     const carousel = document.getElementById('heroCarousel');
     if (!carousel) return;
 
-    // Duplicate items for seamless loop
-    const allItems = [...heroCarouselFacts, ...heroCarouselFacts];
+    // Duplicate images for seamless loop
+    const allImages = [...heroCarouselImages, ...heroCarouselImages];
     
-    allItems.forEach(item => {
+    allImages.forEach(imageSrc => {
         const carouselItem = document.createElement('div');
         carouselItem.className = 'hero-carousel-item';
-        carouselItem.innerHTML = `
-            <h3>${item.title}</h3>
-            <p>${item.text}</p>
-        `;
+        
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.alt = 'Apple Product';
+        img.loading = 'lazy';
+        
+        img.onerror = function() {
+            this.style.display = 'none';
+        };
+        
+        carouselItem.appendChild(img);
         carousel.appendChild(carouselItem);
     });
 }
