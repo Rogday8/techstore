@@ -21,6 +21,13 @@ body {
     background: var(--bg-light);
     min-height: 100vh;
     overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 .container {
@@ -260,6 +267,7 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     overflow: hidden;
+    width: 100%;
 }
 
 .main-content-track {
@@ -888,6 +896,8 @@ body {
     gap: 2rem;
     max-width: 1400px;
     margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
 }
 
 .works-carousel-container {
