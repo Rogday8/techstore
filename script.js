@@ -2743,7 +2743,15 @@ function initWorksCarousels() {
     const carousel1 = document.getElementById('worksCarousel1');
     const carousel2 = document.getElementById('worksCarousel2');
     
-    if (!carousel1 || !carousel2) return;
+    if (!carousel1 || !carousel2) {
+        console.warn('Карусели работ не найдены, повторная попытка через 500ms');
+        setTimeout(initWorksCarousels, 500);
+        return;
+    }
+    
+    // Очищаем контейнеры перед добавлением изображений
+    carousel1.innerHTML = '';
+    carousel2.innerHTML = '';
     
     // Перемешиваем изображения в случайном порядке
     const shuffledImages = [...workImages].sort(() => Math.random() - 0.5);
@@ -2758,6 +2766,9 @@ function initWorksCarousels() {
         imageArray.forEach(src => {
             const img = new Image();
             img.src = src;
+            img.onerror = () => {
+                console.warn('Не удалось загрузить изображение:', src);
+            };
         });
     }
     
@@ -2767,21 +2778,34 @@ function initWorksCarousels() {
     // Функция для создания дублированных изображений (для бесконечной прокрутки)
     function createCarouselImages(images, container) {
         // Добавляем изображения 5 раз для гарантированной бесконечной прокрутки
-        // Это нужно для того, чтобы переход был незаметным и всегда были изображения
         const copies = 5;
+        let loadedCount = 0;
+        const totalImages = copies * images.length;
+        
         for (let i = 0; i < copies; i++) {
             images.forEach(src => {
                 const img = document.createElement('img');
                 img.src = src;
                 img.alt = 'Наша работа';
                 img.className = 'work-image';
-                // Предзагрузка изображений для предотвращения задержек
                 img.loading = 'eager';
                 img.decoding = 'async';
+                
+                // Обработка успешной загрузки
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === totalImages) {
+                        console.log('Все изображения карусели загружены');
+                    }
+                };
+                
                 // Обработка ошибок загрузки
                 img.onerror = function() {
-                    this.style.display = 'none';
+                    console.warn('Ошибка загрузки изображения:', src);
+                    // Не скрываем изображение, оставляем placeholder
+                    this.style.opacity = '0.5';
                 };
+                
                 container.appendChild(img);
             });
         }
@@ -2790,16 +2814,19 @@ function initWorksCarousels() {
     createCarouselImages(images1, carousel1);
     createCarouselImages(images2, carousel2);
     
-    // Сначала настраиваем плавную бесконечную прокрутку
-    // Первая карусель движется влево, вторая - вправо
-    setupInfiniteScroll(carousel1, images1.length, -1); // -1 = влево
-    setupInfiniteScroll(carousel2, images2.length, 1);  // 1 = вправо
-    
-    // Затем добавляем drag функциональность (после инициализации анимации)
+    // Небольшая задержка перед инициализацией анимации
     setTimeout(() => {
-        setupCarouselDrag(carousel1);
-        setupCarouselDrag(carousel2);
-    }, 100);
+        // Сначала настраиваем плавную бесконечную прокрутку
+        // Первая карусель движется влево, вторая - вправо
+        setupInfiniteScroll(carousel1, images1.length, -1); // -1 = влево
+        setupInfiniteScroll(carousel2, images2.length, 1);  // 1 = вправо
+        
+        // Затем добавляем drag функциональность (после инициализации анимации)
+        setTimeout(() => {
+            setupCarouselDrag(carousel1);
+            setupCarouselDrag(carousel2);
+        }, 100);
+    }, 200);
 }
 
 // Настройка плавной бесконечной прокрутки
