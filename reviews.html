@@ -696,30 +696,91 @@
 
     <script src="script.js"></script>
     <script>
-        // API URL - автоматически определяет, использовать ли localhost или текущий домен
-        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
-            ? 'http://localhost:3000/api' 
-            : window.location.origin + '/api';
+        const REVIEWS_STORAGE_KEY = 'appleFavoriteReviews';
         let allReviews = [];
         let currentSort = 'date-desc';
         let selectedFiles = [];
 
-        // Load reviews from server
-        async function loadReviews() {
+        // Примеры отзывов
+        const exampleReviews = [
+            {
+                id: '1',
+                name: 'Александр Петров',
+                email: 'alex@example.com',
+                rating: 5,
+                text: 'Отличный магазин! Заказал iPhone 15 Pro Max, пришел быстро, в идеальном состоянии. Оригинальная упаковка, все аксессуары на месте. Рекомендую!',
+                images: [],
+                date: new Date('2025-01-15').toISOString()
+            },
+            {
+                id: '2',
+                name: 'Мария Иванова',
+                email: 'maria@example.com',
+                rating: 5,
+                text: 'Покупала AirPods Pro 2. Качество звука превосходное, шумоподавление работает отлично. Сервис на высоте, быстро оформили заказ и доставили.',
+                images: [],
+                date: new Date('2025-01-12').toISOString()
+            },
+            {
+                id: '3',
+                name: 'Дмитрий Смирнов',
+                email: 'dmitry@example.com',
+                rating: 4,
+                text: 'Хороший магазин, большой выбор техники Apple. Цены адекватные, гарантия официальная. Единственное - можно было бы быстрее обрабатывать заказы.',
+                images: [],
+                date: new Date('2025-01-10').toISOString()
+            },
+            {
+                id: '4',
+                name: 'Елена Козлова',
+                email: 'elena@example.com',
+                rating: 5,
+                text: 'Приобрела Apple Watch Series 9. Очень довольна покупкой! Дизайн прекрасный, функционал впечатляет. Магазин рекомендую, все честно и быстро.',
+                images: [],
+                date: new Date('2025-01-08').toISOString()
+            },
+            {
+                id: '5',
+                name: 'Игорь Волков',
+                email: 'igor@example.com',
+                rating: 5,
+                text: 'Лучший магазин Apple техники! Заказывал несколько раз, всегда все на высоте. Консультанты помогают выбрать, доставка быстрая. Спасибо!',
+                images: [],
+                date: new Date('2025-01-05').toISOString()
+            },
+            {
+                id: '6',
+                name: 'Анна Белова',
+                email: 'anna@example.com',
+                rating: 4,
+                text: 'Купила защитное стекло и чехол для iPhone. Качество отличное, установили прямо в магазине. Цены приемлемые, сервис хороший.',
+                images: [],
+                date: new Date('2025-01-03').toISOString()
+            }
+        ];
+
+        // Load reviews from localStorage or use examples
+        function loadReviews() {
             try {
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('reviewsList').style.display = 'none';
                 document.getElementById('reviewsEmpty').style.display = 'none';
                 
-                const response = await fetch(`${API_URL}/reviews`);
-                if (!response.ok) throw new Error('Ошибка загрузки отзывов');
+                // Загружаем отзывы из localStorage
+                const storedReviews = localStorage.getItem(REVIEWS_STORAGE_KEY);
+                const userReviews = storedReviews ? JSON.parse(storedReviews) : [];
                 
-                allReviews = await response.json();
+                // Объединяем примеры и пользовательские отзывы
+                allReviews = [...exampleReviews, ...userReviews];
+                
+                // Сортируем по дате (новые первыми)
+                allReviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
                 renderReviews();
                 updateStats();
             } catch (error) {
                 console.error('Error loading reviews:', error);
-                document.getElementById('loading').textContent = 'Ошибка загрузки отзывов. Убедитесь, что сервер запущен.';
+                document.getElementById('loading').textContent = 'Ошибка загрузки отзывов.';
             }
         }
 
@@ -757,7 +818,7 @@
                     <div class="review-text">${escapeHtml(review.text)}</div>
                     ${review.images && review.images.length > 0 ? `
                         <div class="review-images">
-                            ${review.images.map(img => `
+                            ${review.images.map((img, idx) => `
                                 <img src="${img}" alt="Review image" class="review-image" onclick="openImageModal('${img}')">
                             `).join('')}
                         </div>
@@ -897,6 +958,16 @@
             document.getElementById('reviewImages').files = dataTransfer.files;
         }
 
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         // Handle form submission
         document.getElementById('reviewForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -906,25 +977,38 @@
             submitBtn.textContent = 'Отправка...';
             
             try {
-                const formData = new FormData();
-                formData.append('name', document.getElementById('reviewName').value);
-                formData.append('email', document.getElementById('reviewEmail').value);
-                formData.append('rating', document.querySelector('input[name="rating"]:checked').value);
-                formData.append('text', document.getElementById('reviewText').value);
+                const name = document.getElementById('reviewName').value;
+                const email = document.getElementById('reviewEmail').value;
+                const rating = document.querySelector('input[name="rating"]:checked').value;
+                const text = document.getElementById('reviewText').value;
                 
-                // Add files
-                selectedFiles.forEach(file => {
-                    formData.append('images', file);
-                });
+                // Convert images to base64
+                const images = [];
+                for (const file of selectedFiles) {
+                    const base64 = await fileToBase64(file);
+                    images.push(base64);
+                }
                 
-                const response = await fetch(`${API_URL}/reviews`, {
-                    method: 'POST',
-                    body: formData
-                });
+                // Create review object
+                const review = {
+                    id: Date.now().toString(),
+                    name: name,
+                    email: email,
+                    rating: parseInt(rating),
+                    text: text,
+                    images: images,
+                    date: new Date().toISOString()
+                };
                 
-                if (!response.ok) throw new Error('Ошибка при отправке отзыва');
+                // Load existing user reviews
+                const storedReviews = localStorage.getItem(REVIEWS_STORAGE_KEY);
+                const userReviews = storedReviews ? JSON.parse(storedReviews) : [];
                 
-                const result = await response.json();
+                // Add new review
+                userReviews.push(review);
+                
+                // Save to localStorage
+                localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(userReviews));
                 
                 // Reset form
                 this.reset();
@@ -933,12 +1017,12 @@
                 closeReviewModal();
                 
                 // Reload reviews
-                await loadReviews();
+                loadReviews();
                 
                 alert('Спасибо за ваш отзыв! Он был успешно добавлен.');
             } catch (error) {
                 console.error('Error submitting review:', error);
-                alert('Ошибка при отправке отзыва. Убедитесь, что сервер запущен.');
+                alert('Ошибка при отправке отзыва.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Отправить отзыв';
