@@ -696,7 +696,10 @@
 
     <script src="script.js"></script>
     <script>
-        const API_URL = 'http://localhost:3000/api';
+        // API URL - автоматически определяет, использовать ли localhost или текущий домен
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+            ? 'http://localhost:3000/api' 
+            : window.location.origin + '/api';
         let allReviews = [];
         let currentSort = 'date-desc';
         let selectedFiles = [];
