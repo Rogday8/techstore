@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Отзывы - Apple Favorite</title>
+    <link rel="icon" type="image/png" sizes="256x256" href="images/favicon/fhg.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/favicon/fhg.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="images/favicon/fhg.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/favicon/fhg.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="images/favicon/fhg.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/fhg.png">
+    <link rel="apple-touch-icon" sizes="256x256" href="images/favicon/fhg.png">
+    <link rel="shortcut icon" type="image/png" href="images/favicon/fhg.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reviews Page Specific Styles */
+        .reviews-page {
+            background: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .reviews-header {
+            background: var(--text-inverse);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .reviews-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .reviews-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .back-link:hover {
+            color: var(--accent);
+        }
+        
+        .reviews-container {
+            padding: 3rem 0;
+        }
+        
+        .reviews-title {
+            font-size: 3rem;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .reviews-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Review Form */
+        .review-form-section {
+            background: var(--bg-light);
+            padding: 3rem 2rem;
+            border-radius: 8px;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .review-form-title {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+        }
+        
+        .review-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            background: var(--text-inverse);
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .rating-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 0.5rem;
+            direction: rtl;
+        }
+        
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+        
+        .star-rating label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+            margin: 0;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffc107;
+        }
+        
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffc107;
+        }
+        
+        .submit-btn {
+            background: var(--accent);
+            color: var(--text-inverse);
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .submit-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Reviews Display */
+        .reviews-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .review-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .review-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .review-author {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .review-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .review-rating {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .review-rating .star {
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+        
+        .review-rating .star.empty {
+            color: #ddd;
+        }
+        
+        .review-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 1rem;
+        }
+        
+        .reviews-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .reviews-empty h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        /* Stats Section */
+        .reviews-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+        
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .reviews-title {
+                font-size: 2rem;
+            }
+            
+            .review-form-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .reviews-list {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .review-card {
+                padding: 1.5rem;
+            }
+            
+            .reviews-stats {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .reviews-header .container {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="reviews-page">
+    <!-- Reviews Header -->
+    <header class="reviews-header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="images/logo/apple-logo-2.png" alt="Apple Logo" class="apple-logo">
+                <span class="logo-text">Apple <span style="font-weight: 300;">Favorite</span></span>
+            </a>
+            <a href="index.html" class="back-link">← На главную</a>
+        </div>
+    </header>
+
+    <!-- Reviews Container -->
+    <div class="reviews-container">
+        <div class="container">
+            <h1 class="reviews-title">Отзывы</h1>
+            <p class="reviews-subtitle">Ваше мнение важно для нас</p>
+            
+            <!-- Stats Section -->
+            <div class="reviews-stats" id="reviewsStats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalReviews">0</div>
+                    <div class="stat-label">Всего отзывов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="averageRating">0.0</div>
+                    <div class="stat-label">Средняя оценка</div>
+                </div>
+            </div>
+            
+            <!-- Review Form -->
+            <div class="review-form-section">
+                <h2 class="review-form-title">Оставить отзыв</h2>
+                <form class="review-form" id="reviewForm">
+                    <div class="form-group">
+                        <label for="reviewName">Имя *</label>
+                        <input type="text" id="reviewName" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reviewEmail">Email *</label>
+                        <input type="email" id="reviewEmail" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Оценка *</label>
+                        <div class="rating-group">
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5">★</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2">★</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1">★</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reviewText">Текст отзыва *</label>
+                        <textarea id="reviewText" name="text" required placeholder="Поделитесь своими впечатлениями..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Отправить отзыв</button>
+                </form>
+            </div>
+            
+            <!-- Reviews List -->
+            <div id="reviewsList" class="reviews-list">
+                <!-- Reviews will be loaded here -->
+            </div>
+            
+            <div id="reviewsEmpty" class="reviews-empty" style="display: none;">
+                <h3>Пока нет отзывов</h3>
+                <p>Станьте первым, кто оставит отзыв!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Reviews functionality
+        const REVIEWS_STORAGE_KEY = 'appleFavoriteReviews';
+        
+        // Load reviews from localStorage
+        function loadReviews() {
+            const reviewsJson = localStorage.getItem(REVIEWS_STORAGE_KEY);
+            return reviewsJson ? JSON.parse(reviewsJson) : [];
+        }
+        
+        // Save reviews to localStorage
+        function saveReviews(reviews) {
+            localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
+        }
+        
+        // Render reviews
+        function renderReviews() {
+            const reviews = loadReviews();
+            const reviewsList = document.getElementById('reviewsList');
+            const reviewsEmpty = document.getElementById('reviewsEmpty');
+            
+            if (reviews.length === 0) {
+                reviewsList.style.display = 'none';
+                reviewsEmpty.style.display = 'block';
+            } else {
+                reviewsList.style.display = 'grid';
+                reviewsEmpty.style.display = 'none';
+                
+                // Sort reviews by date (newest first)
+                const sortedReviews = [...reviews].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                reviewsList.innerHTML = sortedReviews.map(review => `
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <div class="review-author">${escapeHtml(review.name)}</div>
+                                <div class="review-date">${formatDate(review.date)}</div>
+                            </div>
+                            <div class="review-rating">
+                                ${renderStars(review.rating)}
+                            </div>
+                        </div>
+                        <div class="review-text">${escapeHtml(review.text)}</div>
+                    </div>
+                `).join('');
+            }
+            
+            updateStats(reviews);
+        }
+        
+        // Render stars
+        function renderStars(rating) {
+            let stars = '';
+            for (let i = 5; i >= 1; i--) {
+                if (i <= rating) {
+                    stars += '<span class="star">★</span>';
+                } else {
+                    stars += '<span class="star empty">★</span>';
+                }
+            }
+            return stars;
+        }
+        
+        // Update statistics
+        function updateStats(reviews) {
+            const totalReviews = reviews.length;
+            const averageRating = totalReviews > 0 
+                ? (reviews.reduce((sum, review) => sum + parseInt(review.rating), 0) / totalReviews).toFixed(1)
+                : 0;
+            
+            document.getElementById('totalReviews').textContent = totalReviews;
+            document.getElementById('averageRating').textContent = averageRating;
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('ru-RU', options);
+        }
+        
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Handle form submission
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const review = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                rating: formData.get('rating'),
+                text: formData.get('text'),
+                date: new Date().toISOString()
+            };
+            
+            const reviews = loadReviews();
+            reviews.push(review);
+            saveReviews(reviews);
+            
+            // Reset form
+            this.reset();
+            
+            // Re-render reviews
+            renderReviews();
+            
+            // Show success message
+            alert('Спасибо за ваш отзыв! Он был успешно добавлен.');
+        });
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderReviews();
+        });
+    </script>
+</body>
+</html>
+
