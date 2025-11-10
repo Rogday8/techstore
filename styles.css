@@ -86,12 +86,17 @@ html {
     object-fit: contain;
 }
 
-/* Увеличение логотипа в 2 раза на десктопе */
+/* Увеличение логотипа на десктопе */
 @media (min-width: 769px) {
     .apple-logo,
     .apple-logo-fallback {
-        width: 96px !important;
-        height: 96px !important;
+        width: 150px !important;
+        height: 150px !important;
+    }
+    
+    .logo {
+        font-size: 1.8rem !important;
+        gap: 1rem !important;
     }
 }
 
