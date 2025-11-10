@@ -24,3 +24,18 @@ desktop.ini
 # images/*.jpg
 # images/*.png
 
+# Игнорировать большие исполняемые файлы
+*.exe
+*.msi
+*.dmg
+*.pkg
+
+# Игнорировать node_modules
+node_modules/
+
+# Игнорировать package-lock.json (опционально)
+package-lock.json
+
+# Игнорировать products.json (если это временный файл)
+# products.json
+
