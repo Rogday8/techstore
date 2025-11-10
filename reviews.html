@@ -76,31 +76,161 @@
         .reviews-subtitle {
             text-align: center;
             color: var(--text-secondary);
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             font-size: 1.1rem;
         }
         
-        /* Review Form */
-        .review-form-section {
+        /* Create Review Button */
+        .create-review-btn {
+            display: block;
+            margin: 0 auto 2rem;
+            padding: 0.75rem 2rem;
+            background: var(--accent);
+            color: var(--text-inverse);
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .create-review-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Sort Controls */
+        .sort-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .sort-btn {
+            padding: 0.5rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .sort-btn:hover,
+        .sort-btn.active {
+            background: var(--accent);
+            color: var(--text-inverse);
+            border-color: var(--accent);
+        }
+        
+        /* Stats Section */
+        .reviews-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
             background: var(--bg-light);
-            padding: 3rem 2rem;
             border-radius: 8px;
-            margin-bottom: 4rem;
             border: 1px solid var(--border-color);
         }
         
-        .review-form-title {
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .modal-content {
+            background: var(--text-inverse);
+            border-radius: 8px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: var(--accent);
+        }
+        
+        .modal-title {
             font-size: 2rem;
             font-weight: 400;
             margin-bottom: 2rem;
             color: var(--text-primary);
             font-family: 'Montserrat', sans-serif;
-            text-align: center;
         }
         
+        /* Review Form */
         .review-form {
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 100%;
         }
         
         .form-group {
@@ -128,6 +258,7 @@
             background: var(--text-inverse);
             color: var(--text-primary);
             transition: border-color 0.3s;
+            box-sizing: border-box;
         }
         
         .form-group input:focus,
@@ -176,6 +307,74 @@
             color: var(--accent);
         }
         
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 1rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-light);
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--accent);
+            background: #f5f5f5;
+        }
+        
+        .file-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .file-preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .file-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .file-preview-item .remove-file {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .submit-btn {
             background: var(--accent);
             color: var(--text-inverse);
@@ -198,8 +397,9 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
-        .submit-btn:active {
-            transform: translateY(0);
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         /* Reviews Display */
@@ -262,6 +462,26 @@
             margin-top: 1rem;
         }
         
+        .review-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .review-image {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .review-image:hover {
+            transform: scale(1.05);
+        }
+        
         .reviews-empty {
             text-align: center;
             padding: 4rem 2rem;
@@ -275,35 +495,46 @@
             color: var(--text-primary);
         }
         
-        /* Stats Section */
-        .reviews-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background: var(--bg-light);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .stat-item {
+        .loading {
             text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 300;
-            color: var(--text-primary);
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
+            padding: 2rem;
             color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 0.5rem;
+        }
+        
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-modal.active {
+            display: flex;
+        }
+        
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+        
+        .image-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 3001;
         }
         
         /* Mobile Styles */
@@ -312,8 +543,9 @@
                 font-size: 2rem;
             }
             
-            .review-form-section {
+            .modal-content {
                 padding: 2rem 1.5rem;
+                margin: 1rem;
             }
             
             .reviews-list {
@@ -333,6 +565,14 @@
             .reviews-header .container {
                 flex-wrap: wrap;
                 gap: 1rem;
+            }
+            
+            .sort-controls {
+                flex-direction: column;
+            }
+            
+            .sort-btn {
+                width: 100%;
             }
         }
     </style>
@@ -355,6 +595,9 @@
             <h1 class="reviews-title">Отзывы</h1>
             <p class="reviews-subtitle">Ваше мнение важно для нас</p>
             
+            <!-- Create Review Button -->
+            <button class="create-review-btn" onclick="openReviewModal()">+ Оставить отзыв</button>
+            
             <!-- Stats Section -->
             <div class="reviews-stats" id="reviewsStats">
                 <div class="stat-item">
@@ -367,49 +610,19 @@
                 </div>
             </div>
             
-            <!-- Review Form -->
-            <div class="review-form-section">
-                <h2 class="review-form-title">Оставить отзыв</h2>
-                <form class="review-form" id="reviewForm">
-                    <div class="form-group">
-                        <label for="reviewName">Имя *</label>
-                        <input type="text" id="reviewName" name="name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reviewEmail">Email *</label>
-                        <input type="email" id="reviewEmail" name="email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Оценка *</label>
-                        <div class="rating-group">
-                            <div class="star-rating">
-                                <input type="radio" id="star5" name="rating" value="5" required>
-                                <label for="star5">★</label>
-                                <input type="radio" id="star4" name="rating" value="4">
-                                <label for="star4">★</label>
-                                <input type="radio" id="star3" name="rating" value="3">
-                                <label for="star3">★</label>
-                                <input type="radio" id="star2" name="rating" value="2">
-                                <label for="star2">★</label>
-                                <input type="radio" id="star1" name="rating" value="1">
-                                <label for="star1">★</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reviewText">Текст отзыва *</label>
-                        <textarea id="reviewText" name="text" required placeholder="Поделитесь своими впечатлениями..."></textarea>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Отправить отзыв</button>
-                </form>
+            <!-- Sort Controls -->
+            <div class="sort-controls">
+                <button class="sort-btn active" data-sort="date-desc" onclick="sortReviews('date-desc')">Сначала новые</button>
+                <button class="sort-btn" data-sort="date-asc" onclick="sortReviews('date-asc')">Сначала старые</button>
+                <button class="sort-btn" data-sort="rating-desc" onclick="sortReviews('rating-desc')">Высокий рейтинг</button>
+                <button class="sort-btn" data-sort="rating-asc" onclick="sortReviews('rating-asc')">Низкий рейтинг</button>
             </div>
             
+            <!-- Loading -->
+            <div id="loading" class="loading">Загрузка отзывов...</div>
+            
             <!-- Reviews List -->
-            <div id="reviewsList" class="reviews-list">
+            <div id="reviewsList" class="reviews-list" style="display: none;">
                 <!-- Reviews will be loaded here -->
             </div>
             
@@ -420,57 +633,167 @@
         </div>
     </div>
 
+    <!-- Review Modal -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+            <h2 class="modal-title">Оставить отзыв</h2>
+            <form class="review-form" id="reviewForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="reviewName">Имя *</label>
+                    <input type="text" id="reviewName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reviewEmail">Email *</label>
+                    <input type="email" id="reviewEmail" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Оценка *</label>
+                    <div class="rating-group">
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5" required>
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1">★</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reviewText">Текст отзыва *</label>
+                    <textarea id="reviewText" name="text" required placeholder="Поделитесь своими впечатлениями..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Фотографии (до 10 штук)</label>
+                    <div class="file-upload">
+                        <input type="file" id="reviewImages" name="images" multiple accept="image/*">
+                        <label for="reviewImages" class="file-upload-label">
+                            Нажмите для выбора файлов или перетащите сюда
+                        </label>
+                    </div>
+                    <div class="file-preview" id="filePreview"></div>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">Отправить отзыв</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+        <img id="modalImage" src="" alt="">
+    </div>
+
     <script src="script.js"></script>
     <script>
-        // Reviews functionality
-        const REVIEWS_STORAGE_KEY = 'appleFavoriteReviews';
-        
-        // Load reviews from localStorage
-        function loadReviews() {
-            const reviewsJson = localStorage.getItem(REVIEWS_STORAGE_KEY);
-            return reviewsJson ? JSON.parse(reviewsJson) : [];
+        const API_URL = 'http://localhost:3000/api';
+        let allReviews = [];
+        let currentSort = 'date-desc';
+        let selectedFiles = [];
+
+        // Load reviews from server
+        async function loadReviews() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('reviewsList').style.display = 'none';
+                document.getElementById('reviewsEmpty').style.display = 'none';
+                
+                const response = await fetch(`${API_URL}/reviews`);
+                if (!response.ok) throw new Error('Ошибка загрузки отзывов');
+                
+                allReviews = await response.json();
+                renderReviews();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('loading').textContent = 'Ошибка загрузки отзывов. Убедитесь, что сервер запущен.';
+            }
         }
-        
-        // Save reviews to localStorage
-        function saveReviews(reviews) {
-            localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
-        }
-        
+
         // Render reviews
         function renderReviews() {
-            const reviews = loadReviews();
             const reviewsList = document.getElementById('reviewsList');
             const reviewsEmpty = document.getElementById('reviewsEmpty');
+            const loading = document.getElementById('loading');
             
-            if (reviews.length === 0) {
+            loading.style.display = 'none';
+            
+            if (allReviews.length === 0) {
                 reviewsList.style.display = 'none';
                 reviewsEmpty.style.display = 'block';
-            } else {
-                reviewsList.style.display = 'grid';
-                reviewsEmpty.style.display = 'none';
-                
-                // Sort reviews by date (newest first)
-                const sortedReviews = [...reviews].sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                reviewsList.innerHTML = sortedReviews.map(review => `
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div>
-                                <div class="review-author">${escapeHtml(review.name)}</div>
-                                <div class="review-date">${formatDate(review.date)}</div>
-                            </div>
-                            <div class="review-rating">
-                                ${renderStars(review.rating)}
-                            </div>
-                        </div>
-                        <div class="review-text">${escapeHtml(review.text)}</div>
-                    </div>
-                `).join('');
+                return;
             }
             
-            updateStats(reviews);
+            reviewsList.style.display = 'grid';
+            reviewsEmpty.style.display = 'none';
+            
+            // Sort reviews
+            const sortedReviews = sortReviewsList([...allReviews], currentSort);
+            
+            reviewsList.innerHTML = sortedReviews.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div>
+                            <div class="review-author">${escapeHtml(review.name)}</div>
+                            <div class="review-date">${formatDate(review.date)}</div>
+                        </div>
+                        <div class="review-rating">
+                            ${renderStars(review.rating)}
+                        </div>
+                    </div>
+                    <div class="review-text">${escapeHtml(review.text)}</div>
+                    ${review.images && review.images.length > 0 ? `
+                        <div class="review-images">
+                            ${review.images.map(img => `
+                                <img src="${img}" alt="Review image" class="review-image" onclick="openImageModal('${img}')">
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
         }
-        
+
+        // Sort reviews list
+        function sortReviewsList(reviews, sortType) {
+            switch(sortType) {
+                case 'date-desc':
+                    return reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+                case 'date-asc':
+                    return reviews.sort((a, b) => new Date(a.date) - new Date(b.date));
+                case 'rating-desc':
+                    return reviews.sort((a, b) => b.rating - a.rating);
+                case 'rating-asc':
+                    return reviews.sort((a, b) => a.rating - b.rating);
+                default:
+                    return reviews;
+            }
+        }
+
+        // Sort reviews
+        function sortReviews(sortType) {
+            currentSort = sortType;
+            
+            // Update button states
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.sort === sortType) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            renderReviews();
+        }
+
         // Render stars
         function renderStars(rating) {
             let stars = '';
@@ -483,64 +806,153 @@
             }
             return stars;
         }
-        
+
         // Update statistics
-        function updateStats(reviews) {
-            const totalReviews = reviews.length;
+        function updateStats() {
+            const totalReviews = allReviews.length;
             const averageRating = totalReviews > 0 
-                ? (reviews.reduce((sum, review) => sum + parseInt(review.rating), 0) / totalReviews).toFixed(1)
+                ? (allReviews.reduce((sum, review) => sum + parseInt(review.rating), 0) / totalReviews).toFixed(1)
                 : 0;
             
             document.getElementById('totalReviews').textContent = totalReviews;
             document.getElementById('averageRating').textContent = averageRating;
         }
-        
+
         // Format date
         function formatDate(dateString) {
             const date = new Date(dateString);
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return date.toLocaleDateString('ru-RU', options);
         }
-        
+
         // Escape HTML
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
+
+        // Open review modal
+        function openReviewModal() {
+            document.getElementById('reviewModal').classList.add('active');
+        }
+
+        // Close review modal
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+            document.getElementById('reviewForm').reset();
+            selectedFiles = [];
+            document.getElementById('filePreview').innerHTML = '';
+        }
+
+        // Open image modal
+        function openImageModal(imageSrc) {
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        // Close image modal
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // Handle file selection
+        document.getElementById('reviewImages').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            selectedFiles = files.slice(0, 10); // Limit to 10 files
+            displayFilePreview();
+        });
+
+        // Display file preview
+        function displayFilePreview() {
+            const preview = document.getElementById('filePreview');
+            preview.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'file-preview-item';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="remove-file" onclick="removeFile(${index})">&times;</button>
+                    `;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Remove file
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            displayFilePreview();
+            
+            // Update file input
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            document.getElementById('reviewImages').files = dataTransfer.files;
+        }
+
         // Handle form submission
-        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        document.getElementById('reviewForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
-            const review = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                rating: formData.get('rating'),
-                text: formData.get('text'),
-                date: new Date().toISOString()
-            };
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
             
-            const reviews = loadReviews();
-            reviews.push(review);
-            saveReviews(reviews);
-            
-            // Reset form
-            this.reset();
-            
-            // Re-render reviews
-            renderReviews();
-            
-            // Show success message
-            alert('Спасибо за ваш отзыв! Он был успешно добавлен.');
+            try {
+                const formData = new FormData();
+                formData.append('name', document.getElementById('reviewName').value);
+                formData.append('email', document.getElementById('reviewEmail').value);
+                formData.append('rating', document.querySelector('input[name="rating"]:checked').value);
+                formData.append('text', document.getElementById('reviewText').value);
+                
+                // Add files
+                selectedFiles.forEach(file => {
+                    formData.append('images', file);
+                });
+                
+                const response = await fetch(`${API_URL}/reviews`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Ошибка при отправке отзыва');
+                
+                const result = await response.json();
+                
+                // Reset form
+                this.reset();
+                selectedFiles = [];
+                document.getElementById('filePreview').innerHTML = '';
+                closeReviewModal();
+                
+                // Reload reviews
+                await loadReviews();
+                
+                alert('Спасибо за ваш отзыв! Он был успешно добавлен.');
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('Ошибка при отправке отзыва. Убедитесь, что сервер запущен.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить отзыв';
+            }
         });
-        
+
+        // Close modal on overlay click
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReviewModal();
+            }
+        });
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            renderReviews();
+            loadReviews();
         });
     </script>
 </body>
 </html>
-
