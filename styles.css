@@ -197,8 +197,7 @@ html {
     width: 24px;
     height: 24px;
     display: block;
-    fill: #000;
-    stroke: #000;
+    object-fit: contain;
 }
 
 .cart-count {
