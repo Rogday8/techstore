@@ -1,5 +1,15 @@
-// Данные товаров
-const products = [
+// Настройки API и WebSocket
+const API_BASE = 'http://localhost:3000/api';
+const WS_URL = 'http://localhost:3000';
+let socket = null;
+let productsLoaded = false;
+let useAPI = true; // Флаг для использования API или статических данных
+
+// Данные товаров (будет заполнен из API или статическими данными)
+let products = [];
+
+// Данные товаров (статические, используются как fallback)
+const staticProducts = [
     // СМАРТФОНЫ
     {
         id: 1,
@@ -526,6 +536,172 @@ const products = [
     }
 ];
 
+// Функция загрузки товаров из API
+async function loadProductsFromAPI() {
+    try {
+        console.log('Загрузка товаров из API...');
+        const response = await fetch(`${API_BASE}/products?active=true`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.products) {
+            console.log(`Загружено ${data.products.length} товаров из API`);
+            
+            // Преобразуем товары из формата БД в формат фронтенда
+            products = data.products.map(product => {
+                // Добавляем поля по умолчанию, если их нет
+                return {
+                    ...product,
+                    stock: product.stock || 0,
+                    hasColors: product.hasColors || false,
+                    colors: product.colors || {},
+                    hasMemory: product.hasMemory || false,
+                    memoryOptions: product.memoryOptions || {},
+                    has3D: product.has3D || false,
+                    specs: product.specs || [],
+                    images: product.images || [],
+                    image: product.image || (product.images && product.images[0]) || '',
+                    hasTradeIn: product.hasTradeIn !== undefined ? product.hasTradeIn : false
+                };
+            });
+            
+            productsLoaded = true;
+            useAPI = true;
+            
+            // Подключаем WebSocket для обновлений в реальном времени
+            connectWebSocket();
+            
+            // Перерисовываем товары
+            renderProducts();
+            updateMaxPrice();
+            
+            return true;
+        } else {
+            throw new Error('Неверный формат ответа API');
+        }
+    } catch (error) {
+        console.warn('Ошибка загрузки товаров из API, используем статические данные:', error);
+        
+        // Используем статические данные как fallback
+        products = [...staticProducts];
+        productsLoaded = true;
+        useAPI = false;
+        
+        // Перерисовываем товары
+        renderProducts();
+        updateMaxPrice();
+        
+        return false;
+    }
+}
+
+// Подключение к WebSocket для обновлений в реальном времени
+function connectWebSocket() {
+    try {
+        // Проверяем, есть ли socket.io в глобальной области
+        if (typeof io === 'undefined') {
+            console.warn('Socket.IO не подключен. Добавьте <script src="/socket.io/socket.io.js"></script> в index.html');
+            return;
+        }
+        
+        socket = io(WS_URL);
+        
+        socket.on('connect', () => {
+            console.log('✅ WebSocket подключен');
+            // Подписываемся на обновления товаров
+            socket.emit('subscribe:products');
+        });
+        
+        socket.on('disconnect', () => {
+            console.log('❌ WebSocket отключен');
+        });
+        
+        // Слушаем обновления stock
+        socket.on('stock:update', (data) => {
+            console.log('📦 Обновление stock:', data);
+            
+            // Обновляем товар в массиве products
+            const productIndex = products.findIndex(p => p.id === data.productId);
+            if (productIndex !== -1) {
+                // Обновляем stock товара
+                if (products[productIndex].hasColors && data.color) {
+                    if (products[productIndex].colors[data.color]) {
+                        products[productIndex].colors[data.color].stock = data.stock;
+                        products[productIndex].colors[data.color].available = data.available;
+                    }
+                } else if (products[productIndex].hasMemory && data.memory) {
+                    if (products[productIndex].memoryOptions[data.memory]) {
+                        products[productIndex].memoryOptions[data.memory].stock = data.stock;
+                        products[productIndex].memoryOptions[data.memory].available = data.available;
+                    }
+                } else {
+                    products[productIndex].stock = data.stock;
+                    products[productIndex].available = data.available;
+                }
+                
+                // Перерисовываем товары
+                renderProducts();
+            }
+        });
+        
+        socket.on('product:updated', (data) => {
+            console.log('🔄 Товар обновлен:', data);
+            
+            // Обновляем товар в массиве
+            const productIndex = products.findIndex(p => p.id === data.product.id);
+            if (productIndex !== -1) {
+                products[productIndex] = { ...products[productIndex], ...data.product };
+                renderProducts();
+            }
+        });
+        
+        socket.on('product:deleted', (data) => {
+            console.log('🗑️ Товар удален:', data);
+            
+            // Удаляем товар из массива
+            products = products.filter(p => p.id !== data.productId);
+            renderProducts();
+        });
+        
+        socket.on('product:created', (data) => {
+            console.log('➕ Товар создан:', data);
+            
+            // Добавляем товар в массив
+            if (data.product && data.product.active) {
+                products.push(data.product);
+                renderProducts();
+            }
+        });
+        
+    } catch (error) {
+        console.error('Ошибка подключения WebSocket:', error);
+    }
+}
+
+// Функция обновления максимальной цены
+function updateMaxPrice() {
+    if (products.length > 0) {
+        const maxProductPrice = Math.max(...products.map(p => p.price));
+        const calculatedMaxPrice = Math.ceil(maxProductPrice / 10000) * 10000; // Округляем до 10000
+        maxPrice = calculatedMaxPrice;
+        
+        // Обновляем input поля
+        const priceInputMin = document.getElementById('priceInputMin');
+        const priceInputMax = document.getElementById('priceInputMax');
+        if (priceInputMin && priceInputMax) {
+            priceInputMin.max = calculatedMaxPrice;
+            priceInputMax.max = calculatedMaxPrice;
+            if (priceInputMin.value > calculatedMaxPrice) priceInputMin.value = minPrice;
+            if (priceInputMax.value > calculatedMaxPrice) priceInputMax.value = calculatedMaxPrice;
+            updatePriceRangeInfo();
+        }
+    }
+}
+
 // Корзина
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -547,20 +723,15 @@ let searchQuery = '';
 
 // Инициализация
 window.addEventListener('DOMContentLoaded', async () => {
-    // Вычисляем максимальную цену для фильтра
-    const maxProductPrice = Math.max(...products.map(p => p.price));
-    const calculatedMaxPrice = Math.ceil(maxProductPrice / 10000) * 10000; // Округляем до 10000
-    maxPrice = calculatedMaxPrice;
+    // Загружаем товары из API (или используем статические данные)
+    await loadProductsFromAPI();
     
-    // Инициализируем input поля
-    const priceInputMin = document.getElementById('priceInputMin');
-    const priceInputMax = document.getElementById('priceInputMax');
-    if (priceInputMin && priceInputMax) {
-        priceInputMin.max = calculatedMaxPrice;
-        priceInputMax.max = calculatedMaxPrice;
-        priceInputMin.value = minPrice;
-        priceInputMax.value = maxPrice;
-        updatePriceRangeInfo();
+    // Если товары не загружены, используем статические данные
+    if (!productsLoaded && products.length === 0) {
+        products = [...staticProducts];
+        productsLoaded = true;
+        updateMaxPrice();
+        renderProducts();
     }
     
     renderProducts();

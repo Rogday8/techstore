@@ -7,6 +7,7 @@ const multer = require('multer');
 const path = require('path');
 const fse = require('fs-extra');
 const config = require('../../config/config');
+const XLSX = require('xlsx');
 
 // Middleware для проверки админ-доступа
 const checkAdmin = (req, res, next) => {
@@ -45,6 +46,39 @@ const upload = multer({
       cb(null, true);
     } else {
       cb(new Error('Только изображения разрешены!'));
+    }
+  }
+});
+
+// Настройка multer для загрузки Excel/CSV файлов
+const excelStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = path.join(__dirname, '../../uploads/temp');
+    fse.ensureDirSync(uploadPath);
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'import-' + uniqueSuffix + ext);
+  }
+});
+
+const uploadExcel = multer({
+  storage: excelStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: function (req, file, cb) {
+    const allowedTypes = /xlsx|xls|csv/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                     file.mimetype === 'application/vnd.ms-excel' ||
+                     file.mimetype === 'text/csv' ||
+                     file.mimetype === 'application/csv';
+    
+    if (mimetype || extname) {
+      cb(null, true);
+    } else {
+      cb(new Error('Только Excel (.xlsx, .xls) и CSV файлы разрешены!'));
     }
   }
 });
@@ -133,6 +167,28 @@ router.post('/products', checkAdmin, upload.array('images', 20), async (req, res
     
     await product.save();
     
+    // Отправляем WebSocket уведомление о создании товара
+    const io = req.app.get('io');
+    if (io) {
+      const productObj = product.toObject();
+      // Преобразуем Map в объекты
+      if (productObj.colors instanceof Map) {
+        const colorsObj = {};
+        productObj.colors.forEach((value, key) => {
+          colorsObj[key] = value;
+        });
+        productObj.colors = colorsObj;
+      }
+      if (productObj.memoryOptions instanceof Map) {
+        const memoryObj = {};
+        productObj.memoryOptions.forEach((value, key) => {
+          memoryObj[key] = value;
+        });
+        productObj.memoryOptions = memoryObj;
+      }
+      io.to('products').emit('product:created', { product: productObj });
+    }
+    
     res.json({ success: true, product });
   } catch (error) {
     console.error('Error creating product:', error);
@@ -173,6 +229,28 @@ router.put('/products/:id', checkAdmin, upload.array('images', 20), async (req, 
     product.updatedAt = new Date();
     await product.save();
     
+    // Отправляем WebSocket уведомление об обновлении товара
+    const io = req.app.get('io');
+    if (io) {
+      const productObj = product.toObject();
+      // Преобразуем Map в объекты
+      if (productObj.colors instanceof Map) {
+        const colorsObj = {};
+        productObj.colors.forEach((value, key) => {
+          colorsObj[key] = value;
+        });
+        productObj.colors = colorsObj;
+      }
+      if (productObj.memoryOptions instanceof Map) {
+        const memoryObj = {};
+        productObj.memoryOptions.forEach((value, key) => {
+          memoryObj[key] = value;
+        });
+        productObj.memoryOptions = memoryObj;
+      }
+      io.to('products').emit('product:updated', { product: productObj });
+    }
+    
     res.json({ success: true, product });
   } catch (error) {
     console.error('Error updating product:', error);
@@ -193,6 +271,12 @@ router.delete('/products/:id', checkAdmin, async (req, res) => {
     // Вместо удаления, помечаем как неактивный
     product.active = false;
     await product.save();
+    
+    // Отправляем WebSocket уведомление об удалении товара
+    const io = req.app.get('io');
+    if (io) {
+      io.to('products').emit('product:deleted', { productId: productId });
+    }
     
     res.json({ success: true, message: 'Товар деактивирован' });
   } catch (error) {
@@ -230,6 +314,37 @@ router.put('/products/:id/stock', checkAdmin, async (req, res) => {
     }
     
     await product.save();
+    
+    // Отправляем WebSocket уведомление об обновлении stock
+    const io = req.app.get('io');
+    if (io) {
+      const availableStock = product.getAvailableStock(color, memory);
+      io.to('products').emit('stock:update', {
+        productId: productId,
+        stock: availableStock,
+        available: availableStock > 0,
+        color: color || null,
+        memory: memory || null
+      });
+      
+      // Также отправляем обновление товара
+      const productObj = product.toObject();
+      if (productObj.colors instanceof Map) {
+        const colorsObj = {};
+        productObj.colors.forEach((value, key) => {
+          colorsObj[key] = value;
+        });
+        productObj.colors = colorsObj;
+      }
+      if (productObj.memoryOptions instanceof Map) {
+        const memoryObj = {};
+        productObj.memoryOptions.forEach((value, key) => {
+          memoryObj[key] = value;
+        });
+        productObj.memoryOptions = memoryObj;
+      }
+      io.to('products').emit('product:updated', { product: productObj });
+    }
     
     res.json({ success: true, product });
   } catch (error) {
@@ -290,6 +405,167 @@ router.put('/orders/:orderId/status', checkAdmin, async (req, res) => {
     res.json({ success: true, order });
   } catch (error) {
     console.error('Error updating order status:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ========== МАССОВЫЕ ОПЕРАЦИИ С ЦЕНАМИ ==========
+
+// Массовое изменение цен на процент
+router.post('/products/bulk-price-change', checkAdmin, async (req, res) => {
+  try {
+    const { percent, category, increase } = req.body;
+    
+    if (!percent || percent === 0) {
+      return res.status(400).json({ success: false, error: 'Укажите процент изменения' });
+    }
+    
+    const query = { active: true };
+    if (category && category !== 'all') {
+      query.category = category;
+    }
+    
+    const products = await Product.find(query);
+    let updatedCount = 0;
+    const multiplier = increase ? (1 + percent / 100) : (1 - percent / 100);
+    
+    for (const product of products) {
+      // Изменяем основную цену
+      product.price = Math.round(product.price * multiplier * 100) / 100;
+      
+      // Изменяем цены вариантов памяти, если есть
+      if (product.hasMemory && product.memoryOptions.size > 0) {
+        product.memoryOptions.forEach((variant, key) => {
+          variant.price = Math.round(variant.price * multiplier * 100) / 100;
+        });
+        product.markModified('memoryOptions');
+      }
+      
+      await product.save();
+      updatedCount++;
+    }
+    
+    res.json({
+      success: true,
+      message: `Обновлено ${updatedCount} товаров`,
+      updatedCount,
+      operation: increase ? 'увеличено' : 'уменьшено',
+      percent: Math.abs(percent)
+    });
+  } catch (error) {
+    console.error('Error bulk updating prices:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ========== ИМПОРТ ИЗ EXCEL/CSV ==========
+
+// Импорт товаров из Excel/CSV файла
+router.post('/products/import', checkAdmin, uploadExcel.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Файл не загружен' });
+    }
+    
+    const filePath = req.file.path;
+    const fileExt = path.extname(req.file.originalname).toLowerCase();
+    
+    let workbook;
+    if (fileExt === '.csv') {
+      // Читаем CSV файл
+      const csvContent = fse.readFileSync(filePath, 'utf-8');
+      workbook = XLSX.read(csvContent, { type: 'string' });
+    } else {
+      // Читаем Excel файл
+      workbook = XLSX.readFile(filePath);
+    }
+    
+    // Получаем первый лист
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    
+    // Преобразуем в JSON
+    const data = XLSX.utils.sheet_to_json(worksheet);
+    
+    if (data.length === 0) {
+      // Удаляем временный файл
+      fse.removeSync(filePath);
+      return res.status(400).json({ success: false, error: 'Файл пуст' });
+    }
+    
+    const results = {
+      created: 0,
+      updated: 0,
+      errors: []
+    };
+    
+    // Получаем максимальный ID
+    const lastProduct = await Product.findOne().sort({ id: -1 });
+    let nextId = lastProduct ? lastProduct.id + 1 : 1;
+    
+    // Обрабатываем каждую строку
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      try {
+        // Парсим данные (ожидаемые колонки: name, category, price, stock, description, image, images)
+        const productData = {
+          name: row.name || row['Название'] || row['Name'],
+          category: row.category || row['Категория'] || row['Category'] || 'default',
+          price: parseFloat(row.price || row['Цена'] || row['Price'] || 0),
+          stock: parseInt(row.stock || row['Количество'] || row['Stock'] || 0),
+          description: row.description || row['Описание'] || row['Description'] || '',
+          image: row.image || row['Изображение'] || row['Image'] || '',
+          images: row.images ? (Array.isArray(row.images) ? row.images : row.images.split(',').map(s => s.trim())) : [],
+          active: row.active !== undefined ? (row.active === true || row.active === 'true' || row.active === 'Да') : true
+        };
+        
+        if (!productData.name || !productData.price) {
+          results.errors.push(`Строка ${i + 2}: Отсутствует название или цена`);
+          continue;
+        }
+        
+        // Проверяем, существует ли товар с таким названием
+        let product = await Product.findOne({ name: productData.name });
+        
+        if (product) {
+          // Обновляем существующий товар
+          Object.keys(productData).forEach(key => {
+            if (productData[key] !== undefined && key !== 'id') {
+              product[key] = productData[key];
+            }
+          });
+          await product.save();
+          results.updated++;
+        } else {
+          // Создаем новый товар
+          product = new Product({
+            id: nextId++,
+            ...productData
+          });
+          await product.save();
+          results.created++;
+        }
+      } catch (error) {
+        results.errors.push(`Строка ${i + 2}: ${error.message}`);
+      }
+    }
+    
+    // Удаляем временный файл
+    fse.removeSync(filePath);
+    
+    res.json({
+      success: true,
+      message: `Импорт завершен. Создано: ${results.created}, Обновлено: ${results.updated}`,
+      results
+    });
+  } catch (error) {
+    console.error('Error importing products:', error);
+    
+    // Удаляем временный файл в случае ошибки
+    if (req.file && req.file.path) {
+      fse.removeSync(req.file.path).catch(() => {});
+    }
+    
     res.status(500).json({ success: false, error: error.message });
   }
 });

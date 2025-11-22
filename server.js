@@ -30,6 +30,9 @@ const io = socketIo(server, {
   }
 });
 
+// Делаем io доступным в req.app
+app.set('io', io);
+
 const PORT = config.port;
 
 // Middleware
