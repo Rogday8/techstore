@@ -1,41 +1,43 @@
-# Игнорировать системные файлы
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
 .DS_Store
 Thumbs.db
-desktop.ini
 
-# Игнорировать временные файлы
-*.log
-*.tmp
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
 *~
 
-# Игнорировать IDE файлы
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
+# Build
+dist/
+build/
 
-# Игнорировать папку с большими файлами (опционально)
-# Раскомментируйте если не хотите загружать модели в Git
-# models/*.glb
-# models/*.fbx
-# models/*.usdz
-# images/*.jpg
-# images/*.png
-
-# Игнорировать большие исполняемые файлы
+# Large executable files
 *.exe
 *.msi
 *.dmg
 *.pkg
 
-# Игнорировать node_modules
-node_modules/
+# Uploads (опционально, если хотите хранить в git)
+# uploads/
+# images/products/
 
-# Игнорировать package-lock.json (опционально)
-package-lock.json
-
-# Игнорировать products.json (если это временный файл)
-# products.json
-
+# MongoDB data (если используете локальную БД)
+# data/
