@@ -113,4 +113,84 @@ git checkout -b restore-backup backup-cart-image
 - Все предыдущие функции сохранены
 - Отзывы сохраняются в localStorage браузера
 
+---
+
+## Точка восстановления: backup-admin-database-system
+
+**Дата создания:** 2025-01-XX
+**Коммит:** caaec7a
+**Описание:** Полная система админ-панели, базы данных товаров и конфигурация для деплоя
+
+### Что включено в этот бэкап:
+
+1. **Админ-панель (admin.html)**
+   - Управление товарами (добавление, редактирование, удаление)
+   - Управление заказами
+   - Управление складом (stock) с автоматическим обновлением
+   - Интеграция с MongoDB
+
+2. **Система базы данных**
+   - MongoDB модели (Product, Order, Reservation)
+   - API маршруты для товаров, заказов, админки
+   - Система резервирования товаров
+   - WebSocket для обновлений stock в реальном времени
+   - Cron job для очистки истекших резерваций
+
+3. **Конфигурация для деплоя**
+   - `.env.example` - пример конфигурации окружения
+   - `config/config.js` - конфигурация приложения
+   - `DEPLOY_INSTRUCTIONS.md` - инструкции по деплою
+   - `QUICK_START.md` - быстрый старт
+   - `SYSTEM_OVERVIEW.md` - обзор системы
+   - `DATABASE_SYSTEM_REQUIREMENTS.md` - требования к БД
+
+4. **Миграция данных**
+   - `server/scripts/migrate-products.js` - скрипт миграции товаров из статического массива в БД
+   - `products.json` - JSON файл с товарами
+
+5. **Серверная инфраструктура**
+   - `server.js` - обновленный сервер с MongoDB, Socket.IO, node-cron
+   - `package.json` - зависимости (mongoose, socket.io, node-cron, fs-extra)
+   - Маршруты API (`server/routes/products.js`, `orders.js`, `admin.js`)
+
+6. **Основной функционал сайта**
+   - Все предыдущие функции сохранены
+   - Система отзывов с localStorage
+   - Каталог товаров (готов к интеграции с API)
+   - Корзина покупок
+   - Страница ремонта
+
+### Как восстановить из бэкапа:
+
+```bash
+# Посмотреть все теги
+git tag -l
+
+# Восстановить состояние из тега
+git checkout backup-admin-database-system
+
+# Или создать новую ветку из тега
+git checkout -b restore-backup backup-admin-database-system
+```
+
+### Важные файлы в этом бэкапе:
+
+- `admin.html` - админ-панель
+- `server/models/` - модели MongoDB (Product.js, Order.js, Reservation.js)
+- `server/routes/` - API маршруты (products.js, orders.js, admin.js)
+- `config/config.js` - конфигурация приложения
+- `.env.example` - пример конфигурации окружения
+- `server.js` - основной сервер с интеграцией БД
+- `package.json` - зависимости проекта
+- `DEPLOY_INSTRUCTIONS.md` - инструкции по деплою
+
+### Примечания:
+
+- Требуется MongoDB (локально или MongoDB Atlas)
+- Необходимо создать `.env` файл из `.env.example`
+- Установить зависимости: `npm install`
+- Запустить миграцию: `node server/scripts/migrate-products.js`
+- Frontend пока работает со статическим массивом товаров (можно интегрировать с API)
+- Система отзывов работает с localStorage
+
 
